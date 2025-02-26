@@ -1,12 +1,13 @@
 "use client";
 import { IconArrowNarrowRight } from "@tabler/icons-react";
-import Image from "next/image";
-import { useState, useRef, useId, useEffect } from "react";
+import Image, { StaticImageData } from "next/image";
+import { useState, useRef, useId, useEffect, useCallback } from "react";
 
 interface SlideData {
+  id: number;
   title: string;
   button: string;
-  src: string;
+  src: StaticImageData;
 }
 
 interface SlideProps {
@@ -108,9 +109,9 @@ export function Carousel({ slides }: CarouselProps) {
   const [current, setCurrent] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const goToNextSlide = () => {
+  const goToNextSlide = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
-  };
+  }, []);
 
   const handlePreviousClick = () => {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
@@ -137,7 +138,7 @@ export function Carousel({ slides }: CarouselProps) {
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [goToNextSlide]);
 
   const restartAutoSlide = () => {
     if (intervalRef.current) {

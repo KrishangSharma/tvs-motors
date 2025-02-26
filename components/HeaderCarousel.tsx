@@ -1,23 +1,23 @@
 "use client";
 
 import { Carousel } from "@/components/ui/carousel";
-import Image1 from "@/public/header-images/Corporate landing page Desk-1366x600 -20250214-034900.webp";
-import Image2 from "@/public/header-images/160_4v_HomePageBanner_1366X600.webp";
-import Image3 from "@/public/header-images/MAIN_KV_1366x600 1-20241024-054955.webp";
-import Image4 from "@/public/header-images/RR310-new-banner-desktop.webp";
-import Image5 from "@/public/header-images/TVS125_1366x600.webp";
-import Image6 from "@/public/header-images/apache_tvs_home_banner_desktop.webp";
-import Image7 from "@/public/header-images/Sustainability Banner new.webp";
-import Image8 from "@/public/header-images/Corporate Banner Desktop- 1366x600.webp";
-import Image9 from "@/public/header-images/TVS-Jupiter125_1366x600.webp";
-import Image10 from "@/public/header-images/Corporate Banner Desktop- 1366x600.webp";
-import Image11 from "@/public/header-images/iQube_Family_1366x600px-20240627-101920.webp";
-import Image12 from "@/public/header-images/ntorq-web.webp";
-import Image13 from "@/public/header-images/Black Ka baukhaal Web Banners_W1366 X H600- copy-20240924-063832.webp";
-import Image14 from "@/public/header-images/3300_Desktop-1366x600_eng.webp";
-import Image15 from "@/public/header-images/Coral Silk - Static Banner13102021.webp";
-import Image16 from "@/public/header-images/04_TVS Web Banner - 24-11-2023_Desktop - 1366x600.webp";
-import Image17 from "@/public/header-images/Service and parts Banner_1366x600_Desktop.webp";
+import Image1 from "@/public/header-images/Corporate landing page Desk-1366x600 -20250214-034900.jpg";
+import Image2 from "@/public/header-images/160_4v_HomePageBanner_1366X600.jpg";
+import Image3 from "@/public/header-images/MAIN_KV_1366x600 1-20241024-054955.jpg";
+import Image4 from "@/public/header-images/RR310-new-banner-desktop.jpg";
+import Image5 from "@/public/header-images/TVS125_1366x600.jpg";
+import Image6 from "@/public/header-images/apache_tvs_home_banner_desktop.jpg";
+import Image7 from "@/public/header-images/Sustainability Banner new.jpg";
+import Image8 from "@/public/header-images/Corporate Banner Desktop- 1366x600.jpg";
+import Image9 from "@/public/header-images/TVS-Jupiter125_1366x600.jpg";
+import Image10 from "@/public/header-images/Corporate Banner Desktop- 1366x600.jpg";
+import Image11 from "@/public/header-images/iQube_Family_1366x600px-20240627-101920.jpg";
+import Image12 from "@/public/header-images/ntorq-web.jpg";
+import Image13 from "@/public/header-images/Black Ka baukhaal Web Banners_W1366 X H600- copy-20240924-063832.jpg";
+import Image14 from "@/public/header-images/3300_Desktop-1366x600_eng.jpg";
+import Image15 from "@/public/header-images/Coral Silk - Static Banner13102021.jpg";
+import Image16 from "@/public/header-images/04_TVS Web Banner - 24-11-2023_Desktop - 1366x600.jpg";
+import Image17 from "@/public/header-images/Service and parts Banner_1366x600_Desktop.jpg";
 
 export default function HeaderCarousel() {
   const slideData = [
@@ -125,7 +125,7 @@ export default function HeaderCarousel() {
     },
   ];
   return (
-    <div className="relative overflow-hidden w-full h-[80vh]">
+    <div className="relative overflow-hidden w-full h-[90vh]">
       <Carousel slides={slideData} />
     </div>
   );

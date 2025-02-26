@@ -8,11 +8,11 @@ import {
 export default function Home() {
   return (
     <div className="w-full min-h-screen">
-      <header className="w-full h-20 shadow-md bg-white fixed top-0 z-10">
+      <header className="w-full h-20 rounded-xl fixed top-0 z-[50]">
         <Navbar />
       </header>
       {/* Main Content */}
-      <main className="mt-20">
+      <main>
         <HeaderCarousel />
         <Stories />
         <YourRide />
