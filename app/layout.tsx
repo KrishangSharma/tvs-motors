@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto, Nunito_Sans } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const robotoSans = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -28,6 +29,9 @@ export default function RootLayout({
       <body
         className={`${robotoSans.variable} ${nunitoSans.variable} antialiased`}
       >
+        <header className="w-full h-20 rounded-xl fixed top-0 z-[50]">
+          <Navbar />
+        </header>
         {children}
       </body>
     </html>

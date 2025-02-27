@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
@@ -25,6 +26,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
 
 export default function Navbar() {
+  const path = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   // Mobile Navigation Links
@@ -119,7 +121,9 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:mt-4 sm:rounded-xl flex items-center justify-between font-roboto">
+    <nav
+      className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:mt-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto border`}
+    >
       <div className="lg:hidden flex items-center flex-row-reverse justify-between w-full">
         <MobileNav />
         <Link href="/" className="mr-4">
