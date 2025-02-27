@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 import twilio from "twilio";
 
 // Twilio Credentials
@@ -9,22 +9,17 @@ const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID as string;
 // Initialize Twilio Client
 const twilioClient = twilio(accountSid, authToken);
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const { phone, otp } = req.body;
-
-  // Validate input
-  if (!phone || !otp || !/^\d{10}$/.test(phone) || !/^\d{4,6}$/.test(otp)) {
-    return res.status(400).json({ error: "Invalid input" });
-  }
-
+export async function POST(req: NextRequest) {
   try {
+    // Parse the JSON body
+    const body = await req.json();
+    const { phone, otp } = body;
+
+    // Validate input
+    if (!phone || !otp || !/^\d{10}$/.test(phone) || !/^\d{4,6}$/.test(otp)) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
+
     // Verify the OTP using Twilio
     const verificationCheck = await twilioClient.verify.v2
       .services(serviceSid)
@@ -34,12 +29,21 @@ export default async function handler(
       });
 
     if (verificationCheck.status === "approved") {
-      return res.status(200).json({ message: "OTP verified successfully" });
-    } else {
-      return res.status(400).json({ error: "Invalid or expired OTP" });
+      return NextResponse.json(
+        { message: "OTP verified successfully" },
+        { status: 200 }
+      );
     }
+
+    return NextResponse.json(
+      { error: "Invalid or expired OTP" },
+      { status: 400 }
+    );
   } catch (error) {
     console.error("❌ OTP Verification Error:", error);
-    return res.status(500).json({ error: "Failed to verify OTP" });
+    return NextResponse.json(
+      { error: "Failed to verify OTP" },
+      { status: 500 }
+    );
   }
 }

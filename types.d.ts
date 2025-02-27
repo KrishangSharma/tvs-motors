@@ -14,9 +14,3 @@ export interface Vehicle {
   fuelTankCapacity: string;
   mileage: string;
 }
-
-export interface Props {
-  params: {
-    id: string;
-  };
-}

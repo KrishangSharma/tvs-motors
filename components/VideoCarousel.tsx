@@ -72,13 +72,13 @@ const stories = [
 ];
 
 // Extract YouTube Video ID from URL
-const getYouTubeID = (url) => {
+const getYouTubeID = (url: string) => {
   const match = url.match(/(?:\/|v=)([a-zA-Z0-9_-]{11})/);
   return match ? match[1] : null;
 };
 
 // VideoCard Component
-const VideoCard = ({ videoId }) => {
+const VideoCard = ({ videoId }: { videoId: string }) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
@@ -112,7 +112,12 @@ export function VideoCarousel() {
     return (
       <Card
         key={story.id}
-        card={<VideoCard videoId={videoId} />}
+        card={{
+          src: "",
+          title: `Video ${story.id}`,
+          category: "Video",
+          content: <VideoCard videoId={videoId} />,
+        }}
         index={index}
       />
     );
