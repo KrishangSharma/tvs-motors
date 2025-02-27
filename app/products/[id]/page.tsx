@@ -2,31 +2,10 @@ import { urlFor } from "@/sanity/lib/image";
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
 import Image from "next/image";
+import { Vehicle, Props } from "@/types";
 
-interface Vehicle {
-  _id: string;
-  model: string;
-  price: number;
-  images: string[];
-  engineType: string;
-  maxPower: string;
-  maxTorque: string;
-  fuelSystem: string;
-  transmission: string;
-  suspension: string;
-  brakes: string;
-  dimensions: string;
-  fuelTankCapacity: string;
-  mileage: string;
-}
-
-interface Props {
-  params: {
-    id: string;
-  };
-}
-
-const VehiclePage = async ({ params: { id } }: Props) => {
+const VehiclePage = async ({ params }: Props) => {
+  const { id } = await params;
   const query = groq`*[_type == "vehicle" && _id == "${id}"][0]`;
   const vehicle: Vehicle = await client.fetch(query);
 

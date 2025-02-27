@@ -129,6 +129,7 @@ export default function TestRideForm() {
   // Sample dealers based on pincode
   const getDealers = React.useCallback((pincode: string) => {
     // This would typically be an API call
+    console.log(pincode);
     return [
       { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
       { id: "d2", name: "TVS Motors Authorized Dealer - Highway Road" },
