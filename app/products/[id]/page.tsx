@@ -7,7 +7,7 @@ interface Vehicle {
   _id: string;
   model: string;
   price: number;
-  images: any[];
+  images: string[];
   engineType: string;
   maxPower: string;
   maxTorque: string;
@@ -30,15 +30,18 @@ const VehiclePage = async ({ params: { id } }: Props) => {
   const query = groq`*[_type == "vehicle" && _id == "${id}"][0]`;
   const vehicle: Vehicle = await client.fetch(query);
 
+  const imageUrl = urlFor(vehicle.images?.[0]).toString();
+
   return (
     <div className="container mx-auto px-4 py-8 min-h-screen">
       {/* Hero Section */}
       <div className="relative w-full h-[40vh] md:h-[60vh] lg:h-[70vh] mb-8">
-        {vehicle.images?.length > 0 && (
+        {imageUrl && ( // Only render the image if a valid URL exists
           <Image
-            src={urlFor(vehicle.images[3]) || "/placeholder.svg"}
+            src={imageUrl}
             alt={vehicle.model}
-            fill
+            width={500}
+            height={300}
             className="object-contain"
             priority
           />
@@ -51,7 +54,7 @@ const VehiclePage = async ({ params: { id } }: Props) => {
           {vehicle.model}
         </h1>
         <p className="text-2xl md:text-3xl font-semibold text-primary">
-          ₹{new Intl.NumberFormat("en-IN").format(vehicle.price)}
+          ₹{vehicle.price}
         </p>
       </div>
 
