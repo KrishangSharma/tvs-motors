@@ -9,12 +9,18 @@ const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID as string;
 // Initialize Twilio Client
 const twilioClient = twilio(accountSid, authToken);
 
-export async function POST(req: NextRequest, res: NextResponse) {
-  const { phone } = await req.json;
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const { phone } = body;
 
   // Validate phone number
   if (!phone || !/^\d{10}$/.test(phone)) {
-    return res.status(400).json({ error: "Invalid phone number format" });
+    console.log(phone);
+
+    return NextResponse.json({
+      error: "Invalid phone number format",
+      status: 400,
+    });
   }
 
   try {
@@ -26,11 +32,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
         channel: "sms",
       });
 
-    return res
-      .status(200)
-      .json({ message: "OTP sent successfully", sid: otpRequest.sid });
+    return NextResponse.json({
+      message: "OTP sent successfully",
+      sid: otpRequest.sid,
+      status: 200,
+    });
   } catch (error) {
     console.error("❌ OTP Sending Error:", error);
-    return res.status(500).json({ error: "Failed to send OTP" });
+    return NextResponse.json({ error: "Failed to send OTP", status: 500 });
   }
 }
