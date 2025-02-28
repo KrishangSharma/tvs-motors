@@ -60,7 +60,7 @@ export default function ProductMenu() {
   return (
     <>
       {/* Sidebar w preview pane */}
-      <div className="hidden lg:flex h-full w-full">
+      <div className="hidden lg:flex h-full w-full z-50">
         {/* Sidebar for Categories */}
         <div className="w-1/4 min-w-[250px] bg-gray-100 p-5 flex flex-col gap-2">
           {vehicleTypes.map((type) => (
@@ -94,13 +94,14 @@ export default function ProductMenu() {
                   href={`/product/${vehicle.slug.current}`}
                   className="flex flex-col items-center gap-2 hover:bg-gray-200/50 p-3 rounded-md transition-colors"
                 >
-                  <div className="w-[120px] h-[70px] relative">
+                  <div className="w-[120px] h-[70px] relative overflow-hidden flex items-center justify-center">
                     <Image
                       src={vehicle.image || "/placeholder.svg"}
                       width={120}
                       height={70}
+                      quality={100}
                       alt={vehicle.model}
-                      className="object-contain"
+                      className="w-auto h-full object-contain"
                     />
                   </div>
                   <h3 className="text-sm font-medium text-center">

@@ -93,7 +93,7 @@ export function VideoCarousel() {
         {/* Play icon should be hidden if this video is playing */}
         {!playingVideoId || playingVideoId !== videoId ? (
           <Play
-            className="absolute z-[40] bg-white/70 p-2 rounded-full"
+            className="absolute z-40 bg-white/70 p-2 rounded-full"
             size={32}
           />
         ) : null}
