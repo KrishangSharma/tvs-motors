@@ -10,7 +10,7 @@ import { useState } from "react";
 
 // export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
 export default function DetailsTabs() {
-  const tabs = ["Specifications", "Fuel and Mileage", "Brakes and more"];
+  const tabs = ["Specifications", "Fuel and Mileage", "Brakes and moreee"];
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   // Placeholder content for each tab
