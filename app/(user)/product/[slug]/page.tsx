@@ -5,10 +5,9 @@ import { Vehicle } from "@/types";
 import dynamic from "next/dynamic";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-// Dynamically import client components (no SSR)
 const ImageGallery = dynamic(() => import("@/components/ImageGallery"), {
   ssr: true,
 });
@@ -17,7 +16,7 @@ const DetailsTabs = dynamic(() => import("@/components/DetailsTab"), {
 });
 
 export default async function VehiclePage({ params }: Props) {
-  const { slug } = params;
+  const { slug } = await params;
   const query = groq`*[_type == "vehicle" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<Vehicle>(query);
 
@@ -50,7 +49,8 @@ export default async function VehiclePage({ params }: Props) {
           </button>
           {/* Tab Navigation */}
           <div className="mt-8">
-            <DetailsTabs vehicle={vehicle} />
+            {/* <DetailsTabs vehicle={vehicle} /> */}
+            <DetailsTabs />
           </div>
         </div>
       </div>
