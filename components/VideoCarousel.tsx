@@ -1,73 +1,39 @@
 "use client";
 
-// TODO: Manage videos and zindex of the cards
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 import YouTube from "react-youtube";
-import Image from "next/image";
+import { Play } from "lucide-react";
+import Story1 from "@/public/yt-stories/story-1.jpg";
+import Story2 from "@/public/yt-stories/story-2.jpg";
+import Story3 from "@/public/yt-stories/story-3.jpg";
+import Story4 from "@/public/yt-stories/story-4.jpg";
 
 // Stories (YouTube Video Links)
 const stories = [
   {
     id: 1,
+    thumbnail: Story1,
+    title: "Celebrating Mr. Venu Srinivasan's Llifetime Achievement Award",
     source: "https://youtu.be/A90E-fu1e3o",
   },
   {
     id: 2,
+    thumbnail: Story2,
+    title: "",
     source: "https://youtu.be/n7Y89U8AjSs",
   },
   {
     id: 3,
+    thumbnail: Story3,
+    title: "",
     source: "https://youtu.be/ylNZddpP4YE",
   },
   {
     id: 4,
+    thumbnail: Story4,
+    title: "",
     source: "https://youtu.be/DHNsur93omY",
-  },
-  {
-    id: 5,
-    source: "https://youtu.be/bSa6aa9Vkus",
-  },
-  {
-    id: 6,
-    source: "https://youtu.be/eWwq8nL9VDM",
-  },
-  {
-    id: 7,
-    source: "https://youtu.be/J5--LVZA0hg",
-  },
-  {
-    id: 8,
-    source: "https://youtu.be/JRD1QhGx0fo",
-  },
-  {
-    id: 9,
-    source: "https://youtu.be/AIvn7pKubLY",
-  },
-  {
-    id: 10,
-    source: "https://youtu.be/RQVTIMhQ2Gc",
-  },
-  {
-    id: 11,
-    source: "https://youtu.be/y0gI-eqbmdA",
-  },
-  {
-    id: 12,
-    source: "https://youtu.be/JHLxuzkWBVU",
-  },
-  {
-    id: 13,
-    source: "https://youtu.be/GeOwwD0ys9Q",
-  },
-  {
-    id: 14,
-    source: "https://youtu.be/zNTGXKL3KSY",
-  },
-  {
-    id: 15,
-    source: "https://youtu.be/zNTGXKL3KSY",
   },
 ];
 
@@ -78,54 +44,82 @@ const getYouTubeID = (url: string) => {
 };
 
 // VideoCard Component
-const VideoCard = ({ videoId }: { videoId: string }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-
+const VideoCard = ({
+  videoId,
+  isPlaying,
+  setPlayingVideoId,
+}: {
+  videoId: string;
+  isPlaying: boolean;
+  setPlayingVideoId: (id: string | null) => void;
+}) => {
   return (
     <div
-      className="relative w-full h-56 md:h-64 cursor-pointer"
-      onClick={() => setIsPlaying(true)}
+      className={`relative w-full h-56 md:h-64 cursor-pointer rounded-xl overflow-hidden ${
+        isPlaying ? "z-50" : "z-10"
+      }`}
+      onClick={() => setPlayingVideoId(videoId)}
     >
-      {!isPlaying ? (
-        <Image
-          src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-          alt="YouTube Thumbnail"
-          className="w-full h-full object-cover rounded-xl"
-        />
-      ) : (
+      <div className="w-full h-full">
         <YouTube
           videoId={videoId}
-          className="absolute top-0 left-0 w-full h-full rounded-xl"
-          opts={{ width: "100%", height: "100%", playerVars: { autoplay: 1 } }}
+          className="w-full h-full"
+          opts={{
+            width: "100%",
+            height: "100%",
+            playerVars: {
+              autoplay: 1,
+              modestbranding: 1,
+              rel: 0,
+            },
+          }}
+          onEnd={() => setPlayingVideoId(null)} // Reset playing state when video ends
         />
-      )}
+      </div>
     </div>
   );
 };
 
 // Video Carousel Component
 export function VideoCarousel() {
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null); // Track currently playing video
+
   const cards = stories.map((story, index) => {
     const videoId = getYouTubeID(story.source);
     if (!videoId) return null;
 
     return (
-      <Card
-        key={story.id}
-        card={{
-          src: "",
-          title: `Video ${story.id}`,
-          category: "Video",
-          content: <VideoCard videoId={videoId} />,
-        }}
-        index={index}
-      />
+      <div className="relative flex items-center justify-center" key={story.id}>
+        {/* Play icon should be hidden if this video is playing */}
+        {!playingVideoId || playingVideoId !== videoId ? (
+          <Play
+            className="absolute z-50 bg-white/70 p-2 rounded-full"
+            size={32}
+          />
+        ) : null}
+
+        <Card
+          card={{
+            src: story.thumbnail,
+            title: story.title,
+            category: "",
+            content: (
+              <VideoCard
+                videoId={videoId}
+                isPlaying={playingVideoId === videoId}
+                setPlayingVideoId={setPlayingVideoId}
+              />
+            ),
+          }}
+          index={index}
+        />
+      </div>
     );
   });
 
   return (
     <div className="w-full h-full">
-      <Carousel items={cards} />
+      <Carousel items={cards.filter(Boolean)} />
     </div>
   );
 }

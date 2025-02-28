@@ -122,7 +122,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:mt-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto border`}
+      className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto border`}
     >
       <div className="lg:hidden flex items-center flex-row-reverse justify-between w-full">
         <MobileNav />

@@ -14,7 +14,7 @@ import {
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import Image, { ImageProps } from "next/image";
+import Image, { ImageProps, StaticImageData } from "next/image";
 import { useOutsideClick } from "@/hooks/use-outside-click";
 
 interface CarouselProps {
@@ -23,7 +23,7 @@ interface CarouselProps {
 }
 
 type Card = {
-  src: string;
+  src: StaticImageData;
   title: string;
   category: string;
   content: React.ReactNode;
@@ -254,7 +254,7 @@ export const Card = ({
           </motion.p>
           <motion.p
             layoutId={layout ? `title-${card.title}` : undefined}
-            className="text-white text-xl md:text-3xl font-semibold max-w-xs text-left [text-wrap:balance] font-sans mt-2"
+            className="text-white text-lg md:text-3xl font-medium max-w-xs text-left [text-wrap:balance] font-sans mt-2"
           >
             {card.title}
           </motion.p>

@@ -5,13 +5,13 @@ import Image from "next/image";
 import { Vehicle } from "@/types";
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export default async function VehiclePage({ params }: Props) {
-  const { id } = await params;
-  const query = groq`*[_type == "vehicle" && _id == "${id}"][0]`;
-  const vehicle: Vehicle = await client.fetch(query);
+  const { slug } = await params;
+  const query = groq`*[_type == "vehicle" && slug.current == "${slug}"][0]`;
+  const vehicle = await client.fetch<Vehicle>(query);
 
   const imageUrl = urlFor(vehicle.images?.[0]).toString();
 
