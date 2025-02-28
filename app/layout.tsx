@@ -27,9 +27,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${robotoSans.variable} ${nunitoSans.variable} antialiased overflow-hidden`}
+        className={`${robotoSans.variable} ${nunitoSans.variable} antialiased overflow-x-hidden`}
       >
-        <header className="w-full h-auto lg:pt-5 rounded-xl fixed top-0 z-[50]">
+        <header className="w-full h-auto sm:pt-5 rounded-xl fixed top-0 z-[50]">
           <Navbar />
         </header>
         {children}

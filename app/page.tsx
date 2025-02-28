@@ -4,8 +4,10 @@ export default function Home() {
   return (
     <main className="w-full min-h-screen -mt-20 flex flex-col overflow-hidden">
       <HeaderCarousel />
-      <Stories />
-      <YourRide />
+      <div className="flex flex-col gap-5">
+        <Stories />
+        <YourRide />
+      </div>
     </main>
   );
 }

@@ -23,6 +23,12 @@ export default defineType({
       type: "string",
     }),
     defineField({
+      name: "type",
+      title: "type",
+      type: "string",
+      description: "Vehicle type (e.g., scooter, motorcycle, etc.)",
+    }),
+    defineField({
       name: "engineType",
       title: "Engine Type",
       type: "string",

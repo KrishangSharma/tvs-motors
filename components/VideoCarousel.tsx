@@ -55,7 +55,7 @@ const VideoCard = ({
 }) => {
   return (
     <div
-      className={`relative w-full h-56 md:h-64 cursor-pointer rounded-xl overflow-hidden ${
+      className={`relative w-full h-56 md:h-[30rem] cursor-pointer rounded-xl overflow-hidden ${
         isPlaying ? "z-50" : "z-10"
       }`}
       onClick={() => setPlayingVideoId(videoId)}
@@ -93,7 +93,7 @@ export function VideoCarousel() {
         {/* Play icon should be hidden if this video is playing */}
         {!playingVideoId || playingVideoId !== videoId ? (
           <Play
-            className="absolute z-50 bg-white/70 p-2 rounded-full"
+            className="absolute z-[40] bg-white/70 p-2 rounded-full"
             size={32}
           />
         ) : null}

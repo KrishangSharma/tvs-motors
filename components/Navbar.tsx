@@ -24,6 +24,7 @@ import {
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
+import ProductMenu from "./ProductMenu";
 
 export default function Navbar() {
   const path = usePathname();
@@ -42,7 +43,7 @@ export default function Navbar() {
               className="lg:hidden hover:bg-transparent"
               aria-label="Toggle Menu"
             >
-              <Menu className="h-10 w-10" />
+              <Menu />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-full sm:w-[500px]">
@@ -51,8 +52,8 @@ export default function Navbar() {
                 <div className="px-2 py-1">
                   <h2 className="mb-2 text-lg font-semibold">Products</h2>
                   <div className="space-y-2">
-                    {/* Add your product links here */}
-                    <p className="text-sm">Product content goes here</p>
+                    {/* Product Categories -> Product List -> Individual Product Page */}
+                    <ProductMenu />
                   </div>
                 </div>
                 <div className="px-2 py-1">
@@ -98,19 +99,6 @@ export default function Navbar() {
                   >
                     <span className="text-gray-400">Dealers</span>
                   </Link>
-                  <div className="flex items-center gap-5">
-                    <Link
-                      href="/contact-us"
-                      className="flex items-center gap-2"
-                    >
-                      <Headphones className="h-5 w-5 text-gray-400" />
-                      <span className="text-gray-400">Contact</span>
-                    </Link>
-                    <Link href="/login" className="flex items-center gap-2">
-                      <User className="h-5 w-5 text-gray-400" />
-                      <span className="text-gray-400">Login</span>
-                    </Link>
-                  </div>
                 </div>
               </div>
             </div>
@@ -124,9 +112,17 @@ export default function Navbar() {
     <nav
       className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto border`}
     >
-      <div className="lg:hidden flex items-center flex-row-reverse justify-between w-full">
+      <div className="lg:hidden flex items-center flex-row-reverse w-full">
+        <div className="flex items-center gap-5">
+          <Link href="/contact-us">
+            <Headphones className="h-5 w-5 text-gray-400" />
+          </Link>
+          <Link href="/login">
+            <User className="h-5 w-5 text-gray-400" />
+          </Link>
+        </div>
         <MobileNav />
-        <Link href="/" className="mr-4">
+        <Link href="/" className="mr-auto">
           <Image
             src={Logo}
             alt="TVS Logo"
@@ -155,11 +151,7 @@ export default function Navbar() {
                 Products
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="grid gap-3 p-6 min-w-[500px]">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="text-sm">Product content goes here</div>
-                  </div>
-                </div>
+                <ProductMenu />
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
