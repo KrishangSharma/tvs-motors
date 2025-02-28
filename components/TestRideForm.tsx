@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Check, Loader2 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -50,7 +49,7 @@ const formSchema = z.object({
   interestedInOffers: z.boolean().default(false),
   authorizeContact: z
     .boolean()
-    .default(false)
+    .default(true)
     .refine((val) => val === true, {
       message: "You must authorize TVS Motors to contact you",
     }),
@@ -76,7 +75,7 @@ export default function TestRideForm() {
       variant: "",
       dealer: "",
       interestedInOffers: false,
-      authorizeContact: false,
+      authorizeContact: true,
     },
   });
 
@@ -178,7 +177,7 @@ export default function TestRideForm() {
   };
 
   // Handle OTP sending
-  const handleSendOTP = () => {
+  const handleSendOTP = async () => {
     const phoneValue = form.getValues("phone");
     const phoneResult = z
       .string()
@@ -188,11 +187,25 @@ export default function TestRideForm() {
       .safeParse(phoneValue);
 
     if (phoneResult.success) {
-      // Simulate OTP sending
-      setTimeout(() => {
+      try {
+        const res = await fetch("/api/generate-otp", {
+          method: "POST",
+          body: JSON.stringify({ phone: phoneValue }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         setIsOtpSent(true);
-        form.setFocus("otp");
-      }, 1000);
+      } catch (error) {
+        console.error("Failed to send OTP:", error);
+        form.setError("phone", {
+          type: "manual",
+          message: "Failed to send OTP. Please try again.",
+        });
+      }
     } else {
       form.setError("phone", {
         type: "manual",
@@ -202,8 +215,9 @@ export default function TestRideForm() {
   };
 
   // Handle OTP verification
-  const handleVerifyOTP = () => {
+  const handleVerifyOTP = async () => {
     const otpValue = form.getValues("otp");
+    const phoneValue = form.getValues("phone");
     const otpResult = z
       .string()
       .min(4)
@@ -212,10 +226,25 @@ export default function TestRideForm() {
       .safeParse(otpValue);
 
     if (otpResult.success) {
-      // Simulate OTP verification
-      setTimeout(() => {
+      try {
+        const res = await fetch("/api/verify-otp", {
+          method: "POST",
+          body: JSON.stringify({ otp: otpValue, phone: phoneValue }),
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
         setIsOtpVerified(true);
-      }, 1000);
+      } catch (error) {
+        console.error("Failed to verify OTP:", error);
+        form.setError("otp", {
+          type: "manual",
+          message: "Failed to verify OTP. Please try again.",
+        });
+      }
     } else {
       form.setError("otp", {
         type: "manual",
@@ -224,7 +253,7 @@ export default function TestRideForm() {
     }
   };
 
-  // Handle location detection
+  // Handle location detection //! Probably via google maps
   const handleDetectLocation = () => {
     setIsDetectingLocation(true);
 
@@ -341,7 +370,7 @@ export default function TestRideForm() {
                         className="rounded-l-none border border-l-0 border-input"
                       >
                         {isOtpVerified ? (
-                          <Check className="h-4 w-4" />
+                          <Check className="h-4 w-4 text-green-700" />
                         ) : (
                           "Verify"
                         )}
@@ -355,24 +384,32 @@ export default function TestRideForm() {
 
             {/* Pincode with Detect Button */}
             <div className="flex flex-col md:flex-row items-center gap-4">
-              <div className="w-full md:w-1/2">
-                <FormField
-                  control={form.control}
-                  name="pincode"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Pincode</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter your pincode"
-                          {...field}
-                          maxLength={6}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="w-1/2 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    placeholder="Enter Pincode"
+                    value={form.watch("pincode")}
+                    // onChange={(e) => handlePincodeChange(e.target.value)}
+                  />
+                </div>
+
+                {/* Suggested Pincode List */}
+                {/* {suggestedPincodes.length > 0 && (
+                  <div className="bg-gray-100 p-2 rounded-md">
+                    <strong>Suggested Pincodes:</strong>
+                    <ul>
+                      {suggestedPincodes.map((pincode, idx) => (
+                        <li
+                          key={idx}
+                          className="cursor-pointer hover:bg-gray-200 p-1 rounded"
+                          onClick={() => form.setValue("pincode", pincode)}
+                        >
+                          {pincode}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )} */}
               </div>
 
               <div className="flex items-center mt-6 gap-2">
@@ -380,7 +417,7 @@ export default function TestRideForm() {
                 <Button
                   type="button"
                   onClick={handleDetectLocation}
-                  disabled={isDetectingLocation}
+                  // disabled={isDetectingLocation}
                 >
                   {isDetectingLocation ? (
                     <>

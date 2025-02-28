@@ -54,11 +54,11 @@ export default function HeaderCarousel() {
 
   return (
     <>
-      <div className="relative w-full h-[95vh] overflow-hidden">
-        <div className="hidden md:block absolute top-0 left-0 w-full h-full">
+      <div className="relative w-full overflow-hidden">
+        <div className="hidden sm:block w-full h-auto">
           <Carousel slides={slideData} />
         </div>
-        <div className="md:hidden absolute top-0 left-0 w-full h-[95vh]">
+        <div className="sm:hidden w-full h-[94vh]">
           <Carousel slides={optimisedSlideData} />
         </div>
       </div>

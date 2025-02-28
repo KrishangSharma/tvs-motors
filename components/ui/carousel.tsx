@@ -61,7 +61,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
       >
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden transition-all duration-150 ease-out">
           <Image
-            className="absolute inset-0 w-full h-full object-cover opacity-100 transition-opacity duration-600 ease-in-out"
+            className="absolute inset-0 w-full h-auto object-contain lg:object-contain opacity-100 transition-opacity duration-600 ease-in-out"
             alt={title}
             src={src}
             onLoad={imageLoaded}

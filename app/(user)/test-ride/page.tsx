@@ -5,13 +5,11 @@ import TestRideForm from "@/components/TestRideForm";
 
 const page = () => {
   return (
-    <main className="min-h-screen w-full pt-20">
-      <div className="w-full h-64 overflow-hidden">
+    <main className="min-h-screen w-full">
+      <div className="w-full md:h-[65vh] overflow-hidden -mb-20 lg:-mb-28">
         <Image
           src={TestRideBanner}
           alt="Test Ride Your Dream Vehicle"
-          width={250}
-          height={50}
           quality={100}
           className="w-full h-auto object-contain"
         />

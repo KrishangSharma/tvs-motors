@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
-import { Headphones, Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 
 import {
   NavigationMenu,
@@ -14,13 +14,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Button } from "./ui/button";
@@ -39,7 +32,7 @@ export default function Navbar() {
           <SheetTrigger asChild>
             <Button
               variant="ghost"
-              size="lg"
+              size="default"
               className="lg:hidden hover:bg-transparent"
               aria-label="Toggle Menu"
             >
@@ -50,30 +43,27 @@ export default function Navbar() {
             <div className="flex flex-col space-y-4 mt-8">
               <div className="space-y-4 py-4">
                 <div className="px-2 py-1">
-                  <h2 className="mb-2 text-lg font-semibold">Products</h2>
-                  <div className="space-y-2">
-                    {/* Product Categories -> Product List -> Individual Product Page */}
-                    <ProductMenu />
-                  </div>
+                  <h2 className="text-lg font-semibold">Products</h2>
+                  <ProductMenu />
                 </div>
                 <div className="px-2 py-1">
                   <Link
                     href="/services"
-                    className="block text-lg font-semibold"
+                    className="block font-medium text-customBlue"
                     onClick={() => setIsOpen(false)}
                   >
                     Services
                   </Link>
                 </div>
                 <div className="px-2 py-1">
-                  <h2 className="mb-2 text-lg font-semibold">Shop</h2>
+                  <h2 className="mb-2 font-medium text-customBlue">Shop</h2>
                   <div className="space-y-2">
                     {/* Add your shop links here */}
                     <p className="text-sm">Shop content goes here</p>
                   </div>
                 </div>
                 <div className="px-2 py-1">
-                  <h2 className="mb-2 text-lg font-semibold">Company</h2>
+                  <h2 className="mb-2 font-medium text-customBlue">Company</h2>
                   <div className="space-y-2">
                     {/* Add your company links here */}
                     <p className="text-sm">Company content goes here</p>
@@ -81,24 +71,24 @@ export default function Navbar() {
                 </div>
                 {/* Secondary Links */}
                 <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
-                  <Link
+                  {/* <Link
                     href="/buy-vehicle"
                     className="flex flex-col items-start space-y-1"
                   >
                     <span className="text-gray-400">Buy Vehicle</span>
-                  </Link>
+                  </Link> */}
                   <Link
                     href="/test-ride"
-                    className="flex flex-col items-start space-y-1"
+                    className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
                   >
-                    <span className="text-gray-400">Test Ride</span>
+                    Book A Test Ride
                   </Link>
-                  <Link
+                  {/* <Link
                     href="/dealers"
                     className="flex flex-col items-start space-y-1"
                   >
                     <span className="text-gray-400">Dealers</span>
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -110,19 +100,11 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto border`}
+      className={`container py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 sm:rounded-xl ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto`}
     >
-      <div className="lg:hidden flex items-center flex-row-reverse w-full">
-        <div className="flex items-center gap-5">
-          <Link href="/contact-us">
-            <Headphones className="h-5 w-5 text-gray-400" />
-          </Link>
-          <Link href="/login">
-            <User className="h-5 w-5 text-gray-400" />
-          </Link>
-        </div>
+      <div className="lg:hidden flex items-center flex-row-reverse justify-between w-full px-2">
         <MobileNav />
-        <Link href="/" className="mr-auto">
+        <Link href="/">
           <Image
             src={Logo}
             alt="TVS Logo"
@@ -185,62 +167,30 @@ export default function Navbar() {
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-
       {/* Desktop Right Side Links */}
       <div className="hidden lg:flex items-center space-x-4">
         <nav className="flex items-center space-x-2">
-          <Link
+          {/* <Link
             href="/buy-vehicle"
             className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
           >
             Buy Vehicle
           </Link>
-          <span className="text-muted-foreground">|</span>
+          <span className="text-muted-foreground">|</span> */}
           <Link
             href="/test-ride"
-            className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
+            className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
           >
-            Test Ride
+            Book A Test Ride
           </Link>
-          <span className="text-muted-foreground">|</span>
-          <Link
+          {/* <span className="text-muted-foreground">|</span> */}
+          {/* <Link
             href="/dealers"
             className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
           >
             Dealers
-          </Link>
+          </Link> */}
         </nav>
-        <Select defaultValue="india">
-          <SelectTrigger className="w-[110px] h-9 border-0">
-            <SelectValue placeholder="Select country" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="india">
-              <div className="flex items-center">
-                <Image
-                  src="https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/IN.svg"
-                  width={18}
-                  height={18}
-                  alt="India Flag"
-                  className="mr-2"
-                />
-                India
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <Link
-          href="/contact-us"
-          className="text-muted-foreground inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-primary"
-        >
-          <Headphones className="h-5 w-5" />
-        </Link>
-        <Link
-          href="/login"
-          className="text-muted-foreground inline-flex items-center justify-center text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:text-primary"
-        >
-          <User className="h-5 w-5" />
-        </Link>
       </div>
     </nav>
   );
