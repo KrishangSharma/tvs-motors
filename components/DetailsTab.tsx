@@ -17,7 +17,7 @@ export default function DetailsTabs() {
   const renderContent = () => {
     return (
       <div className="p-4">
-        <p className="text-gray-600">Content for {activeTab} coming soon...</p>
+        <p className="text-gray-600">Content for {activeTab} coming soon..</p>
       </div>
     );
   };
