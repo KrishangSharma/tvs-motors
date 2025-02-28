@@ -15,7 +15,8 @@ export default {
     extend: {
       fontFamily: {
         roboto: "var(--font-roboto)",
-        nunito: "var(--font-nunito-sans)",
+        nunito: "var(--font-nunito)",
+        alfa: "var(--font-alfa-slab)",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -60,6 +61,7 @@ export default {
         },
         // Custom Colors
         customBlue: "#1d3d85",
+        customRed: "#fb494c",
       },
       borderRadius: {
         lg: "var(--radius)",

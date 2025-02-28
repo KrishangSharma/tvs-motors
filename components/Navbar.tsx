@@ -115,7 +115,7 @@ export default function Navbar() {
       {/* Desktop Navigation */}
       {/* Fix the INSTANT shift of layout */}
       <nav
-        className={`${isScrolled ? "container mt-5 sm:rounded-xl fixed top-0 left-1/2 z-50 transform -translate-x-1/2" : "w-full"} hidden lg:flex py-5 mx-auto ${isScrolled ? "bg-white/30" : "bg-white shadow-lg"} backdrop-blur-xl px-2 sm:px-4 ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto`}
+        className={`${isScrolled ? "container mt-5 sm:rounded-xl fixed top-0 left-1/2 z-[70] transform -translate-x-1/2" : "w-full"} hidden lg:flex py-5 mx-auto ${isScrolled ? "bg-white/30" : "bg-white shadow-lg"} backdrop-blur-xl px-2 sm:px-4 ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto`}
       >
         <div className="hidden lg:flex items-center">
           <Link href="/" className="mr-4">

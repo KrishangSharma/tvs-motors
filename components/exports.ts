@@ -6,3 +6,4 @@ export { default as TestRideForm } from "./TestRideForm";
 export { default as ProductMenu } from "./ProductMenu";
 export { default as ImageGallery } from "./ImageGallery";
 export { default as Detailstab } from "./DetailsTab";
+export { default as Hero } from "./Hero";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Nunito_Sans } from "next/font/google";
+import { Roboto, Nunito_Sans, Alfa_Slab_One } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
@@ -7,6 +7,12 @@ const robotoSans = Roboto({
   weight: ["100", "300", "400", "500", "700", "900"],
   variable: "--font-roboto",
   subsets: ["latin"],
+});
+
+const alfaSlabOne = Alfa_Slab_One({
+  variable: "--font-alfa-slab",
+  subsets: ["latin"],
+  weight: ["400"],
 });
 
 const nunitoSans = Nunito_Sans({
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${robotoSans.variable} ${nunitoSans.variable} antialiased overflow-x-hidden`}
+        className={`${robotoSans.variable} ${nunitoSans.variable} ${alfaSlabOne.variable} antialiased overflow-x-hidden`}
       >
         <Navbar />
         {children}

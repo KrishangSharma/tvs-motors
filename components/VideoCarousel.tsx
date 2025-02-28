@@ -56,7 +56,7 @@ const VideoCard = ({
   return (
     <div
       className={`relative w-full h-56 md:h-[30rem] cursor-pointer rounded-xl overflow-hidden ${
-        isPlaying ? "z-50" : "z-10"
+        isPlaying ? "z-50" : "z-50"
       }`}
       onClick={() => setPlayingVideoId(videoId)}
     >

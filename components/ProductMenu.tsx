@@ -60,7 +60,7 @@ export default function ProductMenu() {
   return (
     <>
       {/* Sidebar w preview pane */}
-      <div className="hidden lg:flex h-full w-full z-50">
+      <div className="hidden lg:flex h-full w-full">
         {/* Sidebar for Categories */}
         <div className="w-1/4 min-w-[250px] bg-gray-100 p-5 flex flex-col gap-2">
           {vehicleTypes.map((type) => (
@@ -111,9 +111,7 @@ export default function ProductMenu() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 italic">
-              Select a category to view vehicles
-            </p>
+            <p className="text-gray-500 italic">No Vehicles Available</p>
           )}
         </div>
       </div>
@@ -144,15 +142,15 @@ export default function ProductMenu() {
                     <Link
                       key={vehicle._id}
                       href={`/product/${vehicle.slug.current}`}
-                      className="flex gap-3 items-center hover:bg-gray-50 p-2 rounded-md transition-colors"
+                      className="flex gap-3 items-center hover:bg-gray-200/50 p-2 rounded-md transition-colors"
                     >
-                      <div className="w-[100px] h-[60px] relative flex-shrink-0">
+                      <div className="w-[100px] h-[60px] relative flex-shrink-0 overflow-hidden flex items-center justify-center">
                         <Image
                           src={vehicle.image || "/placeholder.svg"}
                           width={100}
                           height={50}
                           alt={vehicle.model}
-                          className="object-contain"
+                          className="w-auto h-full object-contain"
                         />
                       </div>
                       <h3 className="text-base font-medium">{vehicle.model}</h3>

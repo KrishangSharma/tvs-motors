@@ -24,3 +24,11 @@ export interface NavVehicleItem {
   image: string;
   type: "motorcycle" | "scooter" | "moped";
 }
+
+export interface BentoVehicleItem {
+  slug: {
+    current: string;
+  };
+  model: string;
+  image: string;
+}
