@@ -1,24 +1,13 @@
 import type { Metadata } from "next";
-import { Roboto, Nunito_Sans, Alfa_Slab_One } from "next/font/google";
+import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 
-const robotoSans = Roboto({
-  weight: ["100", "300", "400", "500", "700", "900"],
-  variable: "--font-roboto",
+const quicksand = Quicksand({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
-const alfaSlabOne = Alfa_Slab_One({
-  variable: "--font-alfa-slab",
-  subsets: ["latin"],
-  weight: ["400"],
-});
-
-const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "TVS Motors | Delhi",
@@ -33,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${robotoSans.variable} ${nunitoSans.variable} ${alfaSlabOne.variable} antialiased overflow-x-hidden`}
+        className={`${quicksand.className} antialiased overflow-x-hidden`}
       >
         <Navbar />
         {children}

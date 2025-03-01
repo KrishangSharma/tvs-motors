@@ -51,7 +51,7 @@ export default function Navbar() {
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-full sm:w-[500px]">
+          <SheetContent side="left" className="w-[400px] sm:w-[300px]">
             <div className="flex flex-col space-y-4 mt-8">
               <div className="space-y-4 py-4">
                 <div className="px-2 py-1">
@@ -112,92 +112,112 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Add a placeholder div to prevent layout shift */}
+      <div className={`h-16 w-full ${path.startsWith("/studio") ? "hidden" : "block"}`} />
+
       {/* Desktop Navigation */}
-      {/* Fix the INSTANT shift of layout */}
       <nav
-        className={`${isScrolled ? "container mt-5 sm:rounded-xl fixed top-0 left-1/2 z-[70] transform -translate-x-1/2" : "w-full"} hidden lg:flex py-5 mx-auto ${isScrolled ? "bg-white/30" : "bg-white shadow-lg"} backdrop-blur-xl px-2 sm:px-4 ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto`}
+        className={`
+          w-full fixed top-0 left-0 right-0 z-50
+          ${path.startsWith("/studio") ? "hidden" : "flex"}
+          hidden lg:flex py-5 backdrop-blur-xl
+          transition-all duration-200 ease-in-out
+          ${isScrolled
+            ? "bg-white/90 px-8"
+            : "bg-white"}
+        `}
       >
-        <div className="hidden lg:flex items-center">
-          <Link href="/" className="mr-4">
-            <Image
-              src={Logo}
-              alt="TVS Logo"
-              width={100}
-              height={40}
-              className="h-4 w-auto"
-            />
-          </Link>
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9 font-medium">
-                  Products
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ProductMenu />
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className="group font-medium inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
-                  href="/services"
-                >
-                  Services
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9 font-medium">
-                  Shop
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[400px]">
-                    <div className="text-sm">Shop content goes here</div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="h-9 font-medium">
-                  Company
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="grid gap-3 p-6 w-[400px]">
-                    <div className="text-sm">Company content goes here</div>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-        {/* Desktop Right Side Link */}
-        <div className="hidden lg:flex items-center space-x-4">
-          <nav className="flex items-center space-x-2">
-            {/* <Link
-            href="/buy-vehicle"
-            className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
-          >
-            Buy Vehicle
-          </Link>
-          <span className="text-muted-foreground">|</span> */}
-            <Link
-              href="/test-ride"
-              className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Book A Test Ride
+        <div className={`
+          w-full mx-auto max-w-7xl flex items-center justify-between
+          ${isScrolled ? "px-4" : "px-2 sm:px-4"}
+        `}>
+          <div className="hidden lg:flex items-center">
+            <Link href="/" className="mr-4">
+              <Image
+                src={Logo}
+                alt="TVS Logo"
+                width={100}
+                height={40}
+                className="h-4 w-auto"
+              />
             </Link>
-            {/* <span className="text-muted-foreground">|</span> */}
-            {/* <Link
-            href="/dealers"
-            className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
-          >
-            Dealers
-          </Link> */}
-          </nav>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="h-9 font-medium">
+                    Products
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <ProductMenu />
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    className="group font-medium inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-transparent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50"
+                    href="/services"
+                  >
+                    Services
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="h-9 font-medium">
+                    Shop
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px]">
+                      <div className="text-sm">Shop content goes here</div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="h-9 font-medium">
+                    Company
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid gap-3 p-6 w-[400px]">
+                      <div className="text-sm">Company content goes here</div>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div className="hidden lg:flex items-center space-x-4">
+            <nav className="flex items-center space-x-2">
+              {/* <Link
+              href="/buy-vehicle"
+              className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
+            >
+              Buy Vehicle
+            </Link>
+            <span className="text-muted-foreground">|</span> */}
+              <Link
+                href="/test-ride"
+                className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Book A Test Ride
+              </Link>
+              {/* <span className="text-muted-foreground">|</span> */}
+              {/* <Link
+              href="/dealers"
+              className="text-sm font-medium text-customBlue transition-colors hover:text-primary"
+            >
+              Dealers
+            </Link> */}
+            </nav>
+          </div>
         </div>
       </nav>
 
-      {/* Mobile Nav */}
+      {/* Mobile Nav - update positioning to match desktop */}
       <nav
-        className={`fixed z-50 w-full py-5 mx-auto bg-white/30 backdrop-blur-xl px-2 sm:px-4 ${path.startsWith("/studio") ? "hidden" : "flex"} items-center justify-between font-roboto lg:hidden flex-row-reverse px-2`}
+        className={`
+          fixed top-0 left-0 right-0 z-50 
+          w-full py-5 bg-white/30 backdrop-blur-xl
+          ${path.startsWith("/studio") ? "hidden" : "flex"}
+          items-center justify-between lg:hidden 
+          flex-row-reverse px-4
+        `}
       >
         <MobileNav />
         <Link href="/">
