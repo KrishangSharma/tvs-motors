@@ -22,7 +22,7 @@ import ProductMenu from "./ProductMenu";
 
 export default function Navbar() {
   const path = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -64,7 +64,7 @@ export default function Navbar() {
                     <Link
                       href="/services"
                       className="block font-medium text-customBlue"
-                      onClick={() => setIsOpen(false)}
+
                     >
                       Services
                     </Link>
