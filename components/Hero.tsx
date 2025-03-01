@@ -20,7 +20,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="w-full h-[calc(100vh-80px)] mt-20 lg:mt-0 flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-10 bg-gray-900 text-white">
+    <div className="w-full h-[calc(100vh-80px)]  lg:mt-0 flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-10 bg-gray-900 text-white">
       {/* Left Side - Text Content */}
       <div className="w-full md:w-1/2 text-center md:text-left">
         <motion.h1

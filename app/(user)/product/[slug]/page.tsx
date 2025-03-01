@@ -21,7 +21,7 @@ export default async function VehiclePage({ params }: Props) {
   const vehicle = await client.fetch<Vehicle>(query);
 
   return (
-    <div className="w-full mx-auto pr-4 py-8 min-h-screen mt-24">
+    <div className="w-full mx-auto lg:max-w-7xl py-16 max-w-xs min-h-screen">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Side: Image Gallery */}
         <div className="md:w-1/2 flex flex-col items-center">
@@ -44,7 +44,7 @@ export default async function VehiclePage({ params }: Props) {
           {/* Placeholder for color variants */}
           <div className="py-4">{/* Future color variants go here */}</div>
           {/* Configure Button */}
-          <button className="w-full bg-black text-white py-3 rounded">
+          <button className="w-full bg-black max-w-sm  text-white py-3 rounded-xl">
             Configure your {vehicle.model}
           </button>
           {/* Tab Navigation */}

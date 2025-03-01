@@ -35,10 +35,10 @@ export default function YourRide() {
   return (
     <div className="container mx-auto p-4">
       <Heading smText="Discover Your Ride" lgText="Vehicles" />
-      <BentoGrid className="w-full mx-auto md:auto-rows-[20rem] mt-10">
+      <BentoGrid className="w-full max-w-7xl  mx-auto md:auto-rows-[20rem] mt-10">
         {vehicles &&
           vehicles.map((vehicle, i) => (
-            <Link key={i} href={`/product/${vehicle.slug.current}`} passHref>
+            <Link className=" border border-gray-200 rounded-xl shadow-sm" key={i} href={`/product/${vehicle.slug.current}`} passHref>
               <BentoGridItem
                 title={vehicle.model}
                 description={
@@ -54,7 +54,7 @@ export default function YourRide() {
                       src={vehicle.image}
                       alt={vehicle.model}
                       layout="fill"
-                      className="rounded-lg h-full w-auto object-contain"
+                      className="rounded-xl h-full w-auto object-contain"
                     />
                   </motion.div>
                 }
