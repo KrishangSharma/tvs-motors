@@ -1,3 +1,4 @@
+import React from "react";
 import { Slug } from "sanity";
 
 export interface Vehicle {
@@ -31,4 +32,12 @@ export interface BentoVehicleItem {
   };
   model: string;
   image: string;
+}
+
+export interface NavLinks {
+  id: number;
+  label: string;
+  type: "link" | "dropdown";
+  href?: string;
+  content?: React.ReactNode;
 }

@@ -1,4 +1,4 @@
-export { default as Navbar } from "./Navbar";
+export { default as Navbar } from "./Navbar/Navbar";
 export { default as HeaderCarousel } from "./HeaderCarousel";
 export { default as Stories } from "./Stories";
 export { default as YourRide } from "./YourRide";
@@ -7,4 +7,4 @@ export { default as ProductMenu } from "./ProductMenu";
 export { default as ImageGallery } from "./ImageGallery";
 export { default as Detailstab } from "./DetailsTab";
 export { default as Hero } from "./Hero";
-export { default as Footer } from "./Footer";
+export { default as Footer } from "./Footer/Footer";
