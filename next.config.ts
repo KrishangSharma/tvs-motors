@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ["cdn.sanity.io"], // Allow Sanity image URLs
+    domains: ["cdn.sanity.io", "play.google.com"], // Allow Sanity image URLs
   },
 };
 
