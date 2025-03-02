@@ -192,9 +192,33 @@ export default function DesktopFooterSections() {
                 <div key={eIdx}>
                   <h3 className="font-bold mt-6 mb-4">{extraSection.title}</h3>
                   <div className="space-y-2">
-                    {extraSection.items.map((item, idx) => (
-                      <p key={idx}>{item.content}</p>
-                    ))}
+                    {extraSection.items.map((item, idx) => {
+                      if (item.type === "text") {
+                        return <p key={idx}>{item.content}</p>;
+                      } else if (item.type === "link") {
+                        return (
+                          <div
+                            className="flex flex-col justify-start"
+                            key={idx}
+                          >
+                            <Link
+                              key={idx}
+                              href={item.href}
+                              className="inline-block"
+                            >
+                              <Image
+                                src={item.image}
+                                alt={item.alt}
+                                width={item.width}
+                                height={item.height}
+                                className="object-contain"
+                              />
+                            </Link>
+                          </div>
+                        );
+                      }
+                      return null;
+                    })}
                   </div>
                 </div>
               ))}

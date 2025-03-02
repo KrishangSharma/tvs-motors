@@ -77,6 +77,7 @@ export default function Navbar() {
       <nav
         className={`
           w-full fixed top-0 left-0 right-0 z-50
+          // Remove usePathname hook and add layout to studio
           ${path.startsWith("/studio") ? "hidden" : "flex"}
           hidden lg:flex py-5 backdrop-blur-xl
           transition-all duration-200 ease-in-out

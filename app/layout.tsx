@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
-import Footer from "@/components/Footer/Footer";
+import { Footer } from "@/components/ui/large-name-footer";
 
 const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${quicksand.className} antialiased overflow-x-hidden`}>
+      <body className={`${quicksand.className} antialiased`}>
         <Navbar />
         {children}
         <Footer />

@@ -10,6 +10,8 @@ import Link from "next/link";
 import { BentoVehicleItem } from "@/types";
 import { motion } from "framer-motion";
 
+//! Convert component to SS and prod card to client-side
+
 export default function YourRide() {
   const [vehicles, setVehicles] = useState<BentoVehicleItem[] | null>([]);
 
@@ -38,7 +40,12 @@ export default function YourRide() {
       <BentoGrid className="w-full max-w-7xl  mx-auto md:auto-rows-[20rem] mt-10">
         {vehicles &&
           vehicles.map((vehicle, i) => (
-            <Link className=" border border-gray-200 rounded-xl shadow-sm" key={i} href={`/product/${vehicle.slug.current}`} passHref>
+            <Link
+              className=" border border-gray-200 rounded-xl shadow-sm"
+              key={i}
+              href={`/product/${vehicle.slug.current}`}
+              passHref
+            >
               <BentoGridItem
                 title={vehicle.model}
                 description={

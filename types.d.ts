@@ -41,3 +41,8 @@ export interface NavLinks {
   href?: string;
   content?: React.ReactNode;
 }
+
+export interface FooterItems {
+  title: string;
+  items: FooterItem[];
+}

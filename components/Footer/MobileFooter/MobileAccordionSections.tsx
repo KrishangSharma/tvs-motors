@@ -7,8 +7,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FooterItems } from "@/types";
 
-const desktopFooterSections = [
+const desktopFooterSections: FooterItems[] = [
   {
     title: "MOTORCYCLES",
     items: [
@@ -176,10 +177,10 @@ export default function MobileAccordionSections() {
               {section.items.map((item, idx) => {
                 if (item.type === "text") {
                   return <p key={idx}>{item.content}</p>;
-                } else if (item.type === "list") {
+                } else if (item.type === "list" && "items" in item) {
                   return (
                     <ul key={idx} className="list-disc pl-5 space-y-1">
-                      {item.items.map((listItem, listIdx) => (
+                      {item.items.map((listItem: string, listIdx: number) => (
                         <li key={listIdx}>{listItem}</li>
                       ))}
                     </ul>
@@ -202,9 +203,9 @@ export default function MobileAccordionSections() {
               {section.extra &&
                 section.extra.map((extraSection, eIdx) => (
                   <div key={eIdx}>
-                    <h3 className="font-bold mt-6 mb-4">
+                    {/* <h3 className="font-bold mt-6 mb-4">
                       {extraSection.title}
-                    </h3>
+                    </h3> */}
                     <div className="space-y-2">
                       {extraSection.items.map((item, idx) => (
                         <p key={idx}>{item.content}</p>
