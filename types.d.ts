@@ -42,7 +42,28 @@ export interface NavLinks {
   content?: React.ReactNode;
 }
 
-export interface FooterItems {
+export type FooterItems = {
   title: string;
-  items: FooterItem[];
-}
+  items: Array<{
+    type: string;
+    content?: string;
+    items?: string[];
+    href?: string;
+    image?: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+  }>;
+  extra?: Array<{
+    title: string;
+    items: Array<{
+      type: string;
+      content?: string;
+      href?: string;
+      image?: string;
+      alt?: string;
+      width?: number;
+      height?: number;
+    }>;
+  }>;
+};

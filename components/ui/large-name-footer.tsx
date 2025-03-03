@@ -4,9 +4,10 @@ import Link from "next/link";
 import { Icons } from "@/components/ui/icons";
 import { Phone, Mail, LifeBuoy } from "lucide-react";
 import Image from "next/image";
+import { FooterItems } from "@/types";
 
 export function Footer() {
-  const desktopFooterSections = [
+  const desktopFooterSections: FooterItems[] = [
     {
       title: "MOTORCYCLES",
       items: [
@@ -300,7 +301,7 @@ export function Footer() {
                         {item.content}
                       </p>
                     );
-                  if (item.type === "list")
+                  if (item.type === "list" && item.items)
                     return (
                       <ul
                         key={idx}
@@ -313,10 +314,14 @@ export function Footer() {
                     );
                   if (item.type === "link")
                     return (
-                      <Link key={idx} href={item.href} className="inline-block">
+                      <Link
+                        key={idx}
+                        href={item.href || "#"}
+                        className="inline-block"
+                      >
                         <Image
-                          src={item.image}
-                          alt={item.alt}
+                          src={item.image || "/placeholder.png"}
+                          alt={item.alt || "Placeholder"}
                           width={item.width}
                           height={item.height}
                           className="object-contain"
@@ -343,12 +348,12 @@ export function Footer() {
                             return (
                               <Link
                                 key={idx}
-                                href={item.href}
+                                href={item.href || "#"}
                                 className="inline-block"
                               >
                                 <Image
-                                  src={item.image}
-                                  alt={item.alt}
+                                  src={item.image || "/placeholder.png"}
+                                  alt={item.alt || "Placeholder"}
                                   width={item.width}
                                   height={item.height}
                                   className="object-contain"
