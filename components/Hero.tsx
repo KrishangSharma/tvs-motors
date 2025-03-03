@@ -59,7 +59,7 @@ const Hero = () => {
       </motion.div>
 
       <motion.div
-        className="absolute bottom-27 md:-bottom-12 left-0 right-0 flex justify-center items-end z-[3] pointer-events-none" // 👈 Ensures it doesn’t block clicks
+        className="absolute bottom-24 md:-bottom-12 left-0 right-0 flex justify-center items-end z-[3] pointer-events-none" // 👈 Ensures it doesn’t block clicks
         style={{ y: bikeY }}
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
