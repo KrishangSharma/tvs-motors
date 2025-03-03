@@ -1,5 +1,3 @@
-"use client";
-import React, { useEffect, useState } from "react";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { IconClipboardCopy } from "@tabler/icons-react";
 import Image from "next/image";
@@ -12,9 +10,7 @@ import { motion } from "framer-motion";
 
 //! Convert component to SS and prod card to client-side
 
-export default function YourRide() {
-  const [vehicles, setVehicles] = useState<BentoVehicleItem[] | null>([]);
-
+export default async function YourRide() {
   const query = groq`
   *[_type == "vehicle"] {
   slug,
@@ -22,17 +18,7 @@ export default function YourRide() {
   "image": images[0].asset->url}
   `;
 
-  useEffect(() => {
-    const fetchVehicles = async () => {
-      try {
-        const res = await client.fetch(query);
-        setVehicles(res);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchVehicles();
-  }, []);
+  const vehicles: BentoVehicleItem[] = await client.fetch(query);
 
   return (
     <div className="container mx-auto p-4">
