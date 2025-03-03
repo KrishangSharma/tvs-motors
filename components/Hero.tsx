@@ -44,7 +44,7 @@ const Hero = () => {
           >
             <Link
               href="/vehicles"
-              className="relative z-[5] bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
+              className="relative z-[5] bg-gradient-to-br from-red-600 to-red-700 hover:from-red-600 hover:to-red-500 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Explore Our Bikes
             </Link>
@@ -59,7 +59,7 @@ const Hero = () => {
       </motion.div>
 
       <motion.div
-        className="absolute bottom-28 md:-bottom-10 left-0 right-0 flex justify-center items-end z-[3] pointer-events-none" // 👈 Ensures it doesn’t block clicks
+        className="absolute bottom-27 md:-bottom-12 left-0 right-0 flex justify-center items-end z-[3] pointer-events-none" // 👈 Ensures it doesn’t block clicks
         style={{ y: bikeY }}
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}

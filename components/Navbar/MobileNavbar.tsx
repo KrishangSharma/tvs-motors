@@ -1,8 +1,16 @@
 import { PanelLeftOpen } from "lucide-react";
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 import { Button } from "../ui/button";
 import ProductMenu from "../ProductMenu";
 import Link from "next/link";
+import Image from "next/image";
+import Logo from "@/public/TVSLogo-hr.svg";
 
 export default function MobileNav() {
   return (
@@ -23,6 +31,19 @@ export default function MobileNav() {
           side="left"
           className="w-[400px] overflow-y-auto sm:w-[350px]"
         >
+          <SheetTitle>
+            <SheetClose asChild>
+              <Link href="/">
+                <Image
+                  src={Logo}
+                  alt="TVS Logo"
+                  width={100}
+                  height={40}
+                  className="h-4 w-auto"
+                />
+              </Link>
+            </SheetClose>
+          </SheetTitle>
           <div className="flex flex-col space-y-4 mt-8">
             <div className="space-y-4 py-4">
               <div className="px-2 py-1 ">

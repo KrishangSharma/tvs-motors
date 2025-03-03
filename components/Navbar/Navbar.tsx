@@ -60,7 +60,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 170);
+      setIsScrolled(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -70,18 +70,14 @@ export default function Navbar() {
   return (
     <>
       {/* Add a placeholder div to prevent layout shift */}
-      <div
-        className={`h-16 w-full ${path.startsWith("/studio") ? "hidden" : "block"}`}
-      />
+      <div className="h-16 w-full" />
       {/* Desktop Navigation */}
       <nav
         className={`
           w-full fixed top-0 left-0 right-0 z-50
-          // Remove usePathname hook and add layout to studio
-          ${path.startsWith("/studio") ? "hidden" : "flex"}
           hidden lg:flex py-5 backdrop-blur-xl
           transition-all duration-200 ease-in-out
-          ${isScrolled ? "bg-white/90 px-8" : "bg-white"}
+          ${isScrolled ? "bg-white/50 px-8 container mx-auto rounded-xl transition-all duration-200 ease-in-out mt-5" : "bg-white"}
         `}
         role="navigation"
       >
