@@ -6,9 +6,6 @@ import { groq } from "next-sanity";
 import { client } from "@/sanity/lib/client";
 import Link from "next/link";
 import { BentoVehicleItem } from "@/types";
-import { motion } from "framer-motion";
-
-//! Convert component to SS and prod card to client-side
 
 export default async function YourRide() {
   const query = groq`
@@ -38,18 +35,14 @@ export default async function YourRide() {
                   <span className="text-sm">Explore more details</span>
                 }
                 header={
-                  <motion.div
-                    className="relative w-full h-48"
-                    whileHover={{ scale: 1.05, rotate: 5 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
+                  <div className="relative w-full h-48 hover:scale-110 transition-transform duration-300 ease-in-out">
                     <Image
                       src={vehicle.image}
                       alt={vehicle.model}
-                      layout="fill"
+                      fill
                       className="rounded-xl h-full w-auto object-contain"
                     />
-                  </motion.div>
+                  </div>
                 }
                 className="md:col-span-1 cursor-pointer"
                 icon={
