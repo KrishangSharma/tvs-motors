@@ -43,7 +43,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <Link
-              href="/vehicles"
+              href="/product/vehicles"
               className="relative z-[5] bg-gradient-to-br from-red-600 to-red-700 hover:from-red-600 hover:to-red-500 text-white px-6 py-3 rounded-xl font-semibold text-lg transition-all duration-300 shadow-md hover:shadow-lg"
             >
               Explore Our Bikes

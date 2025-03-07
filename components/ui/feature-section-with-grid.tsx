@@ -85,9 +85,7 @@ function Feature() {
                       ₹ {vehicle.price}
                     </p>
                     <Button variant="outline">
-                      <Link href={`/product/${vehicle.slug.current}`}>
-                        View Details
-                      </Link>
+                      <span>View Details</span>
                     </Button>
                   </div>
                 </Link>
