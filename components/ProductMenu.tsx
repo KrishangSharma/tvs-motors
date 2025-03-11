@@ -7,24 +7,18 @@ import Link from "next/link";
 import Image from "next/image";
 import type { NavVehicleItem } from "@/types";
 import { ChevronRight } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { SheetClose } from "./ui/sheet";
+import ProdMenuMobile from "./ProductMenu/ProdMenuMobile";
 
 export default function ProductMenu() {
   const [vehicles, setVehicles] = useState<NavVehicleItem[]>([]);
-  const [activeType, setActiveType] = useState<string>("Motorcycle");
+  const [activeType, setActiveType] = useState<string>("motorcycle");
   const [loading, setLoading] = useState(false);
 
   // Vehicle categories
   const vehicleTypes = [
-    { id: "Motorcycle", label: "Motorcycles" },
-    { id: "Scooter", label: "Scooters" },
-    { id: "Moped", label: "Mopeds" },
+    { id: "motorcycle", label: "Motorcycles" },
+    { id: "scooter", label: "Scooters" },
+    { id: "moped", label: "Mopeds" },
   ];
 
   useEffect(() => {
@@ -35,7 +29,7 @@ export default function ProductMenu() {
       try {
         // GROQ Query to get vehicles based on selected type
         const query = groq`
-          *[_type == "vehicle" && type == "${activeType}"] {
+          *[_type == "${activeType}"] {
             _id,
             slug,
             model,
@@ -54,15 +48,6 @@ export default function ProductMenu() {
 
     fetchVehicles();
   }, [activeType]);
-
-  // Toggle category visibility
-  const toggleCategory = (type: string) => {
-    if (activeType === type) {
-      setActiveType("");
-    } else {
-      setActiveType(type);
-    }
-  };
 
   return (
     <>
@@ -98,7 +83,7 @@ export default function ProductMenu() {
               {vehicles.map((vehicle) => (
                 <Link
                   key={vehicle._id}
-                  href={`/product/${vehicle.slug.current}`}
+                  href={`/${activeType}/product/${vehicle.slug.current}`}
                   className="flex flex-col items-center gap-2 hover:bg-gray-200/50 p-3 rounded-md transition-colors"
                 >
                   <div className="w-[120px] h-[70px] relative overflow-hidden flex items-center justify-center">
@@ -123,77 +108,7 @@ export default function ProductMenu() {
         </div>
       </div>
       {/* Mobile Menu with dropdown list */}
-      {/* <Sheet> */}
-      <div className="flex flex-col gap-3 p-2 lg:hidden ">
-        {/* Vehicle type categories */}
-        <Accordion
-          type="single"
-          collapsible
-          value={activeType}
-          onValueChange={(value) => setActiveType(value)}
-        >
-          {vehicleTypes.map((type) => (
-            <AccordionItem
-              value={type.id}
-              className="border-none w-full"
-              key={type.id}
-            >
-              <AccordionTrigger
-                className="font-normal hover:no-underline hover:bg-gray-100 p-3 rounded-lg"
-                onClick={() => toggleCategory(type.id)}
-              >
-                {type.label}
-              </AccordionTrigger>
-              <AccordionContent className="ml-5 pl-4 py-2 border-l ">
-                {activeType === type.id && (
-                  <div className="flex flex-col gap-4">
-                    {loading ? (
-                      <p className="text-gray-500">Loading vehicles...</p>
-                    ) : vehicles.length > 0 ? (
-                      vehicles.map((vehicle) => (
-                        <SheetClose asChild key={vehicle._id}>
-                          <Link
-                            href={`/product/${vehicle.slug.current}`}
-                            className="flex gap-3 items-center hover:bg-gray-200/50 p-2 rounded-md transition-colors"
-                          >
-                            <div className="w-[100px] h-[60px] relative flex-shrink-0 overflow-hidden flex items-center justify-center">
-                              <Image
-                                src={vehicle.image || "/placeholder.svg"}
-                                width={100}
-                                height={50}
-                                alt={vehicle.model}
-                                className="w-auto h-full object-contain"
-                              />
-                            </div>
-                            <h3 className="text-base font-medium">
-                              {vehicle.model}
-                            </h3>
-                          </Link>
-                        </SheetClose>
-                      ))
-                    ) : (
-                      <p className="text-gray-500 italic">
-                        No vehicles available
-                      </p>
-                    )}
-                  </div>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-
-        {/* All Vehicles link */}
-        <SheetClose asChild>
-          <Link
-            href="/product/vehicles"
-            className="p-2 hover:bg-gray-100 rounded-md transition-colors"
-          >
-            All Vehicles
-          </Link>
-        </SheetClose>
-      </div>
-      {/* </Sheet> */}
+      <ProdMenuMobile />
     </>
   );
 }

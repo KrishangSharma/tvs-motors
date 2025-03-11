@@ -15,14 +15,17 @@ interface Vehicle {
   model: string;
   price: string;
   image: string;
+  type: string;
 }
 
 function Feature() {
   const query = groq`
-  *[_type == "vehicle"] {
+  *[_type in ["motorcycle", "scooter"]]
+ {
   slug,
     model,
     price,
+    type,
     "image": images[0].asset->url
 }
   `;
@@ -50,7 +53,7 @@ function Feature() {
               <Badge>All Vehicles</Badge>
             </div>
             <div className="flex gap-2 flex-col">
-              <h2 className="text-3xl md:text-5xl tracking-wide max-w-xl text-left font-alfa">
+              <h2 className="text-3xl md:text-5xl tracking-wide max-w-xl text-left ">
                 Discover our Wide Range of Vehicles
               </h2>
               <p className="max-w-xl lg:max-w-lg leading-relaxed tracking-tight text-muted-foreground  text-left">
@@ -63,18 +66,16 @@ function Feature() {
             {vehicles &&
               vehicles.map((vehicle) => (
                 <Link
-                  href={`/product/${vehicle.slug.current}`}
+                  href={`/product/${vehicle.type}/${vehicle.slug.current}`}
                   className="flex flex-col gap-2 border rounded-xl overflow-hidden cursor-pointer  font-roboto font-medium"
                   key={vehicle.slug.current}
                 >
-                  <div className="rounded-md aspect-video mb-2 grid place-items-center hover:scale-125 transition-transform ease-in-out">
+                  <div className="relative w-full h-48 hover:scale-110 transition-transform duration-300 ease-in-out">
                     <Image
                       src={vehicle.image}
                       alt={vehicle.model}
-                      width={100}
-                      height={60}
-                      quality={100}
-                      className="h-full w-auto object-contain"
+                      fill
+                      className="rounded-xl h-full w-auto object-contain"
                     />
                   </div>
                   <div className="flex flex-col gap-2 p-4">

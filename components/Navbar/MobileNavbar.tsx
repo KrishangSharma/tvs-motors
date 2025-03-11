@@ -6,7 +6,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Button } from "../ui/button";
 import ProductMenu from "../ProductMenu";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,14 +17,7 @@ export default function MobileNav() {
       {/* Side Menu */}
       <Sheet>
         <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden w-8 h-8"
-            aria-label="Toggle Menu"
-          >
-            <PanelLeftOpen className="w-8 h-8" />
-          </Button>
+          <PanelLeftOpen className="w-6 h-6 cursor-pointer " />
         </SheetTrigger>
         <SheetContent
           side="left"

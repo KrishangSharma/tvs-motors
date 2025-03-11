@@ -5,7 +5,7 @@ import { Vehicle } from "@/types";
 import dynamic from "next/dynamic";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; vehicleType: string }>;
 }
 
 const ImageGallery = dynamic(() => import("@/components/ImageGallery"), {
@@ -16,12 +16,17 @@ const DetailsTabs = dynamic(() => import("@/components/DetailsTab"), {
 });
 
 export default async function VehiclePage({ params }: Props) {
-  const { slug } = await params;
-  const query = groq`*[_type == "vehicle" && slug.current == "${slug}"][0]`;
+  const { vehicleType, slug } = await params;
+  const formatType =
+    vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
+  const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
+  // console.log(query);
+
   const vehicle = await client.fetch<Vehicle>(query);
+  // console.log("Vehicle: ", vehicle);
 
   return (
-    <div className="w-full mx-auto lg:max-w-7xl py-16 max-w-xs min-h-screen">
+    <div className="w-full mx-auto container lg:max-w-7xl py-16 min-h-screen">
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Side: Image Gallery */}
         <div className="md:w-1/2 flex flex-col items-center">
@@ -49,8 +54,8 @@ export default async function VehiclePage({ params }: Props) {
           </button>
           {/* Tab Navigation */}
           <div className="mt-8">
-            {/* <DetailsTabs vehicle={vehicle} /> */}
-            <DetailsTabs />
+            <DetailsTabs vehicle={vehicle} />
+            {/* <DetailsTabs /> */}
           </div>
         </div>
       </div>

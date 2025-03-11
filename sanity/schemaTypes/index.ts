@@ -1,6 +1,7 @@
 import { type SchemaTypeDefinition } from "sanity";
-import vehicle from "../schemas/vehicles";
+import Motorcycle from "../schemas/Motorcycle";
+import Scooter from "../schemas/Scooter";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [vehicle],
+  types: [Motorcycle, Scooter],
 };

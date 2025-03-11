@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Quicksand } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { Footer } from "@/components/ui/large-name-footer";
 

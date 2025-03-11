@@ -462,9 +462,9 @@ export default function TestRideForm() {
 
   return (
     <div className="flex justify-center items-center min-h-screen w-full p-4 md:p-8 bg-gradient-to-br from-white to-blue-50">
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row gap-8 rounded-3xl overflow-hidden shadow-2xl">
+      <div className="w-full max-w-5xl flex flex-col lg:flex-row gap-8 rounded-3xl overflow-hidden shadow-2xl">
         {/* Left side - Form */}
-        <div className="w-full lg:w-2/3 bg-white p-6 md:p-10">
+        <div className="w-full bg-white p-6 md:p-10">
           <div className="mb-8">
             <Heading
               lgText="Get a Taste of Your Dream Vehicle"
@@ -954,49 +954,6 @@ export default function TestRideForm() {
               </div>
             </form>
           </Form>
-        </div>
-
-        {/* Right side - Contact Info */}
-        <div className="w-full lg:w-1/3 bg-gradient-to-br from-blue-600 to-blue-800 text-white">
-          <div className="h-full p-6 md:p-10 flex flex-col">
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold mb-2">Contact Information</h3>
-              <div className="w-16 h-1 bg-white rounded-full"></div>
-            </div>
-
-            <div className="grid gap-8 mb-auto">
-              {contactInfo.map((item, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="bg-white/20 p-3 rounded-full backdrop-blur-sm">
-                    <item.icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-blue-100 mb-1">
-                      {item.title}
-                    </p>
-                    <p className="text-lg font-semibold">{item.content}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-auto pt-8 border-t border-white/20">
-              <p className="text-sm font-medium text-blue-100 mb-4 text-center">
-                CONNECT WITH US
-              </p>
-              <div className="flex justify-center gap-4">
-                {socialLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.href}
-                    className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors backdrop-blur-sm"
-                  >
-                    <span className="text-white">{link.svg}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { Icons } from "@/components/ui/icons";
 import { Phone, Mail, LifeBuoy } from "lucide-react";
 import Image from "next/image";
 import { FooterItems } from "@/types";
+import FooterLogo from "@/public/TVS-Logo_SVG_White.svg";
 
 export function Footer() {
   const desktopFooterSections: FooterItems[] = [
@@ -137,7 +137,7 @@ export function Footer() {
           items: [
             {
               type: "link",
-              href: "#",
+              href: "https://play.google.com/store/apps/details?id=com.tvsm.connect&pcampaignid=web_share",
               image:
                 "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
               alt: "Get it on Google Play",
@@ -146,7 +146,7 @@ export function Footer() {
             },
             {
               type: "link",
-              href: "#",
+              href: "https://apps.apple.com/in/app/tvs-connect/id1453965748",
               image:
                 "https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg",
               alt: "Download on the App Store",
@@ -283,9 +283,11 @@ export function Footer() {
       <div className="container mx-auto">
         {/* Branding Section */}
         <div className="mb-8">
-          <Link href="/" className="flex items-center gap-2 text-white">
-            <Icons.logo className="icon-class w-8 " />
-            <h2 className="text-xl font-bold ">TVS Motors</h2>
+          <Link href="/" className="md:hidden block">
+            <Image src={FooterLogo} alt="TVS Motors" width={100} height={50} />
+          </Link>
+          <Link href="/" className="hidden md:block">
+            <Image src={FooterLogo} alt="TVS Motors" width={170} height={120} />
           </Link>
         </div>
         {/* Unified Grid: DesktopFooterSections + Contact/Social */}

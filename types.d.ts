@@ -17,6 +17,11 @@ export interface Vehicle {
   dimensions: string;
   fuelTankCapacity: string;
   mileage: string;
+  slug: Slug;
+  enginePerformance: Record<string, string | number>;
+  chassisSuspensionElectrical: Record<string, string | number>;
+  wheelsTyresBrakes: Record<string, string | number>;
+  dimensionsWeightFuel: Record<string, string | number>;
 }
 export interface NavVehicleItem {
   _id: string;
@@ -26,12 +31,14 @@ export interface NavVehicleItem {
   type: "motorcycle" | "scooter" | "moped";
 }
 
-export interface BentoVehicleItem {
+export interface VehicleItem {
   slug: {
     current: string;
   };
   model: string;
   image: string;
+  price: number;
+  type: string;
 }
 
 export interface NavLinks {
