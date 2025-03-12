@@ -25,7 +25,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Heading from "./Heading";
-import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 // Form validation schema
 const formSchema = z.object({
@@ -67,8 +66,6 @@ export default function TestRideForm() {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
 
   // Initialize form
   const form = useForm<FormValues>({
