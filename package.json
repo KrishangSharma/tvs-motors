@@ -38,7 +38,7 @@
     "pincode-search": "^1.0.0",
     "postal-codes-js": "^2.5.2",
     "react": "^19.0.0",
-    "react-day-picker": "^8.10.1",
+    "react-day-picker": "^9.6.1",
     "react-dom": "^19.0.0",
     "react-geolocated": "^4.3.0",
     "react-hook-form": "^7.54.2",
