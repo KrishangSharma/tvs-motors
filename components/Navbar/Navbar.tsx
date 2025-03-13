@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import Logo from "@/public/TVSLogo-hr.svg";
 import MobileNav from "./MobileNavbar";
 import ProductMenu from "../ProductMenu";
@@ -55,8 +54,6 @@ const navLinks: NavLinks[] = [
 ];
 
 export default function Navbar() {
-  const path = usePathname();
-
   // Scroll management logic(state variable and useEffect)
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {

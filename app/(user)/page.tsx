@@ -1,5 +1,3 @@
-"use client";
-
 import { Hero, Stories, YourRide } from "@/components/exports";
 
 export default function Home() {
