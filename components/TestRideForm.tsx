@@ -4,7 +4,7 @@ import React, { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Check, Loader2, MapPin, ChevronRight } from "lucide-react";
+import { Loader2, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,6 +30,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 // Form validation schema
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })
@@ -61,11 +62,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function TestRideForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
-  const [sendingOtp, setSendingOtp] = useState(false);
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [captchaValue, setCaptchaValue] = useState("");
 
@@ -76,6 +73,7 @@ export default function TestRideForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
+      email: "",
       phone: "",
       otp: "",
       pincode: "",
@@ -136,7 +134,6 @@ export default function TestRideForm() {
   // Sample dealers based on pincode
   const getDealers = React.useCallback((pincode: string) => {
     // This would typically be an API call
-    console.log(pincode);
     return [
       { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
       { id: "d2", name: "TVS Motors Authorized Dealer - Highway Road" },
@@ -178,126 +175,33 @@ export default function TestRideForm() {
   }, [form.watch, getDealers]);
 
   // Handle form submission
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
-
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
     setIsSubmitting(true);
 
     try {
-      // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      // Send the form data to the API
+      const bookingResponse = await fetch("/api/book-test-ride", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
 
-      if (!captchaResponse.ok) {
-        throw new Error("Captcha verification failed");
+      if (!bookingResponse.ok) {
+        throw new Error("Failed to book test ride");
       }
-
-      // Rest of form submission logic would go here
 
       setIsSubmitting(false);
       form.reset();
       setActiveStep(1);
       captchaRef.current?.reset();
       setCaptchaValue("");
+
+      // Show success message or redirect
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
-    }
-  };
-
-  // Handle OTP sending
-  const handleSendOTP = async () => {
-    setSendingOtp(true);
-    const phoneValue = form.getValues("phone");
-    const phoneResult = z
-      .string()
-      .min(10)
-      .max(10)
-      .regex(/^\d+$/)
-      .safeParse(phoneValue);
-
-    if (phoneResult.success) {
-      try {
-        const res = await fetch("/api/generate-otp", {
-          method: "POST",
-          body: JSON.stringify({ phone: phoneValue }),
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!res.ok) {
-          setSendingOtp(false);
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        setIsOtpSent(true);
-        setSendingOtp(false);
-      } catch (error) {
-        setSendingOtp(false);
-        console.error("Failed to send OTP:", error);
-        form.setError("phone", {
-          type: "manual",
-          message: "Failed to send OTP. Please try again.",
-        });
-      }
-    } else {
-      setSendingOtp(false);
-      form.setError("phone", {
-        type: "manual",
-        message: "Please enter a valid 10-digit phone number",
-      });
-    }
-  };
-
-  // Handle OTP verification
-  const handleVerifyOTP = async () => {
-    setVerifyingOtp(true);
-    const otpValue = form.getValues("otp");
-    const phoneValue = form.getValues("phone");
-    const otpResult = z
-      .string()
-      .min(4)
-      .max(6)
-      .regex(/^\d+$/)
-      .safeParse(otpValue);
-
-    if (otpResult.success) {
-      try {
-        const res = await fetch("/api/verify-otp", {
-          method: "POST",
-          body: JSON.stringify({ otp: otpValue, phone: phoneValue }),
-          headers: { "Content-Type": "application/json" },
-        });
-
-        if (!res.ok) {
-          setVerifyingOtp(false);
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        setVerifyingOtp(false);
-        setIsOtpVerified(true);
-      } catch (error) {
-        setVerifyingOtp(false);
-        console.error("Failed to verify OTP:", error);
-        form.setError("otp", {
-          type: "manual",
-          message: "Failed to verify OTP. Please try again.",
-        });
-      }
-    } else {
-      setVerifyingOtp(false);
-      form.setError("otp", {
-        type: "manual",
-        message: "Please enter a valid OTP",
-      });
     }
   };
 
@@ -316,8 +220,6 @@ export default function TestRideForm() {
   // Reset form
   const handleReset = () => {
     form.reset();
-    setIsOtpSent(false);
-    setIsOtpVerified(false);
     setActiveStep(1);
   };
 
@@ -341,9 +243,10 @@ export default function TestRideForm() {
       case 1:
         return (
           form.getValues("name") !== "" &&
+          form.getValues("email") !== "" &&
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.getValues("email")) &&
           form.getValues("phone") !== "" &&
-          form.getValues("phone").length === 10 &&
-          isOtpVerified
+          form.getValues("phone").length === 10
         );
       case 2:
         return (
@@ -363,8 +266,19 @@ export default function TestRideForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      throw new Error("Captcha verification failed");
+    }
   };
 
   return (
@@ -430,27 +344,51 @@ export default function TestRideForm() {
                     Personal Information
                   </h3>
 
-                  {/* Name Field */}
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-gray-700">
-                          Full Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your full name"
-                            {...field}
-                            className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
-                            autoComplete="off"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* Name and Email Fields */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">
+                            Full Name
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter your full name"
+                              {...field}
+                              className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">
+                            Email Address
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Enter your email address"
+                              {...field}
+                              className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
+                              autoComplete="off"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Phone Field */}
@@ -462,56 +400,26 @@ export default function TestRideForm() {
                           <FormLabel className="text-gray-700">
                             Phone Number
                           </FormLabel>
-                          <div className="flex">
-                            <FormControl>
-                              <Input
-                                type="tel"
-                                placeholder="Enter your mobile number"
-                                {...field}
-                                autoComplete="off"
-                                maxLength={10}
-                                className={`rounded-r-none bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12 ${
-                                  isOtpSent
-                                    ? "border-green-500 focus:border-green-500 focus:ring-green-500"
-                                    : ""
-                                }`}
-                                onInput={(e) => {
-                                  e.currentTarget.value =
-                                    e.currentTarget.value.replace(/\D/g, "");
-                                  field.onChange(e);
-                                }}
-                                onKeyDown={(e) => {
-                                  if (["e", "E", "+", "-"].includes(e.key)) {
-                                    e.preventDefault();
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              onClick={handleSendOTP}
-                              disabled={
-                                sendingOtp ||
-                                isOtpSent ||
-                                !form.getValues("phone") ||
-                                form.getValues("phone").length !== 10
-                              }
-                              className={`rounded-l-none h-12 px-4 ${
-                                isOtpSent
-                                  ? "bg-green-500 hover:bg-green-600 text-white border-green-500"
-                                  : "bg-blue-600 hover:bg-blue-700 text-white"
-                              }`}
-                            >
-                              {sendingOtp ? (
-                                <div className="flex items-center">
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  <span>Sending...</span>
-                                </div>
-                              ) : (
-                                <>{isOtpSent ? "Resend OTP" : "Send OTP"}</>
-                              )}
-                            </Button>
-                          </div>
+                          <FormControl>
+                            <Input
+                              type="tel"
+                              placeholder="Enter your mobile number"
+                              {...field}
+                              autoComplete="off"
+                              maxLength={10}
+                              className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
+                              onInput={(e) => {
+                                e.currentTarget.value =
+                                  e.currentTarget.value.replace(/\D/g, "");
+                                field.onChange(e);
+                              }}
+                              onKeyDown={(e) => {
+                                if (["e", "E", "+", "-"].includes(e.key)) {
+                                  e.preventDefault();
+                                }
+                              }}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -526,56 +434,15 @@ export default function TestRideForm() {
                           <FormLabel className="text-gray-700">
                             OTP Verification
                           </FormLabel>
-                          <div className="flex">
-                            <FormControl>
-                              <Input
-                                placeholder="Enter OTP"
-                                {...field}
-                                disabled={!isOtpSent}
-                                autoComplete="off"
-                                maxLength={6}
-                                className={`rounded-r-none bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12 ${
-                                  isOtpVerified
-                                    ? "border-green-500 focus:border-green-500 focus:ring-green-500"
-                                    : ""
-                                }`}
-                              />
-                            </FormControl>
-                            <Button
-                              type="button"
-                              onClick={handleVerifyOTP}
-                              disabled={
-                                verifyingOtp ||
-                                !isOtpSent ||
-                                isOtpVerified ||
-                                !form.getValues("otp") ||
-                                form.getValues("otp").length < 4
-                              }
-                              className={`rounded-l-none h-12 px-4 ${
-                                isOtpVerified
-                                  ? "bg-green-500 hover:bg-green-600 text-white border-green-500"
-                                  : "bg-blue-600 hover:bg-blue-700 text-white"
-                              }`}
-                            >
-                              {verifyingOtp ? (
-                                <div className="flex items-center">
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  <span>Verifying...</span>
-                                </div>
-                              ) : (
-                                <>
-                                  {isOtpVerified ? (
-                                    <div className="flex items-center">
-                                      <Check className="w-4 h-4 mr-2" />
-                                      <span>Verified</span>
-                                    </div>
-                                  ) : (
-                                    "Verify"
-                                  )}
-                                </>
-                              )}
-                            </Button>
-                          </div>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter OTP"
+                              {...field}
+                              autoComplete="off"
+                              maxLength={6}
+                              className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}

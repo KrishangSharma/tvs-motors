@@ -5,18 +5,15 @@ export async function POST(req: NextRequest) {
 
   try {
     // Retrieve the raw text from the request
-    const bodyText = await req.text();
+    const body = await req.json();
 
     // Check if the body is empty
-    if (!bodyText) {
+    if (!body) {
       return NextResponse.json(
         { error: "No payload provided" },
         { status: 400 }
       );
     }
-
-    // Attempt to parse the JSON payload
-    const body = JSON.parse(bodyText);
 
     // Ensure the captcha field exists
     if (!body.captcha) {
@@ -44,6 +41,7 @@ export async function POST(req: NextRequest) {
     const captchaValidation = await res.json();
 
     if (!captchaValidation.success) {
+      console.log("❌ Invalid captcha:", captchaValidation);
       return NextResponse.json({ error: "Invalid captcha" }, { status: 400 });
     }
 
