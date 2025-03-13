@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Heading from "./Heading";
+import ReCAPTCHA from "react-google-recaptcha";
 
 // Form validation schema
 const formSchema = z.object({
@@ -66,6 +67,9 @@ export default function TestRideForm() {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
+  const [captchaValue, setCaptchaValue] = useState("");
+
+  const captchaRef = useRef<ReCAPTCHA>(null);
 
   // Initialize form
   const form = useForm<FormValues>({
@@ -175,7 +179,39 @@ export default function TestRideForm() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    console.log("submitted");
+    // Check if captcha is verified
+    if (!captchaValue) {
+      // Show error or alert
+      console.error("Please complete the captcha verification");
+      return;
+    }
+
+    const formData = form.getValues();
+    setIsSubmitting(true);
+
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captcha: captchaValue }),
+      });
+
+      if (!captchaResponse.ok) {
+        throw new Error("Captcha verification failed");
+      }
+
+      // Rest of form submission logic would go here
+
+      setIsSubmitting(false);
+      form.reset();
+      setActiveStep(1);
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
   };
 
   // Handle OTP sending
@@ -319,11 +355,16 @@ export default function TestRideForm() {
         return (
           form.getValues("vehicle") !== "" &&
           form.getValues("variant") !== "" &&
-          form.getValues("authorizeContact") === true
+          form.getValues("authorizeContact") === true &&
+          captchaValue !== "" // Add captcha validation
         );
       default:
         return false;
     }
+  };
+
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value || "");
   };
 
   return (
@@ -763,6 +804,15 @@ export default function TestRideForm() {
                           </div>
                         </FormItem>
                       )}
+                    />
+                  </div>
+
+                  {/* Add ReCAPTCHA only on the last step */}
+                  <div className="mt-6">
+                    <ReCAPTCHA
+                      ref={captchaRef}
+                      sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+                      onChange={handleCaptchaChange}
                     />
                   </div>
                 </div>
