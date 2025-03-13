@@ -27,6 +27,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FormWrapper } from "../FormWrapper";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const formSchema = z.object({
   ownerName: z
@@ -53,6 +54,9 @@ type FormValues = z.infer<typeof formSchema>;
 export default function BuyAMCForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [startDate, setStartDate] = useState<Date>();
+  const [captchaValue, setCaptchaValue] = useState<string>("");
+
+  const captchaRef = React.useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -75,19 +79,37 @@ export default function BuyAMCForm() {
     }
   }, [startDate, form]);
 
-  const onSubmit = async (data: FormValues) => {
+  const handleSubmit = async () => {
+    // Check if captcha is verified
+    if (!captchaValue) {
+      // Show error or alert
+      console.error("Please complete the captcha verification");
+      return;
+    }
+    const formData = form.getValues();
     setIsSubmitting(true);
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captcha: captchaValue }),
+      });
+      if (!captchaResponse.ok) {
+        throw new Error("Captcha verification failed");
+      } // Rest of form submission logic would go here
+      setIsSubmitting(false);
+      form.reset();
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
+  };
 
-    // Simulate API call
-    console.log("Form data:", data);
-
-    // In a real application, you would handle payment gateway integration here
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsSubmitting(false);
-    form.reset();
-    setStartDate(undefined);
-    alert("AMC purchased successfully!");
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value || "");
   };
 
   // Vehicle makes and models (would typically come from an API)
@@ -131,7 +153,7 @@ export default function BuyAMCForm() {
       description="Purchase an AMC for your vehicle with easy payment options"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="ownerName"
@@ -145,7 +167,6 @@ export default function BuyAMCForm() {
               </FormItem>
             )}
           />
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -183,7 +204,6 @@ export default function BuyAMCForm() {
               )}
             />
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
@@ -242,7 +262,6 @@ export default function BuyAMCForm() {
               )}
             />
           </div>
-
           <FormField
             control={form.control}
             name="registrationNumber"
@@ -259,7 +278,6 @@ export default function BuyAMCForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="amcPackage"
@@ -305,7 +323,6 @@ export default function BuyAMCForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="startDate"
@@ -321,7 +338,6 @@ export default function BuyAMCForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="additionalComments"
@@ -339,7 +355,11 @@ export default function BuyAMCForm() {
               </FormItem>
             )}
           />
-
+          <ReCAPTCHA
+            ref={captchaRef}
+            sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+            onChange={handleCaptchaChange}
+          />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? (
               <>

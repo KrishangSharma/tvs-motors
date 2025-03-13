@@ -49,6 +49,8 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 // Define the form schema with Zod
 const formSchema = z.object({
@@ -105,6 +107,10 @@ const timeSlots = [
 ];
 
 export default function OnlineServiceBookingForm() {
+  const captchaRef = useRef<ReCAPTCHA>(null);
+  const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   // Initialize the form with React Hook Form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -120,12 +126,38 @@ export default function OnlineServiceBookingForm() {
     },
   });
 
-  // Handle form submission
-  function onSubmit(data: FormValues) {
-    console.log("Form submitted:", data);
-    // Here you would typically send the data to your backend
-    alert("Service booking submitted successfully!");
-  }
+  const handleSubmit = async () => {
+    // Check if captcha is verified
+    if (!captchaValue) {
+      // Show error or alert
+      console.error("Please complete the captcha verification");
+      return;
+    }
+    const formData = form.getValues();
+    setIsSubmitting(true);
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captcha: captchaValue }),
+      });
+      if (!captchaResponse.ok) {
+        throw new Error("Captcha verification failed");
+      } // Rest of form submission logic would go here
+      setIsSubmitting(false);
+      form.reset();
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value || "");
+  };
 
   return (
     <div className="flex justify-center p-4 w-full">
@@ -142,7 +174,7 @@ export default function OnlineServiceBookingForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
             <CardContent className="grid gap-6 pt-6">
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Personal Information</h3>
@@ -376,6 +408,12 @@ export default function OnlineServiceBookingForm() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+
+                <ReCAPTCHA
+                  ref={captchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+                  onChange={handleCaptchaChange}
                 />
               </div>
             </CardContent>

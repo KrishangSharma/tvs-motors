@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormWrapper } from "../FormWrapper";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const formSchema = z.object({
   fullName: z
@@ -40,6 +41,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function GenericPaymentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState<string>("");
+  const captchaRef = useRef<ReCAPTCHA | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -53,18 +56,37 @@ export default function GenericPaymentForm() {
     },
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const handleSubmit = async () => {
+    // Check if captcha is verified
+    if (!captchaValue) {
+      // Show error or alert
+      console.error("Please complete the captcha verification");
+      return;
+    }
+    const formData = form.getValues();
     setIsSubmitting(true);
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captcha: captchaValue }),
+      });
+      if (!captchaResponse.ok) {
+        throw new Error("Captcha verification failed");
+      } // Rest of form submission logic would go here
+      setIsSubmitting(false);
+      form.reset();
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
+  };
 
-    // Simulate API call
-    console.log("Form data:", data);
-
-    // In a real application, you would integrate with a payment gateway here
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    setIsSubmitting(false);
-    form.reset();
-    alert("Payment processed successfully!");
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value || "");
   };
 
   return (
@@ -73,7 +95,7 @@ export default function GenericPaymentForm() {
       description="Complete your payment for services or products"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="fullName"
@@ -183,6 +205,12 @@ export default function GenericPaymentForm() {
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <ReCAPTCHA
+            ref={captchaRef}
+            sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+            onChange={handleCaptchaChange}
           />
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>

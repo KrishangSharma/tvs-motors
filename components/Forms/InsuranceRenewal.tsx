@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useRef, useState } from "react";
 
 // Generate years for the dropdown (current year down to 20 years ago)
 const currentYear = new Date().getFullYear();
@@ -65,6 +67,11 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function InsuranceRenewalForm() {
+  const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const captchaRef = useRef<ReCAPTCHA>(null);
+
   // Initialize the form with React Hook Form
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -79,12 +86,38 @@ export default function InsuranceRenewalForm() {
     },
   });
 
-  // Handle form submission
-  function onSubmit(data: FormValues) {
-    console.log("Form submitted:", data);
-    // Here you would typically send the data to your backend
-    alert("Form submitted successfully!");
-  }
+  const handleSubmit = async () => {
+    // Check if captcha is verified
+    if (!captchaValue) {
+      // Show error or alert
+      console.error("Please complete the captcha verification");
+      return;
+    }
+    const formData = form.getValues();
+    setIsSubmitting(true);
+    try {
+      // First verify the captcha
+      const captchaResponse = await fetch("/api/verify-captcha", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ captcha: captchaValue }),
+      });
+      if (!captchaResponse.ok) {
+        throw new Error("Captcha verification failed");
+      } // Rest of form submission logic would go here
+      setIsSubmitting(false);
+      form.reset();
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCaptchaChange = (value: string | null) => {
+    setCaptchaValue(value || "");
+  };
 
   return (
     <div className="flex justify-center p-4 w-full">
@@ -98,7 +131,7 @@ export default function InsuranceRenewalForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -217,6 +250,11 @@ export default function InsuranceRenewalForm() {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <ReCAPTCHA
+                  ref={captchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+                  onChange={handleCaptchaChange}
                 />
               </div>
             </CardContent>
