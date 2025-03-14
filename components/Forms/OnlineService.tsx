@@ -110,6 +110,7 @@ export default function OnlineServiceBookingForm() {
   const captchaRef = useRef<ReCAPTCHA>(null);
   const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   // Initialize the form with React Hook Form
   const form = useForm<FormValues>({
@@ -126,25 +127,21 @@ export default function OnlineServiceBookingForm() {
     },
   });
 
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
+
     setIsSubmitting(true);
+
     try {
-      // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      const response = await fetch("/api/online-service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
-      if (!captchaResponse.ok) {
-        throw new Error("Captcha verification failed");
-      } // Rest of form submission logic would go here
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
       setIsSubmitting(false);
       form.reset();
       captchaRef.current?.reset();
@@ -155,8 +152,21 @@ export default function OnlineServiceBookingForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      setIsCaptchaVerified(false);
+      throw new Error("Captcha verification failed");
+    }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -174,7 +184,7 @@ export default function OnlineServiceBookingForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <form onSubmit={handleSubmit}>
             <CardContent className="grid gap-6 pt-6">
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Personal Information</h3>

@@ -1,14 +1,13 @@
-import { ServiceConfirmationEmail } from "@/react-email-starter/emails/service-confirmation";
+import { ServiceBookingConfirmationEmail } from "@/react-email-starter/emails/online-service";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
-// Generate a unique service reference number
-function generateServiceReference(): string {
-  const timestamp = new Date().getTime().toString().slice(-6);
-  const randomNum = Math.floor(Math.random() * 1000)
+// Generate a unique booking ID
+function generateBookingId(): string {
+  const randomNum = Math.floor(Math.random() * 1000000)
     .toString()
-    .padStart(3, "0");
-  return `SRV-${timestamp}${randomNum}`;
+    .padStart(6, "0");
+  return `SRV-${randomNum}`;
 }
 
 export async function POST(req: NextRequest) {
@@ -20,8 +19,6 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Parse the request body
-    const formData = await req.json();
     const {
       name,
       contactNumber,
@@ -32,17 +29,34 @@ export async function POST(req: NextRequest) {
       pickupRequired,
       bookingDate,
       bookingTime,
-    } = formData;
+    } = await req.json();
 
-    // Generate a unique reference number for this service booking
-    const referenceNumber = generateServiceReference();
+    // Validate required fields
+    if (
+      !name ||
+      !contactNumber ||
+      !emailId ||
+      !model ||
+      !registrationNumber ||
+      !serviceType ||
+      !pickupRequired ||
+      !bookingDate ||
+      !bookingTime
+    ) {
+      return NextResponse.json(
+        { success: false, message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const bookingId = generateBookingId();
 
     // Send confirmation email
     const emailData = {
       from: "service@resend.dev",
       to: emailId,
-      subject: `Service Booking Confirmation - ${referenceNumber}`,
-      react: ServiceConfirmationEmail({
+      subject: `Service Booking Confirmation: ${bookingId}`,
+      react: ServiceBookingConfirmationEmail({
         name,
         emailId,
         contactNumber,
@@ -52,7 +66,7 @@ export async function POST(req: NextRequest) {
         pickupRequired,
         bookingDate: new Date(bookingDate),
         bookingTime,
-        referenceNumber,
+        bookingId,
       }),
     };
 
@@ -63,18 +77,30 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Service booking confirmed successfully",
-        referenceNumber,
+        bookingId,
+        bookingDetails: {
+          name,
+          contactNumber,
+          emailId,
+          model,
+          registrationNumber,
+          serviceType,
+          pickupRequired,
+          bookingDate,
+          bookingTime,
+        },
         emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error processing service booking:", error);
+
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to book service",
-        error: error instanceof Error ? error.message : "Unknown error",
+        message: "Failed to process service booking",
+        error: process.env.NODE_ENV === "development" ? error : undefined,
       },
       { status: 500 }
     );

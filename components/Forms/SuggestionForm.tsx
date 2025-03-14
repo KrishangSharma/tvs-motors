@@ -42,6 +42,8 @@ export default function SuggestionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(0);
   const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+
   const captchaRef = React.useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
@@ -60,25 +62,21 @@ export default function SuggestionForm() {
     form.setValue("rating", rating);
   }, [rating, form]);
 
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
+
     setIsSubmitting(true);
+
     try {
-      // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      const response = await fetch("/api/suggestion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
-      if (!captchaResponse.ok) {
-        throw new Error("Captcha verification failed");
-      } // Rest of form submission logic would go here
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
       setIsSubmitting(false);
       form.reset();
       captchaRef.current?.reset();
@@ -89,8 +87,21 @@ export default function SuggestionForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      setIsCaptchaVerified(false);
+      throw new Error("Captcha verification failed");
+    }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -99,7 +110,7 @@ export default function SuggestionForm() {
       description="We value your input to help us improve our services"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <FormField
             control={form.control}
             name="name"

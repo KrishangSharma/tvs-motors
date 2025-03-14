@@ -114,7 +114,6 @@ export default function ExpressServiceForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = form.getValues();
-    console.log("Form data:", formData);
 
     setIsSubmitting(true);
 
