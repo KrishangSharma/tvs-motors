@@ -49,6 +49,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function ExchangeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -67,25 +68,20 @@ export default function ExchangeForm() {
     },
   });
 
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
     setIsSubmitting(true);
+
     try {
-      // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      const response = await fetch("/api/exchange", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
-      if (!captchaResponse.ok) {
-        throw new Error("Captcha verification failed");
-      } // Rest of form submission logic would go here
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
       setIsSubmitting(false);
       form.reset();
       captchaRef.current?.reset();
@@ -96,8 +92,21 @@ export default function ExchangeForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      setIsCaptchaVerified(false);
+      throw new Error("Captcha verification failed");
+    }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -106,7 +115,7 @@ export default function ExchangeForm() {
       description="Submit your current vehicle details for an exchange offer"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <FormField
             control={form.control}
             name="fullName"

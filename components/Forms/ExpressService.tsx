@@ -92,6 +92,7 @@ const timeSlots = [
 export default function ExpressServiceForm() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -110,25 +111,22 @@ export default function ExpressServiceForm() {
     },
   });
 
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
+    console.log("Form data:", formData);
+
     setIsSubmitting(true);
+
     try {
-      // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      const response = await fetch("/api/express-service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
-      if (!captchaResponse.ok) {
-        throw new Error("Captcha verification failed");
-      } // Rest of form submission logic would go here
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
       setIsSubmitting(false);
       form.reset();
       captchaRef.current?.reset();
@@ -139,8 +137,21 @@ export default function ExpressServiceForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      setIsCaptchaVerified(false);
+      throw new Error("Captcha verification failed");
+    }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -155,7 +166,7 @@ export default function ExpressServiceForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)}>
+          <form onSubmit={handleSubmit}>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField

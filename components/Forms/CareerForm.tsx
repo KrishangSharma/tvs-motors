@@ -44,17 +44,17 @@ const formSchema = z.object({
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
-  resume: z
-    .instanceof(FileList)
-    .refine((files) => files.length > 0, "Resume is required")
-    .refine(
-      (files) => files[0]?.size <= MAX_FILE_SIZE,
-      "File size must be less than 5MB"
-    )
-    .refine(
-      (files) => ACCEPTED_FILE_TYPES.includes(files[0]?.type),
-      "Only PDF and DOC/DOCX files are accepted"
-    ),
+  // resume: z
+  //   .instanceof(FileList)
+  //   .refine((files) => files.length > 0, "Resume is required")
+  //   .refine(
+  //     (files) => files[0]?.size <= MAX_FILE_SIZE,
+  //     "File size must be less than 5MB"
+  //   )
+  //   .refine(
+  //     (files) => ACCEPTED_FILE_TYPES.includes(files[0]?.type),
+  //     "Only PDF and DOC/DOCX files are accepted"
+  //   ),
   interestedProfile: z
     .string()
     .min(1, { message: "Please select an interested profile" }),
@@ -79,23 +79,18 @@ export default function CareerForm() {
     },
   });
 
-  const handleSubmit = async () => {
-    // Check if captcha is verified
-    if (!captchaValue) {
-      // Show error or alert
-      console.error("Please complete the captcha verification");
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = form.getValues();
     setIsSubmitting(true);
     try {
       // First verify the captcha
-      const captchaResponse = await fetch("/api/verify-captcha", {
+      const response = await fetch("/api/career-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ captcha: captchaValue }),
+        body: JSON.stringify(formData),
       });
-      if (!captchaResponse.ok) {
+      if (!response.ok) {
         throw new Error("Captcha verification failed");
       } // Rest of form submission logic would go here
       setIsSubmitting(false);
@@ -108,8 +103,19 @@ export default function CareerForm() {
     }
   };
 
-  const handleCaptchaChange = (value: string | null) => {
+  const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
+
+    const captchaResponse = await fetch("/api/verify-captcha", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ captcha: value }),
+    });
+
+    if (!captchaResponse.ok) {
+      // Handle error appropriately
+      throw new Error("Captcha verification failed");
+    }
   };
 
   return (
@@ -118,7 +124,7 @@ export default function CareerForm() {
       description="Submit your resume and contact information for job opportunities"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <FormField
             control={form.control}
             name="fullName"
@@ -171,7 +177,7 @@ export default function CareerForm() {
             />
           </div>
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="resume"
             render={({ field: { onChange, value, ...fieldProps } }) => (
@@ -192,7 +198,7 @@ export default function CareerForm() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             control={form.control}
