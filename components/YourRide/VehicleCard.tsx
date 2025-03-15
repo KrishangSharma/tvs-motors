@@ -6,8 +6,8 @@ import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { ChevronRight, Bike, Gauge } from "lucide-react";
 import type { VehicleItem } from "@/types";
+import { buttonVariants, cardVariants, imageVariants } from "@/constants";
 
-// Individual vehicle card with animations
 export default function VehicleCard({
   vehicle,
   index,
@@ -15,50 +15,6 @@ export default function VehicleCard({
   vehicle: VehicleItem;
   index: number;
 }) {
-  // Animation variants
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    }),
-    hover: {
-      y: -10,
-      boxShadow:
-        "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-      transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 10,
-      },
-    },
-  };
-
-  const imageVariants = {
-    hover: {
-      scale: 1.1,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const buttonVariants = {
-    hover: {
-      x: 5,
-      transition: {
-        duration: 0.2,
-        ease: "easeInOut",
-      },
-    },
-  };
-
   const vehicleTypeIcon =
     vehicle.type === "motorcycle" ? (
       <Bike className="h-5 w-5" />

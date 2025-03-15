@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import Logo from "@/public/TVSLogo-hr.svg";
 import MobileNav from "./MobileNavbar";
-import ProductMenu from "../ProductMenu";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,44 +13,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { NavLinks } from "@/types";
 import { Sheet } from "../ui/sheet";
-
-// Data for nav links
-const navLinks: NavLinks[] = [
-  {
-    id: 1,
-    label: "Products",
-    type: "dropdown",
-    content: <ProductMenu />,
-  },
-  {
-    id: 2,
-    label: "Services",
-    type: "link",
-    href: "/services",
-  },
-  {
-    id: 3,
-    label: "Shop",
-    type: "dropdown",
-    content: (
-      <div className="grid gap-3 p-6 w-[400px]">
-        <div className="text-sm">Shop content goes here</div>
-      </div>
-    ),
-  },
-  {
-    id: 4,
-    label: "Company",
-    type: "dropdown",
-    content: (
-      <div className="grid gap-3 p-6 w-[400px]">
-        <div className="text-sm">Company content goes here</div>
-      </div>
-    ),
-  },
-];
+import { navLinks } from "@/constants";
 
 export default function Navbar() {
   // Scroll management logic(state variable and useEffect)

@@ -1,4 +1,5 @@
 "use client";
+import { tabs } from "@/constants";
 import { useState } from "react";
 
 interface DetailsTabsProps {
@@ -16,12 +17,6 @@ interface Vehicle {
 }
 
 export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
-  const tabs = [
-    "Engine and Performance",
-    "Chassis, Suspension and Electricals",
-    "Wheels, Tyres and Brakes",
-    "Dimensions, Weight and Fuel",
-  ];
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
   // Map each tab to its corresponding vehicle data

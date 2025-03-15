@@ -8,18 +8,12 @@ import Image from "next/image";
 import type { NavVehicleItem } from "@/types";
 import { ChevronRight } from "lucide-react";
 import ProdMenuMobile from "./ProductMenu/ProdMenuMobile";
+import { vehicleTypes } from "@/constants";
 
 export default function ProductMenu() {
   const [vehicles, setVehicles] = useState<NavVehicleItem[]>([]);
   const [activeType, setActiveType] = useState<string>("motorcycle");
   const [loading, setLoading] = useState(false);
-
-  // Vehicle categories
-  const vehicleTypes = [
-    { id: "motorcycle", label: "Motorcycles" },
-    { id: "scooter", label: "Scooters" },
-    { id: "moped", label: "Mopeds" },
-  ];
 
   useEffect(() => {
     const fetchVehicles = async () => {

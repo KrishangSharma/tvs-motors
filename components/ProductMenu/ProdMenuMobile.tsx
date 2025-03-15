@@ -7,22 +7,16 @@ import {
 } from "../ui/accordion";
 import Image from "next/image";
 import { groq } from "next-sanity";
-import { Sheet, SheetClose } from "../ui/sheet";
+import { SheetClose } from "../ui/sheet";
 import { useEffect, useState } from "react";
 import type { NavVehicleItem } from "@/types";
 import { client } from "@/sanity/lib/client";
+import { vehicleTypes } from "@/constants";
 
 export default function ProdMenuMobile() {
   const [loading, setLoading] = useState(false);
   const [vehicles, setVehicles] = useState<NavVehicleItem[]>([]);
   const [activeType, setActiveType] = useState<string>("motorcycle");
-
-  // Vehicle categories
-  const vehicleTypes = [
-    { id: "motorcycle", label: "Motorcycles" },
-    { id: "scooter", label: "Scooters" },
-    { id: "moped", label: "Mopeds" },
-  ];
 
   useEffect(() => {
     const fetchVehicles = async () => {

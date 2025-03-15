@@ -1,41 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 import YouTube from "react-youtube";
 import { Play } from "lucide-react";
-import Story1 from "@/public/yt-stories/story-1.jpg";
-import Story2 from "@/public/yt-stories/story-2.jpg";
-import Story3 from "@/public/yt-stories/story-3.jpg";
-import Story4 from "@/public/yt-stories/story-4.jpg";
-
-// Stories (YouTube Video Links)
-const stories = [
-  {
-    id: 1,
-    thumbnail: Story1,
-    title: "Celebrating Mr. Venu Srinivasan's Llifetime Achievement Award",
-    source: "https://youtu.be/A90E-fu1e3o",
-  },
-  {
-    id: 2,
-    thumbnail: Story2,
-    title: "",
-    source: "https://youtu.be/n7Y89U8AjSs",
-  },
-  {
-    id: 3,
-    thumbnail: Story3,
-    title: "",
-    source: "https://youtu.be/ylNZddpP4YE",
-  },
-  {
-    id: 4,
-    thumbnail: Story4,
-    title: "",
-    source: "https://youtu.be/DHNsur93omY",
-  },
-];
+import { stories } from "@/constants";
+import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 
 // Extract YouTube Video ID from URL
 const getYouTubeID = (url: string) => {
