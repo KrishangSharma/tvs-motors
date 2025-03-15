@@ -1,36 +1,20 @@
 import React from "react";
 import { Slug } from "sanity";
 
-export interface Vehicle {
+// Individual Vehicle Details
+export interface VehicleDetails {
   _id: string;
   model: string;
   price: number;
   type: string;
   images: string[];
-  engineType: string;
-  maxPower: string;
-  maxTorque: string;
-  fuelSystem: string;
-  transmission: string;
-  suspension: string;
-  brakes: string;
-  dimensions: string;
-  fuelTankCapacity: string;
-  mileage: string;
   slug: Slug;
   enginePerformance: Record<string, string | number>;
   chassisSuspensionElectrical: Record<string, string | number>;
   wheelsTyresBrakes: Record<string, string | number>;
   dimensionsWeightFuel: Record<string, string | number>;
 }
-export interface NavVehicleItem {
-  _id: string;
-  slug: Slug;
-  model: string;
-  image: string;
-  type: "motorcycle" | "scooter" | "moped";
-}
-
+// Al Vehicle Page
 export interface VehicleItem {
   slug: {
     current: string;
@@ -40,7 +24,13 @@ export interface VehicleItem {
   price: number;
   type: string;
 }
-
+export interface NavVehicleItem {
+  _id: string;
+  slug: Slug;
+  model: string;
+  image: string;
+  type: "motorcycle" | "scooter" | "moped";
+}
 export interface NavLinks {
   id: number;
   label: string;
@@ -74,3 +64,128 @@ export type FooterItems = {
     }>;
   }>;
 };
+
+export interface FormWrapperProps {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  footer?: React.ReactNode;
+}
+
+export interface ImageGalleryProps {
+  images: string[];
+  model: string;
+}
+
+// EMAIL TEMPLATE PROPS
+export interface CareerApplicationEmailProps {
+  fullName: string;
+  email: string;
+  phone: string;
+  interestedProfile: string;
+  applicationId: string;
+  applicationDate?: Date;
+  hasCoverLetter?: boolean;
+}
+
+export interface AMCConfirmationEmailProps {
+  ownerName: string;
+  email: string;
+  phone: string;
+  vehicleMake: string;
+  vehicleModel: string;
+  registrationNumber: string;
+  amcPackage: string;
+  startDate: Date;
+  orderReference: string;
+  additionalComments?: string;
+}
+
+export interface LoanApplicationEmailProps {
+  fullName: string;
+  email: string;
+  phone: string;
+  dateOfBirth: Date;
+  employmentStatus: string;
+  annualIncome: number;
+  loanAmount: number;
+  loanTenure: number;
+  residentialAddress: string;
+  additionalInfo?: string;
+  applicationId: string;
+  applicationDate: Date;
+}
+
+export interface ServiceBookingEmailProps {
+  name: string;
+  emailId: string;
+  contactNumber: string;
+  model: string;
+  registrationNumber: string;
+  serviceType: "free" | "paid";
+  pickupRequired: "yes" | "no";
+  bookingDate: Date;
+  bookingTime: string;
+  bookingId: string;
+}
+
+export interface PaymentConfirmationEmailProps {
+  fullName: string;
+  email: string;
+  phone: string;
+  serviceDescription: string;
+  amount: number;
+  additionalInfo?: string;
+  transactionId: string;
+  paymentDate: Date;
+}
+
+export interface ServiceConfirmationEmailProps {
+  name: string;
+  emailId: string;
+  contactNumber: string;
+  model: string;
+  registrationNumber: string;
+  serviceType: string;
+  pickupRequired: string;
+  bookingDate: Date;
+  bookingTime: string;
+  referenceNumber: string;
+}
+
+export interface SuggestionFeedbackEmailProps {
+  name?: string;
+  email?: string;
+  subject: string;
+  message: string;
+  rating?: number;
+  feedbackId: string;
+  submissionDate: Date;
+}
+
+export interface TestRideConfirmationEmailProps {
+  name: string;
+  email: string;
+  phone: string;
+  vehicleName: string;
+  variantName: string;
+  dealerName: string;
+  dealerAddress?: string;
+  bookingDate: Date;
+  bookingTime: string;
+  bookingReference: string;
+}
+
+export interface VehicleExchangeConfirmationEmailProps {
+  fullName: string;
+  email: string;
+  phone: string;
+  currentVehicleMake: string;
+  currentVehicleModel: string;
+  currentVehicleYear: string;
+  currentVehicleRegistration: string;
+  desiredVehicleDetails: string;
+  additionalComments?: string;
+  exchangeReference: string;
+  requestDate?: Date;
+}

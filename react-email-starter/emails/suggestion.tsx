@@ -1,3 +1,4 @@
+import { SuggestionFeedbackEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,16 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface SuggestionFeedbackEmailProps {
-  name?: string;
-  email?: string;
-  subject: string;
-  message: string;
-  rating?: number;
-  feedbackId: string;
-  submissionDate: Date;
-}
 
 export const SuggestionFeedbackEmail = ({
   name,

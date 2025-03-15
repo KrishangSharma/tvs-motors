@@ -1,3 +1,4 @@
+import { AMCConfirmationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,19 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface AMCConfirmationEmailProps {
-  ownerName: string;
-  email: string;
-  phone: string;
-  vehicleMake: string;
-  vehicleModel: string;
-  registrationNumber: string;
-  amcPackage: string;
-  startDate: Date;
-  orderReference: string;
-  additionalComments?: string;
-}
 
 export const AMCConfirmationEmail = ({
   ownerName = "John Doe",

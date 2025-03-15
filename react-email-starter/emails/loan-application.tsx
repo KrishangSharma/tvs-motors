@@ -1,3 +1,4 @@
+import { LoanApplicationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,21 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface LoanApplicationEmailProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: Date;
-  employmentStatus: string;
-  annualIncome: number;
-  loanAmount: number;
-  loanTenure: number;
-  residentialAddress: string;
-  additionalInfo?: string;
-  applicationId: string;
-  applicationDate: Date;
-}
 
 export const LoanApplicationEmail = ({
   fullName = "John Doe",

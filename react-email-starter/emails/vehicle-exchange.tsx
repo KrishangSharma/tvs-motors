@@ -1,3 +1,4 @@
+import { VehicleExchangeConfirmationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,20 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface VehicleExchangeConfirmationEmailProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  currentVehicleMake: string;
-  currentVehicleModel: string;
-  currentVehicleYear: string;
-  currentVehicleRegistration: string;
-  desiredVehicleDetails: string;
-  additionalComments?: string;
-  exchangeReference: string;
-  requestDate?: Date;
-}
 
 export default function VehicleExchangeConfirmationEmail({
   fullName = "Jhon Doe",

@@ -2,11 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/sanity/lib/image";
-
-interface ImageGalleryProps {
-  images: string[]; // array of image URLs from Sanity
-  model: string;
-}
+import { ImageGalleryProps } from "@/types";
 
 export default function ImageGallery({ images, model }: ImageGalleryProps) {
   // Start with the first image as the main view

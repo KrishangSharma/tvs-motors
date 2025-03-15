@@ -1,3 +1,4 @@
+import { PaymentConfirmationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,17 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface PaymentConfirmationEmailProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  serviceDescription: string;
-  amount: number;
-  additionalInfo?: string;
-  transactionId: string;
-  paymentDate: Date;
-}
 
 export const PaymentConfirmationEmail = ({
   fullName = "John Doe",

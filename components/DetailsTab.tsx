@@ -1,19 +1,10 @@
 "use client";
 import { tabs } from "@/constants";
+import { VehicleDetails } from "@/types";
 import { useState } from "react";
 
 interface DetailsTabsProps {
-  vehicle: Vehicle;
-}
-interface Vehicle {
-  model: string;
-  price: number;
-  images: string[];
-  type: string;
-  enginePerformance: Record<string, string | number>;
-  chassisSuspensionElectrical: Record<string, string | number>;
-  wheelsTyresBrakes: Record<string, string | number>;
-  dimensionsWeightFuel: Record<string, string | number>;
+  vehicle: VehicleDetails;
 }
 
 export default function DetailsTabs({ vehicle }: DetailsTabsProps) {

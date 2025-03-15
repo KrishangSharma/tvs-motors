@@ -1,3 +1,4 @@
+import { CareerApplicationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,16 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface CareerApplicationEmailProps {
-  fullName: string;
-  email: string;
-  phone: string;
-  interestedProfile: string;
-  applicationId: string;
-  applicationDate?: Date;
-  hasCoverLetter?: boolean;
-}
 
 export const CareerApplicationEmail = ({
   fullName = "John Doe",

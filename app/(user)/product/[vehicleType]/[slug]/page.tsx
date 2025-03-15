@@ -1,7 +1,6 @@
-// import { urlFor } from "@/sanity/lib/image";
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-import { Vehicle } from "@/types";
+import { VehicleDetails } from "@/types";
 import dynamic from "next/dynamic";
 
 interface Props {
@@ -20,10 +19,8 @@ export default async function VehiclePage({ params }: Props) {
   const formatType =
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
-  // console.log(query);
-
-  const vehicle = await client.fetch<Vehicle>(query);
-  // console.log("Vehicle: ", vehicle);
+  const vehicle = await client.fetch<VehicleDetails>(query);
+  // console.log("Vehicle Details:", vehicle);
 
   return (
     <div className="w-full mx-auto container lg:max-w-7xl py-16 min-h-screen">
@@ -55,7 +52,6 @@ export default async function VehiclePage({ params }: Props) {
           {/* Tab Navigation */}
           <div className="mt-8">
             <DetailsTabs vehicle={vehicle} />
-            {/* <DetailsTabs /> */}
           </div>
         </div>
       </div>

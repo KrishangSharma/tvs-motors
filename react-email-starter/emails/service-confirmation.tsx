@@ -1,3 +1,4 @@
+import { ServiceConfirmationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,19 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface ServiceConfirmationEmailProps {
-  name: string;
-  emailId: string;
-  contactNumber: string;
-  model: string;
-  registrationNumber: string;
-  serviceType: string;
-  pickupRequired: string;
-  bookingDate: Date;
-  bookingTime: string;
-  referenceNumber: string;
-}
 
 export const ServiceConfirmationEmail = ({
   name = "John Doe",

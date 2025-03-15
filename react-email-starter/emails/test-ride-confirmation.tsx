@@ -1,3 +1,4 @@
+import { TestRideConfirmationEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -14,19 +15,6 @@ import {
   Hr,
 } from "@react-email/components";
 import { format } from "date-fns";
-
-interface TestRideConfirmationEmailProps {
-  name: string;
-  email: string;
-  phone: string;
-  vehicleName: string;
-  variantName: string;
-  dealerName: string;
-  dealerAddress?: string;
-  bookingDate: Date;
-  bookingTime: string;
-  bookingReference: string;
-}
 
 export const TestRideConfirmationEmail = ({
   name = "John Doe",

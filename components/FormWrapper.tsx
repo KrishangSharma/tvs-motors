@@ -7,13 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-interface FormWrapperProps {
-  title: string;
-  description?: string;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
-}
+import { FormWrapperProps } from "@/types";
 
 export function FormWrapper({
   title,
