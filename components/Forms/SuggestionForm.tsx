@@ -21,22 +21,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { StarRating } from "@/components/ui/star-rating";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
+import { suggestionFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  name: z.string().optional(),
-  email: z
-    .string()
-    .email({ message: "Please enter a valid email address" })
-    .optional()
-    .or(z.literal("")),
-  subject: z.string().min(1, { message: "Subject is required" }),
-  message: z
-    .string()
-    .min(10, { message: "Message must be at least 10 characters" }),
-  rating: z.number().min(0).max(5).optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof suggestionFormSchema>;
 
 export default function SuggestionForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,7 +34,7 @@ export default function SuggestionForm() {
   const captchaRef = React.useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(suggestionFormSchema),
     defaultValues: {
       name: "",
       email: "",

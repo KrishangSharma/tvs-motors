@@ -19,32 +19,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
+import { exchangeFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  currentVehicleMake: z
-    .string()
-    .min(1, { message: "Vehicle make is required" }),
-  currentVehicleModel: z
-    .string()
-    .min(1, { message: "Vehicle model is required" }),
-  currentVehicleYear: z.string().min(4, { message: "Valid year is required" }),
-  currentVehicleRegistration: z
-    .string()
-    .min(1, { message: "Registration number is required" }),
-  desiredVehicleDetails: z
-    .string()
-    .min(5, { message: "Please provide details about your desired vehicle" }),
-  additionalComments: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof exchangeFormSchema>;
 
 export default function ExchangeForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +31,7 @@ export default function ExchangeForm() {
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(exchangeFormSchema),
     defaultValues: {
       fullName: "",
       email: "",

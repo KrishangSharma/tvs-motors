@@ -24,41 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Heading from "./Heading";
+import Heading from "@/components/Heading";
 import ReCAPTCHA from "react-google-recaptcha";
+import { testRideFormSchema } from "@/lib/formSchemas";
 
-// Form validation schema
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" })
-    .max(10, { message: "Phone number must not exceed 10 digits" })
-    .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
-  otp: z
-    .string()
-    .min(4, { message: "OTP must be at least 4 digits" })
-    .max(6, { message: "OTP must not exceed 6 digits" })
-    .regex(/^\d+$/, { message: "OTP must contain only digits" }),
-  pincode: z
-    .string()
-    .min(6, { message: "Pincode must be 6 digits" })
-    .max(6, { message: "Pincode must be 6 digits" })
-    .regex(/^\d+$/, { message: "Pincode must contain only digits" }),
-  vehicle: z.string().min(1, { message: "Please select a vehicle" }),
-  variant: z.string().min(1, { message: "Please select a variant" }),
-  dealer: z.string().min(1, { message: "Please select a dealer" }),
-  interestedInOffers: z.boolean().default(false),
-  authorizeContact: z
-    .boolean()
-    .default(true)
-    .refine((val) => val === true, {
-      message: "You must authorize TVS Motors to contact you",
-    }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof testRideFormSchema>;
 
 export default function TestRideForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +40,7 @@ export default function TestRideForm() {
 
   // Initialize form
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(testRideFormSchema),
     defaultValues: {
       name: "",
       email: "",

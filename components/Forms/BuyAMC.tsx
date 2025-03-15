@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Loader2, CreditCard } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -28,28 +27,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { DatePicker } from "@/components/ui/date-picker";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
+import { amcFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  ownerName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  vehicleMake: z.string().min(1, { message: "Please select a vehicle make" }),
-  vehicleModel: z.string().min(1, { message: "Please select a vehicle model" }),
-  registrationNumber: z
-    .string()
-    .min(1, { message: "Registration number is required" }),
-  amcPackage: z.string().min(1, { message: "Please select an AMC package" }),
-  startDate: z.date({
-    required_error: "Please select a start date",
-  }),
-  additionalComments: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof amcFormSchema>;
 
 export default function BuyAMCForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,7 +40,7 @@ export default function BuyAMCForm() {
   const captchaRef = React.useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(amcFormSchema),
     defaultValues: {
       ownerName: "",
       email: "",

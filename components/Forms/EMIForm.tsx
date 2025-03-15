@@ -18,21 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { FormWrapper } from "../FormWrapper";
 import { Card, CardContent } from "@/components/ui/card";
+import { emiFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  loanAmount: z.coerce
-    .number()
-    .positive({ message: "Loan amount must be greater than 0" }),
-  interestRate: z.coerce
-    .number()
-    .positive({ message: "Interest rate must be greater than 0" }),
-  loanTenure: z.coerce
-    .number()
-    .int()
-    .positive({ message: "Loan tenure must be a positive number" }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof emiFormSchema>;
 
 export default function EMICalculatorForm() {
   const [emiResult, setEmiResult] = useState<number | null>(null);
@@ -40,7 +28,7 @@ export default function EMICalculatorForm() {
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(emiFormSchema),
     defaultValues: {
       loanAmount: 100000,
       interestRate: 10,

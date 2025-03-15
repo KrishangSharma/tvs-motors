@@ -28,40 +28,9 @@ import {
 } from "@/components/ui/select";
 import { FileInput } from "@/components/ui/file-input";
 import { FormWrapper } from "../FormWrapper";
+import { careerFormSchema } from "@/lib/formSchemas";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_FILE_TYPES = [
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
-
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  // resume: z
-  //   .instanceof(FileList)
-  //   .refine((files) => files.length > 0, "Resume is required")
-  //   .refine(
-  //     (files) => files[0]?.size <= MAX_FILE_SIZE,
-  //     "File size must be less than 5MB"
-  //   )
-  //   .refine(
-  //     (files) => ACCEPTED_FILE_TYPES.includes(files[0]?.type),
-  //     "Only PDF and DOC/DOCX files are accepted"
-  //   ),
-  interestedProfile: z
-    .string()
-    .min(1, { message: "Please select an interested profile" }),
-  coverLetter: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof careerFormSchema>;
 
 export default function CareerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,7 +38,7 @@ export default function CareerForm() {
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(careerFormSchema),
     defaultValues: {
       fullName: "",
       email: "",

@@ -18,25 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
+import { genericPaymentFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  serviceDescription: z
-    .string()
-    .min(5, { message: "Description must be at least 5 characters" }),
-  amount: z.coerce
-    .number()
-    .positive({ message: "Amount must be greater than 0" }),
-  additionalInfo: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof genericPaymentFormSchema>;
 
 export default function GenericPaymentForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +30,7 @@ export default function GenericPaymentForm() {
   const captchaRef = useRef<ReCAPTCHA | null>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(genericPaymentFormSchema),
     defaultValues: {
       fullName: "",
       email: "",

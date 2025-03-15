@@ -27,38 +27,9 @@ import {
 import { DatePicker } from "@/components/ui/date-picker";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
+import { loanFormSchema } from "@/lib/formSchemas";
 
-const formSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  dateOfBirth: z.date({
-    required_error: "Date of birth is required",
-  }),
-  employmentStatus: z
-    .string()
-    .min(1, { message: "Please select your employment status" }),
-  annualIncome: z.coerce
-    .number()
-    .positive({ message: "Annual income must be greater than 0" }),
-  loanAmount: z.coerce
-    .number()
-    .positive({ message: "Loan amount must be greater than 0" }),
-  loanTenure: z.coerce
-    .number()
-    .int()
-    .positive({ message: "Loan tenure must be a positive number" }),
-  residentialAddress: z
-    .string()
-    .min(10, { message: "Please provide your complete address" }),
-  additionalInfo: z.string().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof loanFormSchema>;
 
 export default function LoanApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,7 +40,7 @@ export default function LoanApplicationForm() {
   const captchaRef = React.useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(loanFormSchema),
     defaultValues: {
       fullName: "",
       email: "",

@@ -1,7 +1,7 @@
 // import Image from "next/image";
 import React from "react";
 // import TestRideBanner from "@/public/TVS BAU-test-ride-banner.jpg";
-import TestRideForm from "@/components/TestRideForm";
+import TestRideForm from "@/components/Forms/TestRideForm";
 
 const page = () => {
   return (

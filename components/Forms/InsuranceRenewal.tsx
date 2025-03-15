@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRef, useState } from "react";
+import { insuranceRenewalFormSchema } from "@/lib/formSchemas";
 
 // Generate years for the dropdown (current year down to 20 years ago)
 const currentYear = new Date().getFullYear();
@@ -39,32 +40,7 @@ const years = Array.from({ length: 20 }, (_, i) =>
   (currentYear - i).toString()
 );
 
-// Define the form schema with Zod
-const formSchema = z.object({
-  customerName: z.string().min(2, {
-    message: "Customer name must be at least 2 characters.",
-  }),
-  contactNumber: z.string().regex(/^\d{10}$/, {
-    message: "Contact number must be 10 digits.",
-  }),
-  emailId: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  model: z.string().min(1, {
-    message: "Vehicle model is required.",
-  }),
-  registrationNumber: z.string().regex(/^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/, {
-    message: "Please enter a valid registration number (e.g., MH02AB1234).",
-  }),
-  registrationYear: z.string({
-    required_error: "Please select a registration year.",
-  }),
-  previousInsuranceCompany: z.string().min(1, {
-    message: "Previous insurance company is required.",
-  }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof insuranceRenewalFormSchema>;
 
 export default function InsuranceRenewalForm() {
   const [captchaValue, setCaptchaValue] = useState<string>("");
@@ -75,7 +51,7 @@ export default function InsuranceRenewalForm() {
 
   // Initialize the form with React Hook Form
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(insuranceRenewalFormSchema),
     defaultValues: {
       customerName: "",
       contactNumber: "",
