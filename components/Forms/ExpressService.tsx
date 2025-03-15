@@ -81,17 +81,14 @@ export default function ExpressServiceForm() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
-
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/express-service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Form submission failed");
@@ -135,7 +132,7 @@ export default function ExpressServiceForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -353,8 +350,12 @@ export default function ExpressServiceForm() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full">
-                Book Service
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || !isCaptchaVerified}
+              >
+                {isSubmitting ? "Booking" : "Book Service"}
               </Button>
             </CardFooter>
           </form>

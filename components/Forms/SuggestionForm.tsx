@@ -49,17 +49,14 @@ export default function SuggestionForm() {
     form.setValue("rating", rating);
   }, [rating, form]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
-
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/suggestion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Form submission failed");
@@ -97,7 +94,7 @@ export default function SuggestionForm() {
       description="We value your input to help us improve our services"
     >
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="name"
@@ -188,7 +185,11 @@ export default function SuggestionForm() {
             onChange={handleCaptchaChange}
           />
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting || !isCaptchaVerified}
+          >
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

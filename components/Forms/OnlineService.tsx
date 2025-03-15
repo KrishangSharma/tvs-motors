@@ -97,17 +97,14 @@ export default function OnlineServiceBookingForm() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
-
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/online-service", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Form submission failed");
@@ -154,7 +151,7 @@ export default function OnlineServiceBookingForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
             <CardContent className="grid gap-6 pt-6">
               <div className="space-y-2">
                 <h3 className="text-lg font-medium">Personal Information</h3>
@@ -354,7 +351,6 @@ export default function OnlineServiceBookingForm() {
                                   new Date().setMonth(new Date().getMonth() + 3)
                                 )
                             }
-                            initialFocus
                           />
                         </PopoverContent>
                       </Popover>
@@ -398,8 +394,12 @@ export default function OnlineServiceBookingForm() {
               </div>
             </CardContent>
             <CardFooter className="bg-muted/50 rounded-b-lg">
-              <Button type="submit" className="w-full">
-                Book Service Appointment
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!isCaptchaVerified || isSubmitting}
+              >
+                {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </CardFooter>
           </form>

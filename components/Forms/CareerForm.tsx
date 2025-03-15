@@ -35,6 +35,7 @@ type FormValues = z.infer<typeof careerFormSchema>;
 export default function CareerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string>("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
@@ -48,16 +49,14 @@ export default function CareerForm() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
       // First verify the captcha
       const response = await fetch("/api/career-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Captcha verification failed");
@@ -83,8 +82,10 @@ export default function CareerForm() {
 
     if (!captchaResponse.ok) {
       // Handle error appropriately
+      setIsCaptchaVerified(false);
       throw new Error("Captcha verification failed");
     }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -93,7 +94,7 @@ export default function CareerForm() {
       description="Submit your resume and contact information for job opportunities"
     >
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="fullName"
@@ -225,7 +226,11 @@ export default function CareerForm() {
             onChange={handleCaptchaChange}
           />
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting || !isCaptchaVerified}
+          >
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

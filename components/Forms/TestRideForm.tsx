@@ -35,6 +35,7 @@ export default function TestRideForm() {
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [captchaValue, setCaptchaValue] = useState("");
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -145,9 +146,7 @@ export default function TestRideForm() {
   }, [form.watch, getDealers]);
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
@@ -155,7 +154,7 @@ export default function TestRideForm() {
       const bookingResponse = await fetch("/api/book-test-ride", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
 
       if (!bookingResponse.ok) {
@@ -247,8 +246,10 @@ export default function TestRideForm() {
 
     if (!captchaResponse.ok) {
       // Handle error appropriately
+      setIsCaptchaVerified(false);
       throw new Error("Captcha verification failed");
     }
+    setIsCaptchaVerified(true);
   };
 
   return (
@@ -306,7 +307,10 @@ export default function TestRideForm() {
           </div>
 
           <Form {...form}>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-6"
+            >
               {/* Step 1: Personal Information */}
               {activeStep === 1 && (
                 <div className="space-y-6 animate-fadeIn">
@@ -690,7 +694,11 @@ export default function TestRideForm() {
                   ) : (
                     <Button
                       type="submit"
-                      disabled={isSubmitting || !isCurrentStepValid()}
+                      disabled={
+                        isSubmitting ||
+                        !isCurrentStepValid() ||
+                        !isCaptchaVerified
+                      }
                       className="bg-blue-600 hover:bg-blue-700 text-white h-12"
                     >
                       {isSubmitting ? (

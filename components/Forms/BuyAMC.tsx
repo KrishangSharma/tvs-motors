@@ -61,16 +61,14 @@ export default function BuyAMCForm() {
     }
   }, [startDate, form]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/submit-amc", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Form submission failed");
@@ -142,7 +140,7 @@ export default function BuyAMCForm() {
       description="Purchase an AMC for your vehicle with easy payment options"
     >
       <Form {...form}>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="ownerName"

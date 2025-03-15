@@ -63,17 +63,14 @@ export default function InsuranceRenewalForm() {
     },
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = form.getValues();
-
+  const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/generic-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
         throw new Error("Form submission failed");
@@ -117,7 +114,7 @@ export default function InsuranceRenewalForm() {
           </CardDescription>
         </CardHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -245,8 +242,12 @@ export default function InsuranceRenewalForm() {
               </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-full">
-                Submit Renewal Request
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || !isCaptchaVerified}
+              >
+                {isSubmitting ? "Submitting..." : "Submit Renewal Request"}
               </Button>
             </CardFooter>
           </form>
