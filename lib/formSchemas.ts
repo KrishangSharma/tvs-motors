@@ -230,13 +230,12 @@ export const serviceFormSchema = z.object({
 
 // Suggestion Form Schema
 export const suggestionFormSchema = z.object({
-  name: z.string().optional(),
+  name: z.string(),
   email: z
     .string()
     .email({ message: "Please enter a valid email address" })
-    .optional()
     .or(z.literal("")),
-  subject: z.string().min(1, { message: "Subject is required" }),
+  subject: z.string().min(5, { message: "Subject is required" }),
   message: z
     .string()
     .min(10, { message: "Message must be at least 10 characters" }),
@@ -252,11 +251,11 @@ export const testRideFormSchema = z.object({
     .min(10, { message: "Phone number must be at least 10 digits" })
     .max(10, { message: "Phone number must not exceed 10 digits" })
     .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
-  otp: z
-    .string()
-    .min(4, { message: "OTP must be at least 4 digits" })
-    .max(6, { message: "OTP must not exceed 6 digits" })
-    .regex(/^\d+$/, { message: "OTP must contain only digits" }),
+  // otp: z
+  //   .string()
+  //   .min(4, { message: "OTP must be at least 4 digits" })
+  //   .max(6, { message: "OTP must not exceed 6 digits" })
+  //   .regex(/^\d+$/, { message: "OTP must contain only digits" }),
   pincode: z
     .string()
     .min(6, { message: "Pincode must be 6 digits" })
@@ -265,6 +264,10 @@ export const testRideFormSchema = z.object({
   vehicle: z.string().min(1, { message: "Please select a vehicle" }),
   variant: z.string().min(1, { message: "Please select a variant" }),
   dealer: z.string().min(1, { message: "Please select a dealer" }),
+  timeSlot: z.string().min(1, "Please select a time slot"),
+  bookingDate: z.date({
+    required_error: "Please select a booking date",
+  }),
   interestedInOffers: z.boolean().default(false),
   authorizeContact: z
     .boolean()
@@ -272,4 +275,15 @@ export const testRideFormSchema = z.object({
     .refine((val) => val === true, {
       message: "You must authorize TVS Motors to contact you",
     }),
+});
+
+export const contactFormSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Please enter a valid email address"),
+  phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number must be at least 10 digits" })
+    .max(10, { message: "Phone number must not exceed 10 digits" })
+    .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
+  message: z.string().min(10, "Message must be at least 10 characters"),
 });

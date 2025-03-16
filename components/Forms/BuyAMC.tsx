@@ -184,6 +184,7 @@ export default function BuyAMCForm() {
                       type="tel"
                       placeholder="Your contact number"
                       {...field}
+                      maxLength={10}
                     />
                   </FormControl>
                   <FormMessage />

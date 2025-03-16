@@ -100,7 +100,7 @@ export default function SuggestionForm() {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name (Optional)</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Your name" {...field} />
                 </FormControl>
@@ -114,7 +114,7 @@ export default function SuggestionForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address (Optional)</FormLabel>
+                <FormLabel>Email Address</FormLabel>
                 <FormControl>
                   <Input
                     type="email"
@@ -122,9 +122,6 @@ export default function SuggestionForm() {
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  We&apos;ll only use this to follow up if needed
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

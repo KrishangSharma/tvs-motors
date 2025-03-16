@@ -67,7 +67,7 @@ export default function InsuranceRenewalForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/generic-payment", {
+      const response = await fetch("/api/insurance-renewal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form.getValues()),
@@ -100,6 +100,15 @@ export default function InsuranceRenewalForm() {
       throw new Error("Captcha verification failed");
     }
     setIsCaptchaVerified(true);
+  };
+
+  // Custom handler for phone number to only allow digits
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only update if the value contains only digits
+    if (value === "" || /^\d+$/.test(value)) {
+      form.setValue("contactNumber", value);
+    }
   };
 
   return (
@@ -137,7 +146,12 @@ export default function InsuranceRenewalForm() {
                     <FormItem>
                       <FormLabel>Contact Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="1234567890" {...field} />
+                        <Input
+                          placeholder="1234567890"
+                          {...field}
+                          onChange={handlePhoneNumberChange}
+                          maxLength={10}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

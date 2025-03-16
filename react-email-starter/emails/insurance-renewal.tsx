@@ -1,3 +1,4 @@
+import { InsuranceRenewalEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -15,37 +16,24 @@ import {
 } from "@react-email/components";
 import { format } from "date-fns";
 
-export interface TestRideConfirmationEmailProps {
-  name: string;
-  email: string;
-  phone: string;
-  vehicleName: string;
-  variantName: string;
-  dealerName: string;
-  dealerAddress: string;
-  bookingDate: Date;
-  bookingTime: string;
-  bookingReference: string;
-}
-
-export const TestRideConfirmationEmail = ({
-  name,
-  email,
-  phone,
-  vehicleName,
-  variantName,
-  dealerName,
-  dealerAddress,
-  bookingDate,
-  bookingTime,
-  bookingReference,
-}: TestRideConfirmationEmailProps) => {
-  const formattedDate = format(new Date(bookingDate), "dd MMMM yyyy");
+export const InsuranceRenewalEmail = ({
+  customerName = "John Doe",
+  contactNumber = "1234567890",
+  emailId = "john.doe@example.com",
+  model = "Honda City",
+  registrationNumber = "MH02AB1234",
+  registrationYear = "2023",
+  previousInsuranceCompany = "ACME Insurance",
+  requestId = "INS-12345678",
+  requestDate = new Date(),
+}: InsuranceRenewalEmailProps) => {
+  const parsedRequestDate = new Date(requestDate);
+  const formattedDate = format(parsedRequestDate, "dd MMMM yyyy");
 
   return (
     <Html>
       <Head />
-      <Preview>Test Ride Confirmation - {bookingReference}</Preview>
+      <Preview>Insurance Renewal Request Confirmation - {requestId}</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header with Logo */}
@@ -61,36 +49,33 @@ export const TestRideConfirmationEmail = ({
 
           {/* Main Content */}
           <Section style={content}>
-            <Heading style={heading}>Test Ride Booked Successfully!</Heading>
+            <Heading style={heading}>
+              Insurance Renewal Request Received
+            </Heading>
 
             <Text style={paragraph}>
-              Dear <strong>{name}</strong>,
+              Dear <strong>{customerName}</strong>,
             </Text>
 
             <Text style={paragraph}>
-              Thank you for booking a test ride with us. We are excited for you
-              to experience the {vehicleName}!
+              Thank you for submitting your insurance renewal request. We have
+              received your information and will process your request promptly.
             </Text>
 
-            {/* Booking Details */}
+            {/* Request Details */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
-                Booking Details
+                Request Details
               </Heading>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Reference ID:</Column>
-                <Column style={detailValue}>{bookingReference}</Column>
+                <Column style={detailLabel}>Request ID:</Column>
+                <Column style={detailValue}>{requestId}</Column>
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Booking Date:</Column>
+                <Column style={detailLabel}>Submission Date:</Column>
                 <Column style={detailValue}>{formattedDate}</Column>
-              </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Booking Time:</Column>
-                <Column style={detailValue}>{bookingTime}</Column>
               </Row>
             </Section>
 
@@ -101,50 +86,61 @@ export const TestRideConfirmationEmail = ({
               </Heading>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Vehicle:</Column>
-                <Column style={detailValue}>{vehicleName}</Column>
+                <Column style={detailLabel}>Vehicle Model:</Column>
+                <Column style={detailValue}>{model}</Column>
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Variant:</Column>
-                <Column style={detailValue}>{variantName}</Column>
+                <Column style={detailLabel}>Registration Number:</Column>
+                <Column style={detailValue}>{registrationNumber}</Column>
+              </Row>
+
+              <Row style={detailRow}>
+                <Column style={detailLabel}>Registration Year:</Column>
+                <Column style={detailValue}>{registrationYear}</Column>
+              </Row>
+
+              <Row style={detailRow}>
+                <Column style={detailLabel}>Previous Insurance:</Column>
+                <Column style={detailValue}>{previousInsuranceCompany}</Column>
               </Row>
             </Section>
 
-            {/* Dealer Information */}
+            {/* Next Steps */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
-                Dealer Information
+                What Happens Next?
               </Heading>
 
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Name:</Column>
-                <Column style={detailValue}>{dealerName}</Column>
-              </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Address:</Column>
-                <Column style={detailValue}>{dealerAddress}</Column>
-              </Row>
+              <Text style={listItem}>
+                • Our insurance team will review your renewal request
+              </Text>
+              <Text style={listItem}>
+                • We will calculate your renewal premium based on your vehicle
+                details
+              </Text>
+              <Text style={listItem}>
+                • You&apos;ll receive a quote within 2 business days
+              </Text>
+              <Text style={listItem}>
+                • Once approved, we&apos;ll send payment instructions to
+                complete the renewal
+              </Text>
             </Section>
 
             <Hr style={divider} />
 
-            {/* Next Steps */}
+            {/* Contact Information */}
             <Text style={paragraph}>
-              Please arrive at the dealership 15 minutes prior to your scheduled
-              test ride.
-            </Text>
-
-            <Text style={paragraph}>
-              If you have any questions, please contact our customer service
-              team:
+              If you have any questions about your renewal request or need to
+              provide additional information, please contact our customer
+              service team:
             </Text>
 
             <Text style={contactInfo}>
               Email:{" "}
-              <Link href="mailto:support@company.com" style={link}>
-                support@company.com
+              <Link href="mailto:insurance@company.com" style={link}>
+                insurance@company.com
               </Link>
             </Text>
 
@@ -156,35 +152,36 @@ export const TestRideConfirmationEmail = ({
             </Text>
 
             <Text style={paragraph}>
-              Thank you for choosing TVS Motors. We look forward to seeing you!
+              Thank you for choosing us for your insurance needs. We appreciate
+              your business and look forward to continuing to serve you.
             </Text>
 
             <Text style={signature}>
               Best regards,
               <br />
-              TVS Motors Team
+              The Insurance Team
             </Text>
           </Section>
 
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              © {new Date().getFullYear()} TVS Motors. All rights reserved.
+              © {new Date().getFullYear()} Company Name. All rights reserved.
             </Text>
             <Text style={footerLinks}>
               <Link
-                href="https://www.tvsmotor.com/privacy-policy"
+                href="https://www.company.com/privacy-policy"
                 style={footerLink}
               >
                 Privacy Policy
               </Link>{" "}
               •{" "}
-              <Link href="https://www.tvsmotor.com/terms" style={footerLink}>
+              <Link href="https://www.company.com/terms" style={footerLink}>
                 Terms & Conditions
               </Link>{" "}
               •{" "}
-              <Link href="https://www.tvsmotor.com/contact" style={footerLink}>
-                Contact Us
+              <Link href="https://www.company.com/insurance" style={footerLink}>
+                Insurance Services
               </Link>
             </Text>
           </Section>
@@ -193,6 +190,8 @@ export const TestRideConfirmationEmail = ({
     </Html>
   );
 };
+
+export default InsuranceRenewalEmail;
 
 // Styles
 const main = {
@@ -271,6 +270,13 @@ const detailValue = {
   width: "60%",
   fontSize: "14px",
   color: "#333333",
+};
+
+const listItem = {
+  fontSize: "14px",
+  lineHeight: "1.5",
+  color: "#333333",
+  margin: "8px 0",
 };
 
 const divider = {

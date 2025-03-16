@@ -88,6 +88,14 @@ export default function CareerForm() {
     setIsCaptchaVerified(true);
   };
 
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only update if the value contains only digits
+    if (value === "" || /^\d+$/.test(value)) {
+      form.setValue("phone", value);
+    }
+  };
+
   return (
     <FormWrapper
       title="Career Application"
@@ -139,6 +147,8 @@ export default function CareerForm() {
                       type="tel"
                       placeholder="Your contact number"
                       {...field}
+                      onChange={handlePhoneNumberChange}
+                      maxLength={10}
                     />
                   </FormControl>
                   <FormMessage />

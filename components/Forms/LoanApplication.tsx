@@ -100,6 +100,15 @@ export default function LoanApplicationForm() {
     setIsCaptchaVerified(true);
   };
 
+  // Custom handler for phone number to only allow digits
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only update if the value contains only digits
+    if (value === "" || /^\d+$/.test(value)) {
+      form.setValue("phone", value);
+    }
+  };
+
   return (
     <FormWrapper
       title="Vehicle Loan Application"
@@ -151,6 +160,8 @@ export default function LoanApplicationForm() {
                       type="tel"
                       placeholder="Your contact number"
                       {...field}
+                      onChange={handlePhoneNumberChange}
+                      maxLength={10}
                     />
                   </FormControl>
                   <FormMessage />

@@ -1,3 +1,4 @@
+import { ContactEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -15,37 +16,20 @@ import {
 } from "@react-email/components";
 import { format } from "date-fns";
 
-export interface TestRideConfirmationEmailProps {
-  name: string;
-  email: string;
-  phone: string;
-  vehicleName: string;
-  variantName: string;
-  dealerName: string;
-  dealerAddress: string;
-  bookingDate: Date;
-  bookingTime: string;
-  bookingReference: string;
-}
-
-export const TestRideConfirmationEmail = ({
-  name,
-  email,
-  phone,
-  vehicleName,
-  variantName,
-  dealerName,
-  dealerAddress,
-  bookingDate,
-  bookingTime,
-  bookingReference,
-}: TestRideConfirmationEmailProps) => {
-  const formattedDate = format(new Date(bookingDate), "dd MMMM yyyy");
+export const ContactEmail = ({
+  name = "John Doe",
+  email = "john.doe@example.com",
+  phoneNumber = "1234567890",
+  message = "This is a sample message.",
+  requestId = "CONTACT-123456",
+  requestDate = new Date(),
+}: ContactEmailProps) => {
+  const formattedDate = format(new Date(requestDate), "dd MMMM yyyy");
 
   return (
     <Html>
       <Head />
-      <Preview>Test Ride Confirmation - {bookingReference}</Preview>
+      <Preview>Contact Form Submission - {requestId}</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header with Logo */}
@@ -61,70 +45,60 @@ export const TestRideConfirmationEmail = ({
 
           {/* Main Content */}
           <Section style={content}>
-            <Heading style={heading}>Test Ride Booked Successfully!</Heading>
+            <Heading style={heading}>Thank You for Contacting Us</Heading>
 
             <Text style={paragraph}>
               Dear <strong>{name}</strong>,
             </Text>
 
             <Text style={paragraph}>
-              Thank you for booking a test ride with us. We are excited for you
-              to experience the {vehicleName}!
+              Thank you for reaching out to us. We have received your message
+              and will get back to you as soon as possible.
             </Text>
 
-            {/* Booking Details */}
+            {/* Request Details */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
-                Booking Details
+                Contact Details
               </Heading>
 
               <Row style={detailRow}>
                 <Column style={detailLabel}>Reference ID:</Column>
-                <Column style={detailValue}>{bookingReference}</Column>
+                <Column style={detailValue}>{requestId}</Column>
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Booking Date:</Column>
+                <Column style={detailLabel}>Submission Date:</Column>
                 <Column style={detailValue}>{formattedDate}</Column>
               </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Booking Time:</Column>
-                <Column style={detailValue}>{bookingTime}</Column>
-              </Row>
             </Section>
 
-            {/* Vehicle Information */}
+            {/* Message Information */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
-                Vehicle Information
+                Your Message
               </Heading>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Vehicle:</Column>
-                <Column style={detailValue}>{vehicleName}</Column>
+                <Column style={detailLabel}>Name:</Column>
+                <Column style={detailValue}>{name}</Column>
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Variant:</Column>
-                <Column style={detailValue}>{variantName}</Column>
-              </Row>
-            </Section>
-
-            {/* Dealer Information */}
-            <Section style={detailsSection}>
-              <Heading as="h2" style={subheading}>
-                Dealer Information
-              </Heading>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Name:</Column>
-                <Column style={detailValue}>{dealerName}</Column>
+                <Column style={detailLabel}>Email:</Column>
+                <Column style={detailValue}>{email}</Column>
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Address:</Column>
-                <Column style={detailValue}>{dealerAddress}</Column>
+                <Column style={detailLabel}>Phone Number:</Column>
+                <Column style={detailValue}>{phoneNumber}</Column>
+              </Row>
+
+              <Row style={messageRow}>
+                <Column style={messageLabel}>Message:</Column>
+              </Row>
+              <Row style={messageRow}>
+                <Column style={messageContent}>{message}</Column>
               </Row>
             </Section>
 
@@ -132,13 +106,9 @@ export const TestRideConfirmationEmail = ({
 
             {/* Next Steps */}
             <Text style={paragraph}>
-              Please arrive at the dealership 15 minutes prior to your scheduled
-              test ride.
-            </Text>
-
-            <Text style={paragraph}>
-              If you have any questions, please contact our customer service
-              team:
+              Our team will review your message and respond to you within 1-2
+              business days. If your matter is urgent, please contact our
+              customer service team directly:
             </Text>
 
             <Text style={contactInfo}>
@@ -156,34 +126,35 @@ export const TestRideConfirmationEmail = ({
             </Text>
 
             <Text style={paragraph}>
-              Thank you for choosing TVS Motors. We look forward to seeing you!
+              Thank you for choosing our services. We look forward to assisting
+              you.
             </Text>
 
             <Text style={signature}>
               Best regards,
               <br />
-              TVS Motors Team
+              Customer Support Team
             </Text>
           </Section>
 
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              © {new Date().getFullYear()} TVS Motors. All rights reserved.
+              © {new Date().getFullYear()} Company Name. All rights reserved.
             </Text>
             <Text style={footerLinks}>
               <Link
-                href="https://www.tvsmotor.com/privacy-policy"
+                href="https://www.company.com/privacy-policy"
                 style={footerLink}
               >
                 Privacy Policy
               </Link>{" "}
               •{" "}
-              <Link href="https://www.tvsmotor.com/terms" style={footerLink}>
+              <Link href="https://www.company.com/terms" style={footerLink}>
                 Terms & Conditions
               </Link>{" "}
               •{" "}
-              <Link href="https://www.tvsmotor.com/contact" style={footerLink}>
+              <Link href="https://www.company.com/contact" style={footerLink}>
                 Contact Us
               </Link>
             </Text>
@@ -193,6 +164,8 @@ export const TestRideConfirmationEmail = ({
     </Html>
   );
 };
+
+export default ContactEmail;
 
 // Styles
 const main = {
@@ -271,6 +244,25 @@ const detailValue = {
   width: "60%",
   fontSize: "14px",
   color: "#333333",
+};
+
+const messageRow = {
+  margin: "8px 0",
+};
+
+const messageLabel = {
+  fontSize: "14px",
+  color: "#666666",
+  fontWeight: "600",
+};
+
+const messageContent = {
+  fontSize: "14px",
+  color: "#333333",
+  padding: "10px",
+  backgroundColor: "#ffffff",
+  borderRadius: "4px",
+  border: "1px solid #eaeaea",
 };
 
 const divider = {

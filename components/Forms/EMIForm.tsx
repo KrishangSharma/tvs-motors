@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+import type * as z from "zod";
 import { Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -112,12 +112,15 @@ export default function EMICalculatorForm() {
                 <FormControl>
                   <div className="space-y-2">
                     <Input
-                      type="number"
+                      type="text"
+                      min="0"
                       {...field}
                       onChange={(e) => {
                         const value =
                           e.target.value === "" ? "0" : e.target.value;
-                        field.onChange(Number.parseFloat(value));
+                        // Remove prefixing zeros if there's more than one digit
+                        const cleanValue = value.replace(/^0+(\d)/, "$1");
+                        field.onChange(Number.parseFloat(cleanValue));
                       }}
                     />
                     <Slider
@@ -150,12 +153,15 @@ export default function EMICalculatorForm() {
                 <FormControl>
                   <div className="space-y-2">
                     <Input
-                      type="number"
+                      type="text"
+                      min="0"
                       {...field}
                       onChange={(e) => {
                         const value =
                           e.target.value === "" ? "0" : e.target.value;
-                        field.onChange(Number.parseFloat(value));
+                        // Remove prefixing zeros if there's more than one digit
+                        const cleanValue = value.replace(/^0+(\d)/, "$1");
+                        field.onChange(Number.parseFloat(cleanValue));
                       }}
                     />
                     <Slider
@@ -188,12 +194,15 @@ export default function EMICalculatorForm() {
                 <FormControl>
                   <div className="space-y-2">
                     <Input
-                      type="number"
+                      type="text"
+                      min="0"
                       {...field}
                       onChange={(e) => {
                         const value =
                           e.target.value === "" ? "0" : e.target.value;
-                        field.onChange(Number.parseInt(value, 10));
+                        // Remove prefixing zeros if there's more than one digit
+                        const cleanValue = value.replace(/^0+(\d)/, "$1");
+                        field.onChange(Number.parseInt(cleanValue, 10));
                       }}
                     />
                     <Slider
@@ -231,7 +240,10 @@ export default function EMICalculatorForm() {
                       Monthly EMI
                     </h3>
                     <p className="text-2xl font-bold">
-                      ₹{emiResult.toFixed(2)}
+                      ₹
+                      {emiResult.toLocaleString("en-IN", {
+                        maximumFractionDigits: 2,
+                      })}
                     </p>
                   </div>
 
@@ -240,7 +252,10 @@ export default function EMICalculatorForm() {
                       Total Interest
                     </h3>
                     <p className="text-2xl font-bold">
-                      ₹{totalInterest?.toFixed(2)}
+                      ₹
+                      {totalInterest?.toLocaleString("en-IN", {
+                        maximumFractionDigits: 2,
+                      })}
                     </p>
                   </div>
 
@@ -249,7 +264,10 @@ export default function EMICalculatorForm() {
                       Total Amount
                     </h3>
                     <p className="text-2xl font-bold">
-                      ₹{totalAmount?.toFixed(2)}
+                      ₹
+                      {totalAmount?.toLocaleString("en-IN", {
+                        maximumFractionDigits: 2,
+                      })}
                     </p>
                   </div>
                 </div>

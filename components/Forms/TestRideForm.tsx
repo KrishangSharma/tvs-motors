@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Loader2, MapPin, ChevronRight } from "lucide-react";
+import type * as z from "zod";
+import {
+  Loader2,
+  MapPin,
+  ChevronRight,
+  Clock,
+  CalendarIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,15 +33,33 @@ import {
 import Heading from "@/components/Heading";
 import ReCAPTCHA from "react-google-recaptcha";
 import { testRideFormSchema } from "@/lib/formSchemas";
+import { timeSlots } from "@/constants";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
 
 type FormValues = z.infer<typeof testRideFormSchema>;
+
+// Sample vehicle data
+const vehicles = [
+  { id: "1", name: "TVS Apache RR 310" },
+  { id: "2", name: "TVS Apache RTR 200 4V" },
+  { id: "3", name: "TVS Ronin" },
+  { id: "4", name: "TVS Jupiter" },
+  { id: "5", name: "TVS NTORQ" },
+];
 
 export default function TestRideForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [captchaValue, setCaptchaValue] = useState("");
-  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [variants, setVariants] = useState<{ id: string; name: string }[]>([]);
+  const [dealers, setDealers] = useState<{ id: string; name: string }[]>([]);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -46,27 +70,21 @@ export default function TestRideForm() {
       name: "",
       email: "",
       phone: "",
-      otp: "",
+      // otp: "",
       pincode: "",
       vehicle: "",
       variant: "",
       dealer: "",
+      timeSlot: "",
+      bookingDate: undefined,
       interestedInOffers: false,
       authorizeContact: true,
     },
+    mode: "onChange", // Enable validation on change
   });
 
-  // Sample vehicle data
-  const vehicles = [
-    { id: "1", name: "TVS Apache RR 310" },
-    { id: "2", name: "TVS Apache RTR 200 4V" },
-    { id: "3", name: "TVS Ronin" },
-    { id: "4", name: "TVS Jupiter" },
-    { id: "5", name: "TVS NTORQ" },
-  ];
-
   // Sample variant data based on selected vehicle
-  const getVariants = React.useCallback((vehicleId: string) => {
+  const getVariants = useCallback((vehicleId: string) => {
     switch (vehicleId) {
       case "1":
         return [
@@ -103,7 +121,7 @@ export default function TestRideForm() {
   }, []);
 
   // Sample dealers based on pincode
-  const getDealers = React.useCallback((pincode: string) => {
+  const getDealers = useCallback((pincode: string) => {
     // This would typically be an API call
     return [
       { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
@@ -112,14 +130,6 @@ export default function TestRideForm() {
     ];
   }, []);
 
-  const [variants, setVariants] = React.useState<
-    { id: string; name: string }[]
-  >([]);
-
-  const [dealers, setDealers] = React.useState<{ id: string; name: string }[]>(
-    []
-  );
-
   // Handle vehicle change to update variants
   React.useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -127,52 +137,24 @@ export default function TestRideForm() {
         const vehicleId = value.vehicle;
         if (vehicleId) {
           setVariants(getVariants(vehicleId));
-          form.setValue("variant", ""); // Reset variant when vehicle changes
+          form.setValue("variant", "", { shouldValidate: true });
         } else {
-          setVariants([]); // Reset variants when no vehicle is selected
+          setVariants([]);
+        }
+      }
+
+      if (name === "pincode") {
+        const pincode = value.pincode;
+        if (pincode && pincode.length === 6) {
+          setDealers(getDealers(pincode));
+        } else if (pincode && pincode.length < 6) {
+          setDealers([]);
         }
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [form, getVariants]);
-
-  // Handle pincode change to update dealers
-  React.useEffect(() => {
-    const pincode = form.watch("pincode");
-    if (pincode && pincode.length === 6) {
-      setDealers(getDealers(pincode));
-    }
-  }, [form.watch, getDealers]);
-
-  // Handle form submission
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-
-    try {
-      // Send the form data to the API
-      const bookingResponse = await fetch("/api/book-test-ride", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-
-      if (!bookingResponse.ok) {
-        throw new Error("Failed to book test ride");
-      }
-
-      setIsSubmitting(false);
-      form.reset();
-      setActiveStep(1);
-      captchaRef.current?.reset();
-      setCaptchaValue("");
-
-      // Show success message or redirect
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setIsSubmitting(false);
-    }
-  };
+  }, [form, getVariants, getDealers]);
 
   // Handle location detection
   const handleDetectLocation = () => {
@@ -180,7 +162,7 @@ export default function TestRideForm() {
 
     // Simulate geolocation and pincode fetching
     setTimeout(() => {
-      form.setValue("pincode", "400001");
+      form.setValue("pincode", "400001", { shouldValidate: true });
       setDealers(getDealers("400001"));
       setIsDetectingLocation(false);
     }, 2000);
@@ -190,6 +172,8 @@ export default function TestRideForm() {
   const handleReset = () => {
     form.reset();
     setActiveStep(1);
+    setCaptchaValue("");
+    captchaRef.current?.reset();
   };
 
   // Handle next step
@@ -208,36 +192,80 @@ export default function TestRideForm() {
 
   // Check if current step is valid
   const isCurrentStepValid = () => {
+    const values = form.getValues();
+
     switch (activeStep) {
       case 1:
         return (
-          form.getValues("name") !== "" &&
-          form.getValues("email") !== "" &&
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.getValues("email")) &&
-          form.getValues("phone") !== "" &&
-          form.getValues("phone").length === 10
+          !!values.name &&
+          !!values.email &&
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email) &&
+          !!values.phone &&
+          values.phone.length === 10
         );
       case 2:
         return (
-          form.getValues("pincode") !== "" &&
-          form.getValues("pincode").length === 6 &&
-          form.getValues("dealer") !== ""
+          !!values.pincode && values.pincode.length === 6 && !!values.dealer
         );
       case 3:
         return (
-          form.getValues("vehicle") !== "" &&
-          form.getValues("variant") !== "" &&
-          form.getValues("authorizeContact") === true &&
-          captchaValue !== "" // Add captcha validation
+          !!values.vehicle &&
+          !!values.variant &&
+          !!values.bookingDate &&
+          !!values.timeSlot &&
+          values.authorizeContact === true &&
+          !!captchaValue
         );
       default:
         return false;
     }
   };
 
+  // Handle form submission
+  const handleSubmit = async (data: FormValues) => {
+    console.log("Form submission started!!", data);
+    setIsSubmitting(true);
+
+    try {
+      const formattedData = {
+        ...data,
+        bookingDate: data.bookingDate
+          ? data.bookingDate.toISOString()
+          : undefined,
+      };
+
+      console.log("Sending formatted data:", formattedData);
+
+      // Send the form data to the API
+      const bookingResponse = await fetch("/api/book-test-ride", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formattedData),
+      });
+
+      if (!bookingResponse.ok) {
+        const errorData = await bookingResponse.json();
+        console.error("API error response:", errorData);
+        throw new Error("Failed to book test ride");
+      }
+
+      console.log("Form submission successful!");
+      // Reset form state
+      setIsSubmitting(false);
+      form.reset();
+      setActiveStep(1);
+      captchaRef.current?.reset();
+      setCaptchaValue("");
+
+      // Show success message or redirect
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setIsSubmitting(false);
+    }
+  };
+
   const handleCaptchaChange = async (value: string | null) => {
     setCaptchaValue(value || "");
-
     const captchaResponse = await fetch("/api/verify-captcha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -246,10 +274,16 @@ export default function TestRideForm() {
 
     if (!captchaResponse.ok) {
       // Handle error appropriately
-      setIsCaptchaVerified(false);
       throw new Error("Captcha verification failed");
     }
-    setIsCaptchaVerified(true);
+  };
+
+  // Custom handler for phone number to only allow digits and validate the form
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value === "" || /^\d+$/.test(value)) {
+      form.setValue("phone", value, { shouldValidate: true });
+    }
   };
 
   return (
@@ -308,7 +342,21 @@ export default function TestRideForm() {
 
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSubmit)}
+              onSubmit={(e) => {
+                e.preventDefault();
+                console.log("Form submission attempt triggered");
+                console.log("Current form values:", form.getValues());
+                console.log("Form is valid:", form.formState.isValid);
+                console.log("Form errors:", form.formState.errors);
+
+                // Check if the current step is valid
+                if (!isCurrentStepValid()) {
+                  console.log("Current step is not valid");
+                  return;
+                }
+
+                form.handleSubmit(handleSubmit)(e);
+              }}
               className="space-y-6"
             >
               {/* Step 1: Personal Information */}
@@ -380,40 +428,8 @@ export default function TestRideForm() {
                               placeholder="Enter your mobile number"
                               {...field}
                               autoComplete="off"
+                              onChange={handlePhoneNumberChange}
                               maxLength={10}
-                              className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
-                              onInput={(e) => {
-                                e.currentTarget.value =
-                                  e.currentTarget.value.replace(/\D/g, "");
-                                field.onChange(e);
-                              }}
-                              onKeyDown={(e) => {
-                                if (["e", "E", "+", "-"].includes(e.key)) {
-                                  e.preventDefault();
-                                }
-                              }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* OTP Field */}
-                    <FormField
-                      control={form.control}
-                      name="otp"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-gray-700">
-                            OTP Verification
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter OTP"
-                              {...field}
-                              autoComplete="off"
-                              maxLength={6}
                               className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12"
                             />
                           </FormControl>
@@ -449,20 +465,12 @@ export default function TestRideForm() {
                                 className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12 pl-10"
                                 autoComplete="off"
                                 maxLength={6}
-                                onInput={(e) => {
-                                  const value = e.currentTarget.value.replace(
+                                onChange={(e) => {
+                                  const value = e.target.value.replace(
                                     /\D/g,
                                     ""
                                   );
-                                  e.currentTarget.value = value;
                                   field.onChange(value);
-
-                                  // Update dealers when valid pincode is entered
-                                  if (value.length === 6) {
-                                    setDealers(getDealers(value));
-                                  } else {
-                                    setDealers([]);
-                                  }
                                 }}
                               />
                             </FormControl>
@@ -597,6 +605,122 @@ export default function TestRideForm() {
                     )}
                   />
 
+                  {/* Date Picker */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="bookingDate"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel className="text-gray-700">
+                            Preferred Date
+                          </FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={`w-full h-12 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10 text-left font-normal ${
+                                    !field.value ? "text-muted-foreground" : ""
+                                  }`}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Select a date</span>
+                                  )}
+                                  <CalendarIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) => {
+                                  // Disable dates in the past
+                                  const today = new Date();
+                                  today.setHours(0, 0, 0, 0);
+                                  return date < today;
+                                }}
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormDescription>
+                            Choose a date for your test ride (must be a future
+                            date)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="timeSlot"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-gray-700">
+                            Preferred Test Ride Time
+                          </FormLabel>
+                          <div className="relative">
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12 pl-10">
+                                  <SelectValue placeholder="Select a time slot" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <div className="py-2 px-2 text-sm font-medium text-gray-500 bg-gray-50">
+                                  Morning Slots
+                                </div>
+                                {timeSlots
+                                  .filter((slot) => slot.period === "Morning")
+                                  .map((slot) => (
+                                    <SelectItem key={slot.id} value={slot.id}>
+                                      {slot.time}
+                                    </SelectItem>
+                                  ))}
+                                <div className="py-2 px-2 text-sm font-medium text-gray-500 bg-gray-50">
+                                  Afternoon Slots
+                                </div>
+                                {timeSlots
+                                  .filter((slot) => slot.period === "Afternoon")
+                                  .map((slot) => (
+                                    <SelectItem key={slot.id} value={slot.id}>
+                                      {slot.time}
+                                    </SelectItem>
+                                  ))}
+                                <div className="py-2 px-2 text-sm font-medium text-gray-500 bg-gray-50">
+                                  Evening Slots
+                                </div>
+                                {timeSlots
+                                  .filter((slot) => slot.period === "Evening")
+                                  .map((slot) => (
+                                    <SelectItem key={slot.id} value={slot.id}>
+                                      {slot.time}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                            <Clock className="absolute left-3 top-3 h-5 w-5 text-gray-400 pointer-events-none" />
+                          </div>
+                          <FormDescription>
+                            Choose a convenient time for your test ride
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   {/* Checkboxes */}
                   <div className="space-y-4 pt-2">
                     <FormField
@@ -694,11 +818,8 @@ export default function TestRideForm() {
                   ) : (
                     <Button
                       type="submit"
-                      disabled={
-                        isSubmitting ||
-                        !isCurrentStepValid() ||
-                        !isCaptchaVerified
-                      }
+                      onClick={() => console.log("Submit button clicked")}
+                      disabled={isSubmitting || !isCurrentStepValid()}
                       className="bg-blue-600 hover:bg-blue-700 text-white h-12"
                     >
                       {isSubmitting ? (

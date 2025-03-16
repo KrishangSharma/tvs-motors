@@ -189,3 +189,24 @@ export interface VehicleExchangeConfirmationEmailProps {
   exchangeReference: string;
   requestDate?: Date;
 }
+
+export interface InsuranceRenewalEmailProps {
+  customerName: string;
+  contactNumber: string;
+  emailId: string;
+  model: string;
+  registrationNumber: string;
+  registrationYear: string;
+  previousInsuranceCompany: string;
+  requestId: string;
+  requestDate: Date;
+}
+
+export interface ContactEmailProps {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  message: string;
+  requestId: string;
+  requestDate: Date;
+}

@@ -136,6 +136,15 @@ export default function OnlineServiceBookingForm() {
     setIsCaptchaVerified(true);
   };
 
+  // Custom handler for phone number to only allow digits
+  const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only update if the value contains only digits
+    if (value === "" || /^\d+$/.test(value)) {
+      form.setValue("contactNumber", value);
+    }
+  };
+
   return (
     <div className="flex justify-center p-4 w-full">
       <Card className="w-full max-w-2xl shadow-lg border-t-4 border-t-primary">
@@ -183,7 +192,12 @@ export default function OnlineServiceBookingForm() {
                         <Phone className="h-4 w-4" /> Contact Number
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="1234567890" {...field} />
+                        <Input
+                          placeholder="1234567890"
+                          {...field}
+                          onChange={handlePhoneNumberChange}
+                          maxLength={10}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -127,3 +127,15 @@ export const stories = [
     source: "https://youtu.be/DHNsur93omY",
   },
 ];
+
+export const timeSlots = [
+  { id: "morning1", time: "09:00 AM - 10:00 AM", period: "Morning" },
+  { id: "morning2", time: "10:00 AM - 11:00 AM", period: "Morning" },
+  { id: "morning3", time: "11:00 AM - 12:00 PM", period: "Morning" },
+  { id: "afternoon1", time: "12:00 PM - 01:00 PM", period: "Afternoon" },
+  { id: "afternoon2", time: "02:00 PM - 03:00 PM", period: "Afternoon" },
+  { id: "afternoon3", time: "03:00 PM - 04:00 PM", period: "Afternoon" },
+  { id: "evening1", time: "04:00 PM - 05:00 PM", period: "Evening" },
+  { id: "evening2", time: "05:00 PM - 06:00 PM", period: "Evening" },
+  { id: "evening3", time: "06:00 PM - 07:00 PM", period: "Evening" },
+];
