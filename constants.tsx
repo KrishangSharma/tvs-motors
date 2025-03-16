@@ -139,3 +139,86 @@ export const timeSlots = [
   { id: "evening2", time: "05:00 PM - 06:00 PM", period: "Evening" },
   { id: "evening3", time: "06:00 PM - 07:00 PM", period: "Evening" },
 ];
+
+export const vehicles = [
+  { id: "1", name: "TVS Apache RR 310" },
+  { id: "2", name: "TVS Apache RTR 200 4V" },
+  { id: "3", name: "TVS Ronin" },
+  { id: "4", name: "TVS Jupiter" },
+  { id: "5", name: "TVS NTORQ" },
+];
+
+export const vehicleVariants = {
+  "1": [
+    { id: "1-1", name: "Standard" },
+    { id: "1-2", name: "BTO" },
+  ],
+  "2": [
+    { id: "2-1", name: "Single Channel ABS" },
+    { id: "2-2", name: "Dual Channel ABS" },
+  ],
+  "3": [
+    { id: "3-1", name: "Single Tone" },
+    { id: "3-2", name: "Dual Tone" },
+    { id: "3-3", name: "Triple Tone" },
+  ],
+  "4": [
+    { id: "4-1", name: "Standard" },
+    { id: "4-2", name: "ZX" },
+    { id: "4-3", name: "ZX Disc" },
+    { id: "4-4", name: "Classic" },
+  ],
+  "5": [
+    { id: "5-1", name: "Race XP" },
+    { id: "5-2", name: "Super Squad Edition" },
+    { id: "5-3", name: "Standard" },
+  ],
+} as const;
+
+export const sampleDealers = [
+  { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
+  { id: "d2", name: "TVS Motors Authorized Dealer - Highway Road" },
+  { id: "d3", name: "TVS Motors Authorized Dealer - Main Street" },
+];
+
+// Sample vehicle and variant data for mapping IDs to names
+export const vehicleMap = {
+  "1": "TVS Apache RR 310",
+  "2": "TVS Apache RTR 200 4V",
+  "3": "TVS Ronin",
+  "4": "TVS Jupiter",
+  "5": "TVS NTORQ",
+};
+
+export const variantMap = {
+  "1-1": "Standard",
+  "1-2": "BTO",
+  "2-1": "Single Channel ABS",
+  "2-2": "Dual Channel ABS",
+  "3-1": "Single Tone",
+  "3-2": "Dual Tone",
+  "3-3": "Triple Tone",
+  "4-1": "Standard",
+  "4-2": "ZX",
+  "4-3": "ZX Disc",
+  "4-4": "Classic",
+  "5-1": "Race XP",
+  "5-2": "Super Squad Edition",
+  "5-3": "Standard",
+};
+
+// Sample dealer data for mapping IDs to names and addresses
+export const dealerMap = {
+  d1: {
+    name: "TVS Motors Authorized Dealer - City Center",
+    address: "123 Main Street, Mumbai, Maharashtra 400001",
+  },
+  d2: {
+    name: "TVS Motors Authorized Dealer - Highway Road",
+    address: "456 Highway Road, Mumbai, Maharashtra 400002",
+  },
+  d3: {
+    name: "TVS Motors Authorized Dealer - Main Street",
+    address: "789 Main Street, Mumbai, Maharashtra 400003",
+  },
+};

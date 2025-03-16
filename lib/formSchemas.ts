@@ -76,9 +76,6 @@ export const exchangeFormSchema = z.object({
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
-  currentVehicleMake: z
-    .string()
-    .min(1, { message: "Vehicle make is required" }),
   currentVehicleModel: z
     .string()
     .min(1, { message: "Vehicle model is required" }),

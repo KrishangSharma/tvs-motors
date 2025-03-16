@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { useRef, useState } from "react";
 import { insuranceRenewalFormSchema } from "@/lib/formSchemas";
+import { vehicles } from "@/constants";
 
 // Generate years for the dropdown (current year down to 20 years ago)
 const currentYear = new Date().getFullYear();
@@ -183,10 +184,24 @@ export default function InsuranceRenewalForm() {
                   name="model"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Vehicle Model</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Honda City" {...field} />
-                      </FormControl>
+                      <FormLabel>Model</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
+                            <SelectValue placeholder="Select a vehicle" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.name}>
+                              {vehicle.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

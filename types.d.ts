@@ -180,7 +180,6 @@ export interface VehicleExchangeConfirmationEmailProps {
   fullName: string;
   email: string;
   phone: string;
-  currentVehicleMake: string;
   currentVehicleModel: string;
   currentVehicleYear: string;
   currentVehicleRegistration: string;

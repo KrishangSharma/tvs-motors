@@ -1,49 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { TestRideConfirmationEmail } from "@/react-email-starter/emails/test-ride-confirmation";
+import { dealerMap, variantMap, vehicleMap } from "@/constants";
 
 const resend = new Resend();
-// Sample vehicle and variant data for mapping IDs to names
-const vehicleMap = {
-  "1": "TVS Apache RR 310",
-  "2": "TVS Apache RTR 200 4V",
-  "3": "TVS Ronin",
-  "4": "TVS Jupiter",
-  "5": "TVS NTORQ",
-};
-
-const variantMap = {
-  "1-1": "Standard",
-  "1-2": "BTO",
-  "2-1": "Single Channel ABS",
-  "2-2": "Dual Channel ABS",
-  "3-1": "Single Tone",
-  "3-2": "Dual Tone",
-  "3-3": "Triple Tone",
-  "4-1": "Standard",
-  "4-2": "ZX",
-  "4-3": "ZX Disc",
-  "4-4": "Classic",
-  "5-1": "Race XP",
-  "5-2": "Super Squad Edition",
-  "5-3": "Standard",
-};
-
-// Sample dealer data for mapping IDs to names and addresses
-const dealerMap = {
-  d1: {
-    name: "TVS Motors Authorized Dealer - City Center",
-    address: "123 Main Street, Mumbai, Maharashtra 400001",
-  },
-  d2: {
-    name: "TVS Motors Authorized Dealer - Highway Road",
-    address: "456 Highway Road, Mumbai, Maharashtra 400002",
-  },
-  d3: {
-    name: "TVS Motors Authorized Dealer - Main Street",
-    address: "789 Main Street, Mumbai, Maharashtra 400003",
-  },
-};
 
 export async function POST(req: NextRequest) {
   if (req.method !== "POST") {

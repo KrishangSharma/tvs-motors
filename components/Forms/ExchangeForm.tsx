@@ -20,6 +20,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
 import { exchangeFormSchema } from "@/lib/formSchemas";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { vehicles, vehicleVariants } from "@/constants";
 
 type FormValues = z.infer<typeof exchangeFormSchema>;
 
@@ -36,7 +44,6 @@ export default function ExchangeForm() {
       fullName: "",
       email: "",
       phone: "",
-      currentVehicleMake: "",
       currentVehicleModel: "",
       currentVehicleYear: "",
       currentVehicleRegistration: "",
@@ -155,36 +162,33 @@ export default function ExchangeForm() {
 
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Current Vehicle Details</h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="currentVehicleMake"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Make</FormLabel>
+            <FormField
+              control={form.control}
+              name="currentVehicleModel"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Model</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
-                      <Input placeholder="e.g., Honda, Toyota" {...field} />
+                      <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
+                        <SelectValue placeholder="Select a vehicle" />
+                      </SelectTrigger>
                     </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="currentVehicleModel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Model</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., Civic, Corolla" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                    <SelectContent>
+                      {vehicles.map((vehicle) => (
+                        <SelectItem key={vehicle.id} value={vehicle.name}>
+                          {vehicle.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField

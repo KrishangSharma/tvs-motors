@@ -20,7 +20,6 @@ export default function VehicleExchangeConfirmationEmail({
   fullName = "Jhon Doe",
   email = "jhondoe@email.com",
   phone = "1800-123-4567",
-  currentVehicleMake = "Toyota",
   currentVehicleModel = "Corolla",
   currentVehicleYear = "2018",
   currentVehicleRegistration = "KA-01-12345",
@@ -87,11 +86,6 @@ export default function VehicleExchangeConfirmationEmail({
               <Heading as="h2" style={subheading}>
                 Your Current Vehicle
               </Heading>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Make:</Column>
-                <Column style={detailValue}>{currentVehicleMake}</Column>
-              </Row>
 
               <Row style={detailRow}>
                 <Column style={detailLabel}>Model:</Column>

@@ -33,7 +33,12 @@ import {
 import Heading from "@/components/Heading";
 import ReCAPTCHA from "react-google-recaptcha";
 import { testRideFormSchema } from "@/lib/formSchemas";
-import { timeSlots } from "@/constants";
+import {
+  sampleDealers,
+  timeSlots,
+  vehicles,
+  vehicleVariants,
+} from "@/constants";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -43,15 +48,6 @@ import {
 import { format } from "date-fns";
 
 type FormValues = z.infer<typeof testRideFormSchema>;
-
-// Sample vehicle data
-const vehicles = [
-  { id: "1", name: "TVS Apache RR 310" },
-  { id: "2", name: "TVS Apache RTR 200 4V" },
-  { id: "3", name: "TVS Ronin" },
-  { id: "4", name: "TVS Jupiter" },
-  { id: "5", name: "TVS NTORQ" },
-];
 
 export default function TestRideForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,54 +76,15 @@ export default function TestRideForm() {
       interestedInOffers: false,
       authorizeContact: true,
     },
-    mode: "onChange", // Enable validation on change
+    mode: "onChange",
   });
 
-  // Sample variant data based on selected vehicle
   const getVariants = useCallback((vehicleId: string) => {
-    switch (vehicleId) {
-      case "1":
-        return [
-          { id: "1-1", name: "Standard" },
-          { id: "1-2", name: "BTO" },
-        ];
-      case "2":
-        return [
-          { id: "2-1", name: "Single Channel ABS" },
-          { id: "2-2", name: "Dual Channel ABS" },
-        ];
-      case "3":
-        return [
-          { id: "3-1", name: "Single Tone" },
-          { id: "3-2", name: "Dual Tone" },
-          { id: "3-3", name: "Triple Tone" },
-        ];
-      case "4":
-        return [
-          { id: "4-1", name: "Standard" },
-          { id: "4-2", name: "ZX" },
-          { id: "4-3", name: "ZX Disc" },
-          { id: "4-4", name: "Classic" },
-        ];
-      case "5":
-        return [
-          { id: "5-1", name: "Race XP" },
-          { id: "5-2", name: "Super Squad Edition" },
-          { id: "5-3", name: "Standard" },
-        ];
-      default:
-        return [];
-    }
+    return vehicleVariants[vehicleId as keyof typeof vehicleVariants] || [];
   }, []);
 
-  // Sample dealers based on pincode
-  const getDealers = useCallback((pincode: string) => {
-    // This would typically be an API call
-    return [
-      { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
-      { id: "d2", name: "TVS Motors Authorized Dealer - Highway Road" },
-      { id: "d3", name: "TVS Motors Authorized Dealer - Main Street" },
-    ];
+  const getDealers = useCallback(() => {
+    return sampleDealers;
   }, []);
 
   // Handle vehicle change to update variants
@@ -136,7 +93,7 @@ export default function TestRideForm() {
       if (name === "vehicle") {
         const vehicleId = value.vehicle;
         if (vehicleId) {
-          setVariants(getVariants(vehicleId));
+          setVariants([...getVariants(vehicleId)]);
           form.setValue("variant", "", { shouldValidate: true });
         } else {
           setVariants([]);
@@ -146,7 +103,7 @@ export default function TestRideForm() {
       if (name === "pincode") {
         const pincode = value.pincode;
         if (pincode && pincode.length === 6) {
-          setDealers(getDealers(pincode));
+          setDealers(getDealers());
         } else if (pincode && pincode.length < 6) {
           setDealers([]);
         }
@@ -163,7 +120,7 @@ export default function TestRideForm() {
     // Simulate geolocation and pincode fetching
     setTimeout(() => {
       form.setValue("pincode", "400001", { shouldValidate: true });
-      setDealers(getDealers("400001"));
+      setDealers(getDealers());
       setIsDetectingLocation(false);
     }, 2000);
   };

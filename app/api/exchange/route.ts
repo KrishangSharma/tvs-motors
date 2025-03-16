@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
       fullName,
       email,
       phone,
-      currentVehicleMake,
       currentVehicleModel,
       currentVehicleYear,
       currentVehicleRegistration,
@@ -38,12 +37,11 @@ export async function POST(req: NextRequest) {
     const emailData = {
       from: "exchange@resend.dev",
       to: email,
-      subject: `Confirmation: Vehicle Exchange Request for ${currentVehicleMake} ${currentVehicleModel}`,
+      subject: `Confirmation: Vehicle Exchange Request for ${currentVehicleModel}`,
       react: VehicleExchangeConfirmationEmail({
         fullName,
         email,
         phone,
-        currentVehicleMake,
         currentVehicleModel,
         currentVehicleYear,
         currentVehicleRegistration,
