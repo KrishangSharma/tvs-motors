@@ -86,9 +86,5 @@ export function VideoCarousel() {
     );
   });
 
-  return (
-    <div className="w-full h-full">
-      <Carousel items={cards.filter(Boolean)} />
-    </div>
-  );
+  return <Carousel items={cards.filter(Boolean)} />;
 }

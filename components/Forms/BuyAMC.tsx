@@ -130,7 +130,7 @@ export default function BuyAMCForm() {
     const make = form.watch("vehicleMake");
     if (make) {
       setVehicleModels(getVehicleModels(make));
-      form.setValue("vehicleModel", ""); // Reset model when make changes
+      form.setValue("vehicleModel", "");
     }
   }, [form.watch("vehicleMake"), form]);
 
@@ -140,7 +140,11 @@ export default function BuyAMCForm() {
       description="Purchase an AMC for your vehicle with easy payment options"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-4"
+          autoComplete="off"
+        >
           <FormField
             control={form.control}
             name="ownerName"

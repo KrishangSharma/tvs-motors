@@ -119,7 +119,7 @@ export default function ContactForm() {
 
   return (
     <div className="flex justify-center p-4 w-full">
-      <Card className="w-full max-w-2xl">
+      <Card className="w-full max-w-2xl md:border-none md:shadow-none ">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Contact Us</CardTitle>
           <CardDescription>

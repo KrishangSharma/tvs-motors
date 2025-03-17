@@ -94,7 +94,11 @@ export default function SuggestionForm() {
       description="We value your input to help us improve our services"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-4  "
+          autoComplete="off"
+        >
           <FormField
             control={form.control}
             name="name"

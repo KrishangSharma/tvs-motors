@@ -5,6 +5,19 @@ import Story2 from "@/public/yt-stories/story-2.jpg";
 import Story3 from "@/public/yt-stories/story-3.jpg";
 import Story4 from "@/public/yt-stories/story-4.jpg";
 
+import {
+  Briefcase,
+  Phone,
+  Calculator,
+  RefreshCw,
+  Clock,
+  Shield,
+  Repeat,
+  CreditCard,
+  Calendar,
+  MessageSquare,
+} from "lucide-react";
+
 // NAVBAR CONSTANTS
 export const navLinks: NavLinks[] = [
   {
@@ -222,3 +235,86 @@ export const dealerMap = {
     address: "789 Main Street, Mumbai, Maharashtra 400003",
   },
 };
+
+export const services = [
+  {
+    id: 1,
+    title: "Career Application",
+    description:
+      "Join our team of automotive professionals and build your career with us",
+    icon: <Briefcase className="h-10 w-10 text-primary" />,
+    link: "/careers/apply",
+  },
+  {
+    id: 2,
+    title: "Contact Us",
+    description:
+      "Get in touch with our customer support team for any queries or assistance",
+    icon: <Phone className="h-10 w-10 text-primary" />,
+    link: "/contact-us",
+  },
+  {
+    id: 3,
+    title: "EMI Calculator",
+    description:
+      "Calculate your monthly installments for vehicle purchases and services",
+    icon: <Calculator className="h-10 w-10 text-primary" />,
+    link: "/emi-calculator",
+  },
+  {
+    id: 4,
+    title: "Vehicle Exchange",
+    description:
+      "Trade in your old vehicle for a new one with our hassle-free exchange program",
+    icon: <RefreshCw className="h-10 w-10 text-primary" />,
+    link: "/exchange",
+  },
+  {
+    id: 5,
+    title: "Express Service",
+    description:
+      "Quick maintenance services for your vehicle when you're short on time",
+    icon: <Clock className="h-10 w-10 text-primary" />,
+    link: "/express-service",
+  },
+  {
+    id: 6,
+    title: "AMC",
+    description:
+      "Comprehensive maintenance packages to keep your vehicle in top condition",
+    icon: <Shield className="h-10 w-10 text-primary" />,
+    link: "/get-amc",
+  },
+  {
+    id: 7,
+    title: "Insurance Renewal",
+    description:
+      "Renew your vehicle insurance quickly and easily with our assistance",
+    icon: <Repeat className="h-10 w-10 text-primary" />,
+    link: "/insurance-renewal",
+  },
+  {
+    id: 8,
+    title: "Loan Application",
+    description:
+      "Apply for vehicle loans with competitive interest rates and flexible terms",
+    icon: <CreditCard className="h-10 w-10 text-primary" />,
+    link: "/loan-application",
+  },
+  {
+    id: 9,
+    title: "Online Service Booking",
+    description:
+      "Book your vehicle service appointment online at your convenience",
+    icon: <Calendar className="h-10 w-10 text-primary" />,
+    link: "/online-service",
+  },
+  {
+    id: 10,
+    title: "Suggestions",
+    description:
+      "Share your feedback and suggestions to help us improve our services",
+    icon: <MessageSquare className="h-10 w-10 text-primary" />,
+    link: "/suggestions",
+  },
+];

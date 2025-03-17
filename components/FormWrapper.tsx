@@ -16,7 +16,7 @@ export function FormWrapper({
   footer,
 }: FormWrapperProps) {
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-lg">
+    <Card className="w-full max-w-2xl shadow-lg md:shadow-none md:border-none ">
       <CardHeader>
         <CardTitle className="text-2xl">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

@@ -147,8 +147,8 @@ export default function OnlineServiceBookingForm() {
 
   return (
     <div className="flex justify-center p-4 w-full">
-      <Card className="w-full max-w-2xl shadow-lg border-t-4 border-t-primary">
-        <CardHeader className="space-y-1 bg-muted/50 rounded-t-lg">
+      <Card className="w-full max-w-2xl md:border-none md:shadow-none shadow-lg border-t-4 border-t-primary">
+        <CardHeader className="space-y-1  rounded-t-lg">
           <div className="flex items-center space-x-2">
             <CheckCircle className="h-6 w-6 text-primary" />
             <CardTitle className="text-2xl font-bold">

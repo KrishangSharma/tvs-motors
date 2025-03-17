@@ -19,7 +19,7 @@ export default async function YourRide() {
   const vehicles: VehicleItem[] = await client.fetch(query);
 
   return (
-    <div className="container mx-auto w-full sm:max-w-7xl p-4 md:p-8 -mt-10 ">
+    <div className="container mx-auto w-full sm:max-w-7xl p-4 md:p-8 mt-10 ">
       <Heading smText="Discover Your Ride" lgText="Vehicles" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-5">
