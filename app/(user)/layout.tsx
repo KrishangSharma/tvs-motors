@@ -4,6 +4,7 @@ import "../globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { Footer } from "@/components/ui/large-name-footer";
 import { Toaster } from "@/components/ui/sonner";
+import { FloatingDockDemo } from "@/components/FloatingDock";
 
 const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
@@ -23,8 +24,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${quicksand.className} antialiased`}>
-        <Navbar />
+        {/* <Navbar /> */}
         {children}
+        <FloatingDockDemo />
         <Footer />
         <Toaster />
       </body>

@@ -9,14 +9,14 @@ const Hero = () => {
   const bikeY = useTransform(scrollY, [0, 1000], [0, 150]);
 
   return (
-    <div className="relative w-full h-[100svh] overflow-hidden bg-white text-gray-900">
+    <div className="relative w-full h-[100svh] overflow-hidden text-gray-900">
       <motion.div
         className="absolute inset-0 flex flex-col items-center pt-10 md:pt-20 px-6 md:px-12 z-[2]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="relative w-full text-center rounded-2xl bg-gradient-to-b from-white via-white/50 to-white/30 backdrop-blur-sm">
+        <div className="relative w-full text-center">
           <motion.h1
             className="max-w-4xl mx-auto text-3xl md:text-6xl font-bold leading-tight tracking-wider bg-gradient-to-r from-red-600 to-blue-600 text-transparent bg-clip-text"
             initial={{ opacity: 0, y: -20 }}
