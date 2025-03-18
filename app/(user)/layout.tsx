@@ -3,6 +3,7 @@ import { Quicksand } from "next/font/google";
 import "../globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { Footer } from "@/components/ui/large-name-footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
@@ -25,6 +26,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

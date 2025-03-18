@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import ReCAPTCHA from "react-google-recaptcha";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,22 +53,31 @@ export default function CareerForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // First verify the captcha
       const response = await fetch("/api/career-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form.getValues()),
       });
       if (!response.ok) {
-        throw new Error("Captcha verification failed");
-      } // Rest of form submission logic would go here
+        throw new Error("Form submission failed");
+      }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        fullName: "",
+        email: "",
+        phone: "",
+        interestedProfile: "",
+        coverLetter: "",
+      });
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success(
+        "Application submitted successfully! We'll review your application and get back to you."
+      );
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error("Failed to submit application. Please try again.");
     }
   };
 

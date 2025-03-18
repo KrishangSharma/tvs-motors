@@ -28,6 +28,8 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
 import { amcFormSchema } from "@/lib/formSchemas";
+import { toast } from "sonner";
+import { vehicles, vehicleVariants } from "@/constants";
 
 type FormValues = z.infer<typeof amcFormSchema>;
 
@@ -74,11 +76,26 @@ export default function BuyAMCForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
       captchaRef.current?.reset();
       setCaptchaValue("");
+      setStartDate(undefined);
+      form.reset({
+        ownerName: "",
+        email: "",
+        phone: "",
+        vehicleMake: "",
+        vehicleModel: "",
+        registrationNumber: "",
+        amcPackage: "",
+        startDate: undefined,
+        additionalComments: "",
+      });
+      toast.success(
+        "Form submitted successfully and a confirmation email has been sent to the shared email"
+      );
     } catch (error) {
       console.error("Form submission error:", error);
+      toast.error("Form submission failed");
       setIsSubmitting(false);
     }
   };
@@ -94,33 +111,11 @@ export default function BuyAMCForm() {
 
     if (!captchaResponse.ok) {
       // Handle error appropriately
+      toast.error("Captcha verification failed");
       setIsCaptchaVerified(false);
       throw new Error("Captcha verification failed");
     }
     setIsCaptchaVerified(true);
-  };
-  // Vehicle makes and models (would typically come from an API)
-  const vehicleMakes = [
-    "Toyota",
-    "Honda",
-    "Ford",
-    "Hyundai",
-    "Maruti Suzuki",
-    "Tata",
-    "Mahindra",
-  ];
-
-  const getVehicleModels = (make: string) => {
-    const models: Record<string, string[]> = {
-      Toyota: ["Corolla", "Camry", "Fortuner", "Innova"],
-      Honda: ["City", "Civic", "Accord", "Amaze"],
-      Ford: ["EcoSport", "Endeavour", "Figo", "Aspire"],
-      Hyundai: ["i10", "i20", "Creta", "Venue"],
-      "Maruti Suzuki": ["Swift", "Baleno", "Dzire", "Ertiga"],
-      Tata: ["Nexon", "Harrier", "Safari", "Tiago"],
-      Mahindra: ["XUV700", "Scorpio", "Thar", "XUV300"],
-    };
-    return models[make] || [];
   };
 
   const [vehicleModels, setVehicleModels] = useState<string[]>([]);
@@ -129,8 +124,14 @@ export default function BuyAMCForm() {
   React.useEffect(() => {
     const make = form.watch("vehicleMake");
     if (make) {
-      setVehicleModels(getVehicleModels(make));
-      form.setValue("vehicleModel", "");
+      const selectedVehicle = vehicles.find((v) => v.name === make);
+      if (selectedVehicle) {
+        const variants =
+          vehicleVariants[selectedVehicle.id as keyof typeof vehicleVariants] ||
+          [];
+        setVehicleModels(variants.map((v) => v.name));
+        form.setValue("vehicleModel", "");
+      }
     }
   }, [form.watch("vehicleMake"), form]);
 
@@ -203,19 +204,16 @@ export default function BuyAMCForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vehicle Make</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select vehicle make" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {vehicleMakes.map((make) => (
-                        <SelectItem key={make} value={make}>
-                          {make}
+                      {vehicles.map((vehicle) => (
+                        <SelectItem key={vehicle.id} value={vehicle.name}>
+                          {vehicle.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -233,7 +231,7 @@ export default function BuyAMCForm() {
                   <FormLabel>Vehicle Model</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     disabled={vehicleModels.length === 0}
                   >
                     <FormControl>
@@ -279,7 +277,7 @@ export default function BuyAMCForm() {
                 <FormControl>
                   <RadioGroup
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value}
                     className="flex flex-col space-y-1"
                   >
                     <FormItem className="flex items-center space-x-3 space-y-0">
@@ -318,12 +316,15 @@ export default function BuyAMCForm() {
           <FormField
             control={form.control}
             name="startDate"
-            render={() => (
+            render={({ field }) => (
               <FormItem className="flex flex-col">
                 <FormLabel>AMC Start Date</FormLabel>
                 <DatePicker
                   date={startDate}
-                  setDate={setStartDate}
+                  setDate={(date) => {
+                    setStartDate(date);
+                    field.onChange(date);
+                  }}
                   placeholder="Select start date"
                 />
                 <FormMessage />

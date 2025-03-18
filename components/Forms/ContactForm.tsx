@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +29,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from "lucide-react";
 import { contactFormSchema } from "@/lib/formSchemas";
 
 type FormValues = z.infer<typeof contactFormSchema>;
@@ -36,8 +37,6 @@ export default function ContactForm() {
   const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -54,7 +53,6 @@ export default function ContactForm() {
 
   const handleSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    setSubmitError(null);
 
     try {
       const response = await fetch("/api/contact", {
@@ -68,15 +66,19 @@ export default function ContactForm() {
         throw new Error(errorData.message || "Form submission failed");
       }
 
-      setSubmitSuccess(true);
       form.reset();
       captchaRef.current?.reset();
       setCaptchaValue("");
       setIsCaptchaVerified(false);
+      toast.success(
+        "Message sent successfully! We'll respond to your inquiry shortly."
+      );
     } catch (error) {
       console.error("Form submission error:", error);
-      setSubmitError(
-        error instanceof Error ? error.message : "An unknown error occurred"
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to send message. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -127,125 +129,105 @@ export default function ContactForm() {
             possible.
           </CardDescription>
         </CardHeader>
-
-        {submitSuccess ? (
-          <CardContent className="text-center py-8">
-            <h3 className="text-xl font-semibold text-green-600 mb-2">
-              Message Sent Successfully!
-            </h3>
-            <p className="text-muted-foreground">
-              Thank you for contacting us. We&apos;ll respond to your inquiry
-              shortly.
-            </p>
-            <Button className="mt-6" onClick={() => setSubmitSuccess(false)}>
-              Send Another Message
-            </Button>
-          </CardContent>
-        ) : (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)}>
-              <CardContent className="grid gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="example@email.com"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="phoneNumber"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="1234567890"
-                          value={field.value}
-                          onChange={handlePhoneNumberChange}
-                          maxLength={10}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Message</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Your message here..."
-                          className="min-h-[120px]"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="mt-2">
-                  <ReCAPTCHA
-                    ref={captchaRef}
-                    sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
-                    onChange={handleCaptchaChange}
-                  />
-                </div>
-
-                {submitError && (
-                  <div className="text-red-500 text-sm mt-2">{submitError}</div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <CardContent className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </CardContent>
+              />
 
-              <CardFooter>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isSubmitting || !isCaptchaVerified}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    "Send Message"
-                  )}
-                </Button>
-              </CardFooter>
-            </form>
-          </Form>
-        )}
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="example@email.com"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="1234567890"
+                        value={field.value}
+                        onChange={handlePhoneNumberChange}
+                        maxLength={10}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Your message here..."
+                        className="min-h-[120px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="mt-2">
+                <ReCAPTCHA
+                  ref={captchaRef}
+                  sitekey={process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY || ""}
+                  onChange={handleCaptchaChange}
+                />
+              </div>
+            </CardContent>
+
+            <CardFooter>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || !isCaptchaVerified}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
       </Card>
     </div>
   );

@@ -13,6 +13,7 @@ import {
   FileText,
   CheckCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +53,7 @@ import { Separator } from "@/components/ui/separator";
 import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { serviceFormSchema } from "@/lib/formSchemas";
+import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof serviceFormSchema>;
 
@@ -110,12 +112,26 @@ export default function OnlineServiceBookingForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        name: "",
+        contactNumber: "",
+        emailId: "",
+        model: "",
+        registrationNumber: "",
+        serviceType: undefined,
+        pickupRequired: undefined,
+        bookingTime: "",
+        bookingDate: undefined,
+      });
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success("Service booking request submitted successfully!");
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error(
+        "Failed to submit service booking request. Please try again."
+      );
     }
   };
 
@@ -239,9 +255,23 @@ export default function OnlineServiceBookingForm() {
                       <FormLabel className="flex items-center gap-2">
                         <Car className="h-4 w-4" /> Vehicle Model
                       </FormLabel>
-                      <FormControl>
-                        <Input placeholder="Honda City" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-background">
+                            <SelectValue placeholder="Select vehicle model" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.name}>
+                              {vehicle.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -278,7 +308,7 @@ export default function OnlineServiceBookingForm() {
                       <FormLabel>Service Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-background">
@@ -303,7 +333,7 @@ export default function OnlineServiceBookingForm() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
                           className="flex flex-row space-x-4"
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -380,7 +410,7 @@ export default function OnlineServiceBookingForm() {
                       <FormLabel>Service Booking Time</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-background">

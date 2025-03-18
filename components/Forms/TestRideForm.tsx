@@ -46,6 +46,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { toast } from "sonner";
 
 type FormValues = z.infer<typeof testRideFormSchema>;
 
@@ -213,11 +214,13 @@ export default function TestRideForm() {
       setActiveStep(1);
       captchaRef.current?.reset();
       setCaptchaValue("");
-
-      // Show success message or redirect
+      toast.success(
+        "Test ride booked successfully! We'll contact you shortly."
+      );
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error("Failed to book test ride. Please try again.");
     }
   };
 

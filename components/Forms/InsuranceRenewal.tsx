@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import ReCAPTCHA from "react-google-recaptcha";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -77,12 +78,24 @@ export default function InsuranceRenewalForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        customerName: "",
+        contactNumber: "",
+        emailId: "",
+        model: "",
+        registrationNumber: "",
+        registrationYear: "",
+        previousInsuranceCompany: "",
+      });
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success("Insurance renewal request submitted successfully!");
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error(
+        "Failed to submit insurance renewal request. Please try again."
+      );
     }
   };
 
@@ -187,7 +200,7 @@ export default function InsuranceRenewalForm() {
                       <FormLabel>Model</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
@@ -231,7 +244,7 @@ export default function InsuranceRenewalForm() {
                       <FormLabel>Registration Year</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>

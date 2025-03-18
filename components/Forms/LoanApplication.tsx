@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Loader2, DollarSign } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -74,12 +75,28 @@ export default function LoanApplicationForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        fullName: "",
+        email: "",
+        phone: "",
+        employmentStatus: "",
+        annualIncome: 0,
+        loanAmount: 0,
+        loanTenure: 0,
+        residentialAddress: "",
+        additionalInfo: "",
+        dateOfBirth: undefined,
+      });
+      setDateOfBirth(undefined);
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success(
+        "Loan application submitted successfully! Our team will review your application."
+      );
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error("Failed to submit loan application. Please try again.");
     }
   };
 
@@ -193,10 +210,7 @@ export default function LoanApplicationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Employment Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />

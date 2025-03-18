@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -43,6 +44,7 @@ import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { expressServiceFormSchema } from "@/lib/formSchemas";
+import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof expressServiceFormSchema>;
 
@@ -94,12 +96,27 @@ export default function ExpressServiceForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        name: "",
+        contactNumber: "",
+        emailId: "",
+        model: "",
+        registrationNumber: "",
+        serviceType: undefined,
+        pickupRequired: undefined,
+        bookingTime: "",
+        bookingDate: undefined,
+      });
       captchaRef.current?.reset();
       setCaptchaValue("");
+      setIsCaptchaVerified(false);
+      toast.success("Service booking request submitted successfully!");
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error(
+        "Failed to submit service booking request. Please try again."
+      );
     }
   };
 
@@ -201,9 +218,23 @@ export default function ExpressServiceForm() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Vehicle Model</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Honda City" {...field} />
-                      </FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select your vehicle model" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.name}>
+                              {vehicle.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -233,7 +264,7 @@ export default function ExpressServiceForm() {
                       <FormLabel>Service Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -258,7 +289,7 @@ export default function ExpressServiceForm() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value || undefined}
                           className="flex flex-row space-x-4"
                         >
                           <FormItem className="flex items-center space-x-2 space-y-0">
@@ -336,7 +367,7 @@ export default function ExpressServiceForm() {
                       <FormLabel>Service Booking Time</FormLabel>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>

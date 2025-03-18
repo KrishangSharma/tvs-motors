@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
-
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -63,11 +63,14 @@ export default function SuggestionForm() {
       }
       setIsSubmitting(false);
       form.reset();
+      setRating(0);
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success("Thank you for your feedback!");
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error("Failed to submit feedback. Please try again.");
     }
   };
 

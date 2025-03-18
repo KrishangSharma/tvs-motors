@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Loader2, RefreshCw } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { vehicles, vehicleVariants } from "@/constants";
+import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof exchangeFormSchema>;
 
@@ -65,12 +66,25 @@ export default function ExchangeForm() {
         throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
-      form.reset();
+      form.reset({
+        fullName: "",
+        email: "",
+        phone: "",
+        currentVehicleModel: "",
+        currentVehicleYear: "",
+        currentVehicleRegistration: "",
+        desiredVehicleDetails: "",
+        additionalComments: "",
+      });
       captchaRef.current?.reset();
       setCaptchaValue("");
+      toast.success(
+        "Exchange request submitted successfully! Our team will contact you shortly."
+      );
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
+      toast.error("Failed to submit exchange request. Please try again.");
     }
   };
 
@@ -105,7 +119,11 @@ export default function ExchangeForm() {
       description="Submit your current vehicle details for an exchange offer"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-6"
+          autoComplete="off"
+        >
           <FormField
             control={form.control}
             name="fullName"
@@ -168,10 +186,7 @@ export default function ExchangeForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Model</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
                         <SelectValue placeholder="Select a vehicle" />
