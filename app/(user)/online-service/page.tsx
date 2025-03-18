@@ -2,6 +2,7 @@
 import React from "react";
 import OnlineServiceBookingForm from "@/components/Forms/OnlineService";
 import Image from "next/image";
+import FormImage from "@/public/form-image.jpg";
 
 const page = () => {
   return (
@@ -10,19 +11,18 @@ const page = () => {
       <div className="hidden md:block md:w-1/2 h-screen sticky top-0 bg-slate-100">
         <div className="relative w-full h-screen">
           <Image
-            src="/placeholder.svg?height=1080&width=1080"
+            src={FormImage}
             alt="Vehicle maintenance"
             fill
             className="object-cover"
             priority
           />
           <div className="absolute bottom-0 py-16 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8 text-white">
-            <h2 className="text-2xl font-bold mb-2">
-              Professional Vehicle Care
-            </h2>
-            <p className="text-lg">
-              Get your vehicle serviced by certified technicians at affordable
-              prices.
+            <h2 className="text-2xl font-bold mb-2">Online Service Booking</h2>
+            <p className="text-lg max-w-xl">
+              Book your vehicle service appointment online. Our expert
+              technicians will ensure your vehicle receives the best care at
+              your convenience.
             </p>
           </div>
         </div>
@@ -30,7 +30,7 @@ const page = () => {
 
       {/* Right side - Scrollable form */}
       <div className="w-full md:w-1/2 min-h-screen overflow-y-auto p-4 md:p-0 flex items-start justify-center">
-        <div className="py-8">
+        <div className="p-8 w-full">
           <OnlineServiceBookingForm />
         </div>
       </div>

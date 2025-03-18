@@ -21,7 +21,7 @@ const page = async () => {
   const vehicles = await client.fetch<VehicleItem[]>(query);
 
   return (
-    <div className="container mx-auto py-20 px-5">
+    <div className="container mx-auto py-10 px-5">
       <div className="flex flex-col gap-10">
         <div className="flex gap-4 flex-col items-start">
           <div>
