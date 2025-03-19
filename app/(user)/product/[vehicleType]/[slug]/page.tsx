@@ -31,7 +31,7 @@ export default async function VehiclePage({ params }: Props) {
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<VehicleDetails>(query);
-  console.log(vehicle);
+  // console.log(vehicle);
 
   return (
     <div className="w-full mx-auto container lg:max-w-7xl pb-8 min-h-screen px-4 md:px-6 ">

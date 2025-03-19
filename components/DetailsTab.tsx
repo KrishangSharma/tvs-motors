@@ -1,6 +1,6 @@
 "use client";
 import { tabs } from "@/constants";
-import { VehicleDetails } from "@/types";
+import type { VehicleDetails } from "@/types";
 import { useState } from "react";
 
 interface DetailsTabsProps {
@@ -17,7 +17,19 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
     "Wheels, Tyres and Brakes": vehicle.wheelsTyresBrakes,
     "Dimensions, Weight and Fuel": vehicle.dimensionsWeightFuel,
   };
-  // Helper function to render a field on a single line.
+
+  // Helper function to chunk the data into groups of 4
+  const chunkData = (
+    data: [string, string | number | Record<string, string | number>][]
+  ) => {
+    const chunks = [];
+    for (let i = 0; i < data.length; i += 4) {
+      chunks.push(data.slice(i, i + 4));
+    }
+    return chunks;
+  };
+
+  // Helper function to render a field
   const renderField = (
     key: string,
     value: string | number | Record<string, string | number>
@@ -26,8 +38,8 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
       // Convert object entries to a comma-separated list on one line.
       const subEntries = Object.entries(value);
       return (
-        <div key={key} className="border-b pb-2 capitalize">
-          <span className="font-medium text-gray-700">{key}: </span>
+        <div key={key} className="py-2 capitalize">
+          <span className="font-medium text-gray-800">{key}: </span>
           <span className="text-gray-600">
             {subEntries.map(([subKey, subValue], index) => (
               <span key={subKey}>
@@ -40,8 +52,8 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
       );
     } else {
       return (
-        <div key={key} className="border-b pb-2 capitalize">
-          <span className="font-medium text-gray-700">{key}: </span>
+        <div key={key} className="py-2 capitalize">
+          <span className="font-medium text-gray-800">{key}: </span>
           <span className="text-gray-600">{value}</span>
         </div>
       );
@@ -51,33 +63,44 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
   // Render the content for the active tab.
   const renderContent = () => {
     const content = tabContent[activeTab];
-    return (
-      <div className="p-4">
-        {content ? (
-          <div className="grid grid-cols-1 gap-4">
-            {Object.entries(content).map(([key, value]) =>
-              renderField(key, value)
-            )}
-          </div>
-        ) : (
+
+    if (!content) {
+      return (
+        <div className="p-4">
           <p className="text-gray-600">No content available for {activeTab}</p>
-        )}
+        </div>
+      );
+    }
+
+    // Chunk the data into groups of 4 items
+    const chunkedData = chunkData(Object.entries(content));
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+        {chunkedData.map((chunk, chunkIndex) => (
+          <div
+            key={chunkIndex}
+            className="w-full bg-white rounded-lg shadow-md p-5 border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+          >
+            {chunk.map(([key, value]) => renderField(key, value))}
+          </div>
+        ))}
       </div>
     );
   };
 
   return (
-    <div className="border-t pt-4">
+    <>
       {/* Scrollable tab bar with hidden scrollbar */}
-      <div className="flex space-x-4 border-b pb-2 overflow-x-auto no-scrollbar">
+      <div className="flex space-x-4 pb-2 overflow-x-auto no-scrollbar">
         {tabs.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`min-w-min flex-shrink-0 p-2 text-sm ${
+            className={`min-w-min flex-shrink-0 px-4 py-2 text-sm font-medium rounded-t-lg transition-all duration-200 ${
               activeTab === tab
-                ? "border-b-2 border-blue-500 font-bold"
-                : "text-gray-500"
+                ? "text-primary border-b-2 border-primary"
+                : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
             }`}
           >
             {tab}
@@ -85,6 +108,6 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
         ))}
       </div>
       {renderContent()}
-    </div>
+    </>
   );
 }
