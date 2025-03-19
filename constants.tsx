@@ -4,8 +4,6 @@ import Story1 from "@/public/yt-stories/story-1.jpg";
 import Story2 from "@/public/yt-stories/story-2.jpg";
 import Story3 from "@/public/yt-stories/story-3.jpg";
 import Story4 from "@/public/yt-stories/story-4.jpg";
-import { IconHome, IconUsers } from "@tabler/icons-react";
-import Image from "next/image";
 import { Bike, PackageSearch, Wrench } from "lucide-react";
 import {
   Briefcase,
@@ -19,6 +17,7 @@ import {
   Calendar,
   MessageSquare,
 } from "lucide-react";
+import { IconHome } from "@tabler/icons-react";
 
 // NAVBAR CONSTANTS
 export const navLinks: NavLinks[] = [
@@ -131,27 +130,7 @@ export const dockLinks = [
     href: "/services",
   },
   {
-    title: "Shop",
-    icon: (
-      <Image
-        src="https://assets.aceternity.com/logo-dark.png"
-        width={20}
-        height={20}
-        alt="Aceternity Logo"
-      />
-    ),
-    href: "/shop",
-  },
-  {
-    title: "Company",
-    icon: (
-      <IconUsers className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-    ),
-    href: "/about-us",
-  },
-
-  {
-    title: "Book a Test Ride",
+    title: "Test Ride",
     icon: (
       <Bike className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),

@@ -72,7 +72,7 @@ export interface FormWrapperProps {
   footer?: React.ReactNode;
 }
 
-export interface ImageGalleryProps {
+export interface imageCarouselProps {
   images: string[];
   model: string;
 }

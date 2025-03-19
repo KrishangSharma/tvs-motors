@@ -8,7 +8,7 @@ export function FloatingDockDemo() {
       <FloatingDock
         items={dockLinks}
         desktopClassName="border shadow-xl"
-        mobileClassName="absolute right-5 bottom-0 border rounded-full shadow-xl"
+        mobileClassName="hidden absolute right-5 bottom-0 border rounded-full shadow-xl"
       />
     </div>
   );

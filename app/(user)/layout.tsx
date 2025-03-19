@@ -24,11 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${quicksand.className} antialiased`}>
-        {/* <Navbar /> */}
+        <Navbar />
         {children}
         <FloatingDockDemo />
         <Footer />
-        <Toaster />
+        <Toaster position="top-right" />
       </body>
     </html>
   );

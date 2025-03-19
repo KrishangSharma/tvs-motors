@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet } from "../ui/sheet";
 import { navLinks } from "@/constants";
+import Search from "../ui/search";
 
 export default function Navbar() {
   // Scroll management logic(state variable and useEffect)
@@ -86,6 +87,7 @@ export default function Navbar() {
             </div>
             <div className="hidden lg:flex items-center space-x-4">
               <nav className="flex items-center space-x-2">
+                <Search />
                 <Link
                   href="/test-ride"
                   className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"

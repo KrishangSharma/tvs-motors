@@ -10,6 +10,7 @@ import ProductMenu from "../ProductMenu";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
+import Search from "../ui/search";
 
 export default function MobileNav() {
   return (
@@ -21,7 +22,7 @@ export default function MobileNav() {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="w-[400px] overflow-y-auto sm:w-[350px]"
+          className="w-[400px] overflow-y-auto sm:w-[350px] flex flex-col gap-5"
         >
           <SheetTitle>
             <SheetClose asChild>
@@ -36,8 +37,9 @@ export default function MobileNav() {
               </Link>
             </SheetClose>
           </SheetTitle>
-          <div className="flex flex-col space-y-4 mt-8">
-            <div className="space-y-4 py-4">
+          <Search />
+          <div className="flex flex-col space-y-4">
+            <div className="space-y-4">
               <div className="px-2 py-1 ">
                 <h2 className="font-medium">Products</h2>
                 <ProductMenu />

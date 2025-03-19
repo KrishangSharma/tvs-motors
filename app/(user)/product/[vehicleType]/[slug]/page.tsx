@@ -1,18 +1,29 @@
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-import { VehicleDetails } from "@/types";
+import type { VehicleDetails } from "@/types";
 import dynamic from "next/dynamic";
+import { Montserrat } from "next/font/google";
+
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 interface Props {
   params: Promise<{ slug: string; vehicleType: string }>;
 }
 
-const ImageGallery = dynamic(() => import("@/components/ImageGallery"), {
+const ImageCarousel = dynamic(() => import("@/components/ImageCarousel"), {
   ssr: true,
 });
+
 const DetailsTabs = dynamic(() => import("@/components/DetailsTab"), {
   ssr: true,
 });
+
+const ConfigureForm = dynamic(
+  () => import("@/components/Forms/ConfigureForm"),
+  {
+    ssr: true,
+  }
+);
 
 export default async function VehiclePage({ params }: Props) {
   const { vehicleType, slug } = await params;
@@ -20,38 +31,40 @@ export default async function VehiclePage({ params }: Props) {
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<VehicleDetails>(query);
-  // console.log("Vehicle Details:", vehicle);
+  console.log(vehicle);
 
   return (
-    <div className="w-full mx-auto container lg:max-w-7xl py-16 min-h-screen">
-      <div className="flex flex-col md:flex-row gap-8">
-        {/* Left Side: Image Gallery */}
-        <div className="md:w-1/2 flex flex-col items-center">
-          {/* The ImageGallery includes the square preview frame & thumbnails */}
-          <div className="w-full max-w-md">
-            <ImageGallery images={vehicle.images} model={vehicle.model} />
-          </div>
+    <div className="w-full mx-auto container lg:max-w-7xl pb-8 min-h-screen px-4 md:px-6 ">
+      <div className="relative mb-8 md:mb-16 overflow-hidden">
+        {/* Vehicle Name in Big Bold Letters */}
+        <h1
+          className={`text-6xl md:text-8xl lg:text-9xl font-extrabold text-gray-100 pt-8 md:pt-12 pb-4 md:pb-8 z-10 relative ${montserrat.className}`}
+        >
+          {vehicle.model.toUpperCase()}
+        </h1>
+
+        {/* Main Image Carousel */}
+        <div className="relative z-20 -mt-16 md:-mt-24 lg:-mt-32">
+          <ImageCarousel images={vehicle.images} model={vehicle.model} />
+        </div>
+      </div>
+
+      {/* Main Content Section */}
+      <div className="flex flex-col lg:flex-row gap-8 relative">
+        {/* Left Side: Vehicle Specifications */}
+        <div className="lg:w-2/3">
+          <h2
+            className={`text-2xl md:text-3xl font-bold mb-6 ${montserrat.className}`}
+          >
+            Vehicle Specifications
+          </h2>
+          <DetailsTabs vehicle={vehicle} />
         </div>
 
-        {/* Right Side: Vehicle Details */}
-        <div className="md:w-1/2 flex flex-col gap-4">
-          {/* Category (small font, subtle) */}
-          <p className="text-sm text-gray-500 uppercase">
-            {vehicle.type || "Vehicle"}
-          </p>
-          {/* Vehicle Name */}
-          <h1 className="text-4xl font-bold">TVS {vehicle.model}</h1>
-          {/* Price */}
-          <p className="text-xl font-bold">₹{vehicle.price}</p>
-          {/* Placeholder for color variants */}
-          <div className="py-4">{/* Future color variants go here */}</div>
-          {/* Configure Button */}
-          <button className="w-full bg-black max-w-sm  text-white py-3 rounded-xl">
-            Configure your {vehicle.model}
-          </button>
-          {/* Tab Navigation */}
-          <div className="mt-8">
-            <DetailsTabs vehicle={vehicle} />
+        {/* Right Side: Configure Form (Fixed Position on Desktop) */}
+        <div className="lg:w-1/3 mt-8 lg:mt-0">
+          <div className="lg:sticky lg:top-24">
+            <ConfigureForm vehicle={vehicle} />
           </div>
         </div>
       </div>
