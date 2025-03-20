@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email to the user
     const emailData = {
-      from: "contact@resend.dev",
+      from: "contact@sehajbindra.info",
       to: email,
       subject: "Thank You for Contacting Us",
       react: ContactEmail({

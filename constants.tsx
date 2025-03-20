@@ -43,14 +43,11 @@ export const navLinks: NavLinks[] = [
   },
   {
     id: 3,
-    label: "Shop",
-    type: "dropdown",
-    content: (
-      <div className="grid gap-3 p-6 w-[400px]">
-        <div className="text-sm">Shop content goes here</div>
-      </div>
-    ),
+    label: "Awards",
+    type: "link",
+    href: "/awards",
   },
+
   {
     id: 4,
     label: "Company",
