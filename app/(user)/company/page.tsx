@@ -21,6 +21,7 @@ import {
 } from "@/constants";
 import HeroImage from "@/public/header-images/tvs-sabhrawal.jpg";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default function CompanyPage() {
   return (
@@ -40,24 +41,11 @@ export default function CompanyPage() {
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-white">
                 Driving Innovation Since 1978
               </h1>
-              <p className="text-white/90 md:text-xl">
+              <p className=" text-white/90 md:text-xl">
                 TVS Motor Company is a reputed two and three-wheeler
                 manufacturer globally, championing progress through sustainable
                 mobility with a focus on innovation and quality.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button size="lg">
-                  Our Legacy
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="bg-background/20 hover:bg-background/30 text-white border-white/20"
-                >
-                  Investor Relations
-                </Button>
-              </div>
             </div>
           </div>
         </section>
@@ -155,7 +143,10 @@ export default function CompanyPage() {
                 <TabsTrigger value="values">Values</TabsTrigger>
               </TabsList>
             </div>
-            <TabsContent value="vision" className="space-y-4">
+            <TabsContent
+              value="vision"
+              className="space-y-4 pointer-events-none  "
+            >
               <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-bold">Our Vision</h3>
@@ -259,7 +250,7 @@ export default function CompanyPage() {
                   with operations spanning across continents, serving customers
                   in over 60 countries worldwide.
                 </p>
-                <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                   {globalPresence.map((item, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <div className="rounded-full bg-primary-foreground/10 p-1">
@@ -274,9 +265,6 @@ export default function CompanyPage() {
                     </div>
                   ))}
                 </div>
-                <Button variant="secondary" size="lg" className="mt-4">
-                  Explore Our Global Network
-                </Button>
               </div>
               <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-300">
                 <Image
@@ -343,10 +331,16 @@ export default function CompanyPage() {
                   excellence. Join us in shaping the future of mobility.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                  <Button size="lg">Explore Careers</Button>
-                  <Button variant="outline" size="lg">
-                    Contact Us
-                  </Button>
+                  <Link href="/careers/apply">
+                    <Button size="lg" className="w-full ">
+                      Explore Careers
+                    </Button>
+                  </Link>
+                  <Link href="/contact-us">
+                    <Button variant="outline" size="lg" className="w-full">
+                      Contact Us
+                    </Button>
+                  </Link>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">

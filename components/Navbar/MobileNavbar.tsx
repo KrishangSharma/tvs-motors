@@ -44,16 +44,16 @@ export default function MobileNav() {
                 <h2 className="font-medium">Products</h2>
                 <ProductMenu />
               </div>
-              <SheetClose asChild>
-                <div className="px-2 py-1">
+              <div className="px-2 py-1">
+                <SheetClose asChild>
                   <Link
-                    href="/services"
+                    href="/our-services"
                     className="block font-medium text-customBlue"
                   >
                     Services
                   </Link>
-                </div>
-              </SheetClose>
+                </SheetClose>
+              </div>
               <div className="px-2 py-1">
                 <h2 className="mb-2 font-medium text-customBlue">Shop</h2>
                 <div className="space-y-2">
@@ -62,20 +62,16 @@ export default function MobileNav() {
                 </div>
               </div>
               <div className="px-2 py-1">
-                <h2 className="mb-2 font-medium text-customBlue">Company</h2>
-                <div className="space-y-2">
-                  {/* Add your company links here */}
-                  <p className="text-sm">Company content goes here</p>
-                </div>
-              </div>
-              {/* Secondary Links */}
-              <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
-                {/* <Link
-                    href="/buy-vehicle"
-                    className="flex flex-col items-start space-y-1"
+                <SheetClose asChild>
+                  <Link
+                    href="/company"
+                    className="block font-medium text-customBlue"
                   >
-                    <span className="text-gray-400">Buy Vehicle</span>
-                  </Link> */}
+                    Company
+                  </Link>
+                </SheetClose>
+              </div>
+              <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
                 <SheetClose asChild>
                   <Link
                     href="/test-ride"
@@ -84,12 +80,6 @@ export default function MobileNav() {
                     Book A Test Ride
                   </Link>
                 </SheetClose>
-                {/* <Link
-                    href="/dealers"
-                    className="flex flex-col items-start space-y-1"
-                  >
-                    <span className="text-gray-400">Dealers</span>
-                  </Link> */}
               </div>
             </div>
           </div>

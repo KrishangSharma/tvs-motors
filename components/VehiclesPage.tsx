@@ -44,6 +44,11 @@ export default function VehiclesPage({
   const filterVehicles = () => {
     let filtered = [...vehicles];
 
+    // Apply vehicle type filter
+    if (activeFilter !== "all") {
+      filtered = filtered.filter((vehicle) => vehicle.type === activeFilter);
+    }
+
     // Apply price range filters
     if (selectedPriceRanges.length > 0) {
       filtered = filtered.filter((vehicle) => {
@@ -85,14 +90,8 @@ export default function VehiclesPage({
   // Filter vehicles by type
   const handleFilterChange = (value: string) => {
     setActiveFilter(value);
-    if (value === "all") {
-      setFilteredVehicles(vehicles);
-    } else {
-      const filtered = vehicles.filter((vehicle) => vehicle.type === value);
-      setFilteredVehicles(filtered);
-      console.log(`Current filter: ${activeFilter}, vehicles: ${filtered}`);
-    }
   };
+
   // Sort vehicles
   const handleSortChange = (value: string) => {
     setSortOrder(value);
