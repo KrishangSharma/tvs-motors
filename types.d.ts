@@ -217,3 +217,12 @@ export interface Service {
   icon: React.ReactElement;
   link: string;
 }
+
+export interface Award {
+  _id: string;
+  title: string;
+  description?: string;
+  year: number;
+  organization?: string;
+  image?: string;
+}
