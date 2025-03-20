@@ -4,8 +4,10 @@ import Story1 from "@/public/yt-stories/story-1.jpg";
 import Story2 from "@/public/yt-stories/story-2.jpg";
 import Story3 from "@/public/yt-stories/story-3.jpg";
 import Story4 from "@/public/yt-stories/story-4.jpg";
-import { Bike, PackageSearch, Wrench } from "lucide-react";
 import {
+  Bike,
+  PackageSearch,
+  Wrench,
   Briefcase,
   Phone,
   Calculator,
@@ -16,6 +18,12 @@ import {
   CreditCard,
   Calendar,
   MessageSquare,
+  Award,
+  Building2,
+  Factory,
+  Globe,
+  MapPin,
+  Users,
 } from "lucide-react";
 import { IconHome } from "@tabler/icons-react";
 
@@ -31,7 +39,7 @@ export const navLinks: NavLinks[] = [
     id: 2,
     label: "Services",
     type: "link",
-    href: "/services",
+    href: "/our-services",
   },
   {
     id: 3,
@@ -46,12 +54,8 @@ export const navLinks: NavLinks[] = [
   {
     id: 4,
     label: "Company",
-    type: "dropdown",
-    content: (
-      <div className="grid gap-3 p-6 w-[400px]">
-        <div className="text-sm">Company content goes here</div>
-      </div>
-    ),
+    type: "link",
+    href: "/company",
   },
 ];
 
@@ -127,7 +131,7 @@ export const dockLinks = [
     icon: (
       <Wrench className="h-full w-full text-neutral-500 dark:text-neutral-300" />
     ),
-    href: "/services",
+    href: "/our-services",
   },
   {
     title: "Test Ride",
@@ -288,6 +292,14 @@ export const services = [
   },
   {
     id: 3,
+    title: "Test Ride",
+    description:
+      "Book a test ride with our team to experience the thrill of our vehicles",
+    icon: <Bike className="h-10 w-10 text-primary" />,
+    link: "/test-ride",
+  },
+  {
+    id: 4,
     title: "EMI Calculator",
     description:
       "Calculate your monthly installments for vehicle purchases and services",
@@ -295,7 +307,7 @@ export const services = [
     link: "/emi-calculator",
   },
   {
-    id: 4,
+    id: 5,
     title: "Vehicle Exchange",
     description:
       "Trade in your old vehicle for a new one with our hassle-free exchange program",
@@ -303,7 +315,7 @@ export const services = [
     link: "/exchange",
   },
   {
-    id: 5,
+    id: 6,
     title: "Express Service",
     description:
       "Quick maintenance services for your vehicle when you're short on time",
@@ -311,7 +323,7 @@ export const services = [
     link: "/express-service",
   },
   {
-    id: 6,
+    id: 7,
     title: "AMC",
     description:
       "Comprehensive maintenance packages to keep your vehicle in top condition",
@@ -319,7 +331,7 @@ export const services = [
     link: "/get-amc",
   },
   {
-    id: 7,
+    id: 8,
     title: "Insurance Renewal",
     description:
       "Renew your vehicle insurance quickly and easily with our assistance",
@@ -327,7 +339,7 @@ export const services = [
     link: "/insurance-renewal",
   },
   {
-    id: 8,
+    id: 9,
     title: "Loan Application",
     description:
       "Apply for vehicle loans with competitive interest rates and flexible terms",
@@ -335,7 +347,7 @@ export const services = [
     link: "/loan-application",
   },
   {
-    id: 9,
+    id: 10,
     title: "Online Service Booking",
     description:
       "Book your vehicle service appointment online at your convenience",
@@ -343,11 +355,129 @@ export const services = [
     link: "/online-service",
   },
   {
-    id: 10,
+    id: 11,
     title: "Suggestions",
     description:
       "Share your feedback and suggestions to help us improve our services",
     icon: <MessageSquare className="h-10 w-10 text-primary" />,
     link: "/suggestions",
+  },
+];
+
+// Company features data
+export const companyFeatures = [
+  {
+    icon: <Factory className="h-5 w-5 text-primary" />,
+    title: "Manufacturing Excellence",
+    description: "State-of-the-art facilities across India",
+  },
+  {
+    icon: <Globe className="h-5 w-5 text-primary" />,
+    title: "Global Presence",
+    description: "Exports to over 60 countries worldwide",
+  },
+  {
+    icon: <Users className="h-5 w-5 text-primary" />,
+    title: "Strong Workforce",
+    description: "Over 7,000 dedicated employees",
+  },
+  {
+    icon: <Award className="h-5 w-5 text-primary" />,
+    title: "Quality Commitment",
+    description: "Multiple quality certifications",
+  },
+];
+
+// Milestones data
+export const milestones = [
+  {
+    year: "1978",
+    description:
+      "Establishment of TVS Motor Company as Sundaram-Clayton Ltd's subsidiary for two-wheelers",
+  },
+  {
+    year: "1984",
+    description:
+      "Launch of India's first indigenous two-seater moped, the TVS 50",
+  },
+  {
+    year: "2001",
+    description:
+      "Became an independent company after restructuring from Sundaram-Clayton Ltd",
+  },
+  {
+    year: "2020",
+    description:
+      "Acquisition of Norton Motorcycles, expanding global premium motorcycle portfolio",
+  },
+];
+
+// Vision points data
+export const visionPoints = [
+  "Global leadership in two-wheeler manufacturing",
+  "Pioneering sustainable mobility solutions",
+  "Setting new benchmarks in customer satisfaction",
+];
+
+// Mission points data
+export const missionPoints = [
+  "Continuous innovation in product development",
+  "Operational excellence across all functions",
+  "Environmental stewardship in all business activities",
+];
+
+// Values points data
+export const valuesPoints = [
+  "Integrity and transparency in all dealings",
+  "Customer-centricity as our primary focus",
+  "Excellence and continuous improvement",
+  "Respect for individuals and the environment",
+];
+
+// Global presence data
+export const globalPresence = [
+  {
+    icon: <Building2 className="h-5 w-5" />,
+    title: "Headquarters",
+    description: "Chennai, India",
+  },
+  {
+    icon: <Factory className="h-5 w-5" />,
+    title: "Manufacturing Units",
+    description: "India, Indonesia, Uganda",
+  },
+  {
+    icon: <MapPin className="h-5 w-5" />,
+    title: "Key Markets",
+    description: "Asia, Africa, Latin America",
+  },
+  {
+    icon: <Clock className="h-5 w-5" />,
+    title: "Established",
+    description: "1978",
+  },
+];
+
+// Leadership team data
+export const leadershipTeam = [
+  {
+    name: "Venu Srinivasan",
+    position: "Chairman Emeritus",
+    image: "/placeholder.svg?height=300&width=300",
+  },
+  {
+    name: "Sudarshan Venu",
+    position: "Managing Director",
+    image: "/placeholder.svg?height=300&width=300",
+  },
+  {
+    name: "K.N. Radhakrishnan",
+    position: "Director & CEO",
+    image: "/placeholder.svg?height=300&width=300",
+  },
+  {
+    name: "Sir Ralf Speth",
+    position: "Chairman",
+    image: "/placeholder.svg?height=300&width=300",
   },
 ];

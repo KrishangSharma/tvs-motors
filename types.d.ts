@@ -209,3 +209,11 @@ export interface ContactEmailProps {
   requestId: string;
   requestDate: Date;
 }
+
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ReactElement;
+  link: string;
+}

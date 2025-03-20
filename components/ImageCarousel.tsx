@@ -97,7 +97,7 @@ export default function ImageCarousel({ images, model }: imageCarouselProps) {
             data-index={index}
             onClick={() => goToSlide(index)}
             className={cn(
-              "flex-shrink-0 relative rounded-md overflow-hidden transition-all mt-2",
+              "flex-shrink-0 relative rounded-md overflow-hidden transition-all m-2",
               currentIndex === index
                 ? "ring-1 ring-primary ring-offset-2"
                 : "opacity-70 hover:opacity-100"
