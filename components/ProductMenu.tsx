@@ -77,7 +77,7 @@ export default function ProductMenu() {
               {vehicles.map((vehicle) => (
                 <Link
                   key={vehicle._id}
-                  href={`/${activeType}/product/${vehicle.slug.current}`}
+                  href={`/product/${activeType}/${vehicle.slug.current}`}
                   className="flex flex-col items-center gap-2 hover:bg-gray-200/50 p-3 rounded-md transition-colors"
                 >
                   <div className="w-[120px] h-[70px] relative overflow-hidden flex items-center justify-center">
