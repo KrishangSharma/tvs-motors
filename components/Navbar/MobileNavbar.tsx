@@ -6,6 +6,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
 import ProductMenu from "../ProductMenu";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,55 +42,56 @@ export default function MobileNav() {
               </Link>
             </SheetClose>
           </SheetTitle>
-          <div className="flex flex-col space-y-4">
-            <div className="space-y-4">
-              <div className="px-2 py-1 ">
-                <h2 className="font-medium">Products</h2>
-                <ProductMenu />
+          <NavigationMenu>
+            <NavigationMenuList className="flex-col items-start">
+              <div className="space-y-4 w-full min-h-screen">
+                <div className="px-2 py-1">
+                  <h2 className="font-medium">Products</h2>
+                  <ProductMenu />
+                </div>
+                <NavigationMenuItem className="px-2 py-1">
+                  <SheetClose asChild>
+                    <NavigationMenuLink
+                      asChild
+                      className="block font-medium text-customBlue"
+                    >
+                      <Link href="/our-services">Services</Link>
+                    </NavigationMenuLink>
+                  </SheetClose>
+                </NavigationMenuItem>
+                <NavigationMenuItem className="px-2 py-1">
+                  <SheetClose asChild>
+                    <NavigationMenuLink
+                      asChild
+                      className="block font-medium text-customBlue"
+                    >
+                      <Link href="/awards">Awards</Link>
+                    </NavigationMenuLink>
+                  </SheetClose>
+                </NavigationMenuItem>
+                <NavigationMenuItem className="px-2 py-1">
+                  <SheetClose asChild>
+                    <NavigationMenuLink
+                      asChild
+                      className="block font-medium text-customBlue"
+                    >
+                      <Link href="/company">Company</Link>
+                    </NavigationMenuLink>
+                  </SheetClose>
+                </NavigationMenuItem>
+                <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
+                  <SheetClose asChild>
+                    <Link
+                      href="/test-ride"
+                      className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      Book A Test Ride
+                    </Link>
+                  </SheetClose>
+                </div>
               </div>
-              <div className="px-2 py-1">
-                <SheetClose asChild>
-                  <Link
-                    href="/our-services"
-                    className="block font-medium text-customBlue"
-                  >
-                    Services
-                  </Link>
-                </SheetClose>
-              </div>
-              <div className="px-2 py-1">
-                <SheetClose asChild>
-                  <Link
-                    href="/awards"
-                    className="block font-medium text-customBlue"
-                  >
-                    Awards
-                  </Link>
-                </SheetClose>
-              </div>
-
-              <div className="px-2 py-1">
-                <SheetClose asChild>
-                  <Link
-                    href="/company"
-                    className="block font-medium text-customBlue"
-                  >
-                    Company
-                  </Link>
-                </SheetClose>
-              </div>
-              <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
-                <SheetClose asChild>
-                  <Link
-                    href="/test-ride"
-                    className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
-                  >
-                    Book A Test Ride
-                  </Link>
-                </SheetClose>
-              </div>
-            </div>
-          </div>
+            </NavigationMenuList>
+          </NavigationMenu>
         </SheetContent>
       </Sheet>
     </>

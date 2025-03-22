@@ -84,7 +84,7 @@ export default function ProdMenuMobile() {
                     vehicles.map((vehicle) => (
                       <SheetClose asChild key={vehicle._id}>
                         <Link
-                          href={`/product/${activeType}/${vehicle.slug.current}`}
+                          href={`/product/${activeType.toLowerCase()}/${vehicle.slug.current}`}
                           className="flex gap-3 items-center hover:bg-gray-200/50 p-2 rounded-md transition-colors"
                         >
                           <div className="w-[100px] h-[60px] relative flex-shrink-0 overflow-hidden flex items-center justify-center">

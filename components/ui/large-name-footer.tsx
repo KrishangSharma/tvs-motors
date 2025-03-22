@@ -277,11 +277,11 @@ export function Footer() {
               <h3 className="text-lg font-bold tracking-wider mb-6 text-center">
                 CONTACT US
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-content-center">
                 {contactInfo.map((contact, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col items-center text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
+                    className="flex flex-col items-center  text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                   >
                     <div className="bg-white/10 p-3 rounded-full mb-3">
                       <contact.icon className="w-5 h-5" />

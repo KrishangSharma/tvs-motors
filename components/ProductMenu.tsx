@@ -70,7 +70,7 @@ export default function ProductMenu() {
             {vehicles.map((vehicle) => (
               <Link
                 key={vehicle._id}
-                href={`/product/${vehicle.type}/${vehicle.slug.current}`}
+                href={`/product/${vehicle.type.toLowerCase()}/${vehicle.slug.current}`}
                 className="flex flex-col items-center w-40 h-40 gap-3 p-4 rounded-md transition-all ease-in-out border border-gray-200 hover:border-gray-300 bg-gray-50 hover:shadow-md hover:shadow-gray-300 group"
               >
                 <div className="relative overflow-hidden flex items-center justify-center aspect-video transition-all duration-300 group-hover:scale-110">
