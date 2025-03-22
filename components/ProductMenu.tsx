@@ -68,28 +68,29 @@ export default function ProductMenu() {
         ) : vehicles.length > 0 ? (
           <div className="min-w-max grid lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {vehicles.map((vehicle) => (
-              <Link
-                key={vehicle._id}
-                href={`/product/${vehicle.type.toLowerCase()}/${vehicle.slug.current}`}
-                className="flex flex-col items-center w-40 h-40 gap-3 p-4 rounded-md transition-all ease-in-out border border-gray-200 hover:border-gray-300 bg-gray-50 hover:shadow-md hover:shadow-gray-300 group"
-              >
-                <div className="relative overflow-hidden flex items-center justify-center aspect-video transition-all duration-300 group-hover:scale-110">
-                  <Image
-                    src={vehicle.image || "/placeholder.svg"}
-                    width={180}
-                    height={100}
-                    quality={100}
-                    alt={vehicle.model}
-                    className="w-auto h-full object-contain"
-                  />
-                </div>
-                <h3 className="text-sm font-medium text-center">
-                  {vehicle.model}
-                </h3>
-                <span className="text-xs text-gray-500 capitalize">
-                  {vehicle.type}
-                </span>
-              </Link>
+              <NavigationMenuLink asChild key={vehicle._id}>
+                <Link
+                  href={`/product/${vehicle.type.toLowerCase()}/${vehicle.slug.current}`}
+                  className="flex flex-col items-center w-40 h-40 gap-3 p-4 rounded-md transition-all ease-in-out border border-gray-200 hover:border-gray-300 bg-gray-50 hover:shadow-md hover:shadow-gray-300 group"
+                >
+                  <div className="relative overflow-hidden flex items-center justify-center aspect-video transition-all duration-300 group-hover:scale-110">
+                    <Image
+                      src={vehicle.image || "/placeholder.svg"}
+                      width={180}
+                      height={100}
+                      quality={100}
+                      alt={vehicle.model}
+                      className="w-auto h-full object-contain"
+                    />
+                  </div>
+                  <h3 className="text-sm font-medium text-center">
+                    {vehicle.model}
+                  </h3>
+                  <span className="text-xs text-gray-500 capitalize">
+                    {vehicle.type}
+                  </span>
+                </Link>
+              </NavigationMenuLink>
             ))}
           </div>
         ) : (
