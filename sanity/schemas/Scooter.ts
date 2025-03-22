@@ -29,7 +29,12 @@ const Scooter = {
       title: "Type",
       type: "string",
     },
-
+    {
+      name: "category",
+      title: "Category",
+      type: "reference",
+      to: [{ type: "vehicleCategory" }],
+    },
     {
       name: "images",
       title: "Images",

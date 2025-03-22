@@ -30,13 +30,13 @@ export default function Search() {
   }, []);
 
   return (
-    <div className="relative" ref={searchRef}>
+    <div className="relative ml-auto mr-5 lg:m-0" ref={searchRef}>
       <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onFocus={() => setIsFocused(true)}
         placeholder="Search TSV Motors"
-        className="pr-10 min-w-[300px] focus-visible:ring-0 focus:shadow-md bg-white"
+        className="pr-10 w-[200px] md:min-w-[300px] focus-visible:ring-0 focus:shadow-md bg-white"
       />
       {value ? (
         <XIcon

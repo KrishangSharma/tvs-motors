@@ -116,6 +116,11 @@ const FloatingDockDesktop = ({
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
+  // Reset mouseX when route changes
+  useEffect(() => {
+    mouseX.set(Infinity);
+  }, [mouseX]);
+
   return (
     <motion.div
       onMouseMove={(e) => isLargeScreen && mouseX.set(e.pageX)}

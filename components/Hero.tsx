@@ -11,7 +11,7 @@ const Hero = () => {
   return (
     <div className="relative w-full h-[100svh] overflow-hidden text-gray-900">
       <motion.div
-        className="absolute inset-0 flex flex-col items-center pt-10 md:pt-20 px-6 md:px-12 z-[2]"
+        className="absolute inset-0 flex flex-col items-center py-10 md:pt-20 px-6 md:px-12 z-[2]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}

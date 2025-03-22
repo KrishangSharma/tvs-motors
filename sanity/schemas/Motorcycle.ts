@@ -21,6 +21,12 @@ const Motorcycle = {
       type: "string",
     },
     {
+      name: "category",
+      title: "Category",
+      type: "reference",
+      to: [{ type: "vehicleCategory" }],
+    },
+    {
       name: "slug",
       title: "Slug",
       type: "slug",

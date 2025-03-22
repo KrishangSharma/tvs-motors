@@ -1,325 +1,258 @@
 "use client";
-import React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Phone, Mail, LifeBuoy } from "lucide-react";
 import Image from "next/image";
-import { FooterItems } from "@/types";
+import type { Category, Vehicle } from "@/types";
 import FooterLogo from "@/public/TVS-Logo_SVG_White.svg";
+import { getFooterData } from "@/lib/sanity";
+import { contactInfo, copyrightLinks, socialLinks } from "@/constants";
+import { ChevronDown } from "lucide-react";
+
+interface FooterItem {
+  type: string;
+  content?: string;
+  items?: Vehicle[] | string[];
+  href?: string;
+  image?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+}
+
+interface FooterSection {
+  title: string;
+  items: FooterItem[];
+}
 
 export function Footer() {
-  const desktopFooterSections: FooterItems[] = [
-    {
-      title: "MOTORCYCLES",
-      items: [
-        { type: "text", content: "TVS Apache" },
-        {
-          type: "list",
-          items: [
-            "RTR 310",
-            "RR 310",
-            "RTR 200 4V",
-            "RTR 180",
-            "RTR 160 4V",
-            "RTR 160",
-          ],
-        },
-        { type: "text", content: "Ronin" },
-        { type: "text", content: "Raider" },
-        { type: "text", content: "Radeon" },
-        { type: "text", content: "Sport" },
-        { type: "text", content: "Star City+" },
-      ],
-    },
-    {
-      title: "ELECTRIC SCOOTERS",
-      items: [
-        { type: "text", content: "TVS iQube" },
-        {
-          type: "list",
-          items: [
-            "iQube 2.2 kWh",
-            "iQube 3.4 kWh",
-            "iQube S 3.4 kWh",
-            "iQube ST 3.4 kWh",
-            "iQube ST 5.1 kWh",
-          ],
-        },
-        { type: "text", content: "TVS X" },
-      ],
-      extra: [
-        {
-          title: "SCOOTERS",
-          items: [
-            { type: "text", content: "Jupiter 110" },
-            { type: "text", content: "Jupiter 125" },
-            { type: "text", content: "Ntorq" },
-            { type: "text", content: "Zest 110" },
-          ],
-        },
-      ],
-    },
-    {
-      title: "MOPEDS",
-      items: [{ type: "text", content: "XL 100" }],
-      extra: [
-        {
-          title: "THREE WHEELERS",
-          items: [
-            { type: "text", content: "TVS King Deluxe" },
-            { type: "text", content: "TVS King Duramax" },
-            { type: "text", content: "TVS King Duramax Plus" },
-            { type: "text", content: "TVS King EV Max" },
-            { type: "text", content: "TVS King Kargo" },
-          ],
-        },
-        {
-          title: "RIDES & EVENTS",
-          items: [
-            { type: "text", content: "TVS Racing" },
-            { type: "text", content: "TVS Motosoul" },
-            { type: "text", content: "TVS Storm the Sands 2024" },
-          ],
-        },
-      ],
-    },
-    {
-      title: "INVESTORS",
-      items: [
-        { type: "text", content: "Overview" },
-        { type: "text", content: "Financial Reports" },
-        { type: "text", content: "Communication" },
-      ],
-      extra: [
-        {
-          title: "TVS DEALER LOCATOR",
-          items: [
-            { type: "text", content: "Two Wheeler Dealers" },
-            { type: "text", content: "Three Wheeler Dealers" },
-            { type: "text", content: "Super Premium Dealers" },
-            { type: "text", content: "Electric Scooter Dealers" },
-            { type: "text", content: "AMD & AD Dealers" },
-            { type: "text", content: "iQube Dealers" },
-          ],
-        },
-      ],
-    },
+  const [vehicleCategories, setVehicleCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({});
+
+  const toggleSection = (title: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [title]: !prev[title],
+    }));
+  };
+
+  const desktopFooterSections: FooterSection[] = [
+    // Vehicle Categories (Dynamic)
+    ...vehicleCategories.map((category) => ({
+      title: category.name.toUpperCase(),
+      items: category.subcategories.map((subcategory) => {
+        // Check if this subcategory has vehicles (variants)
+        const hasVariants =
+          subcategory.vehicles && subcategory.vehicles.length > 0;
+
+        if (hasVariants) {
+          // For subcategories WITH variants, render as list with heading
+          return {
+            type: "list" as const,
+            content: subcategory.name, // This will be plain text heading
+            items: subcategory.vehicles, // These will be rendered as links
+          };
+        } else {
+          // For subcategories WITHOUT variants, render as direct link
+          return {
+            type: "directLink" as const,
+            content: subcategory.name,
+            href: `/product/${subcategory.parentCategory.name.toLowerCase()}/${subcategory.slug}`,
+          };
+        }
+      }),
+    })),
+    // Static Sections
     {
       title: "ABOUT US",
       items: [
-        { type: "text", content: "Overview" },
-        { type: "text", content: "Company Vision" },
-        { type: "text", content: "Achievements" },
-        { type: "text", content: "Careers" },
-        { type: "text", content: "Contact Us" },
-      ],
-      extra: [
-        {
-          title: "NEWS & MEDIA",
-          items: [
-            { type: "text", content: "News" },
-            { type: "text", content: "Press Release" },
-            { type: "text", content: "Blog" },
-          ],
-        },
+        { type: "text", content: "Achievements", href: "/achievements" },
+        { type: "text", content: "Careers", href: "/careers" },
+        { type: "text", content: "Contact Us", href: "/contact" },
       ],
     },
     {
-      title: "SHOP",
+      title: "TVS CONNECT APP",
       items: [
-        { type: "text", content: "Accessories" },
-        { type: "text", content: "Merchandise" },
-        { type: "text", content: "TVS Genuine Parts" },
-        { type: "text", content: "TRU4 Oil" },
-      ],
-      extra: [
         {
-          title: "TVS CONNECT APP",
-          items: [
-            {
-              type: "link",
-              href: "https://play.google.com/store/apps/details?id=com.tvsm.connect&pcampaignid=web_share",
-              image:
-                "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
-              alt: "Get it on Google Play",
-              width: 140,
-              height: 42,
-            },
-            {
-              type: "link",
-              href: "https://apps.apple.com/in/app/tvs-connect/id1453965748",
-              image:
-                "https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg",
-              alt: "Download on the App Store",
-              width: 140,
-              height: 42,
-            },
-          ],
+          type: "link",
+          href: "https://play.google.com/store/apps/details?id=com.tvsm.connect&pcampaignid=web_share",
+          image:
+            "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
+          alt: "Get it on Google Play",
+          width: 140,
+          height: 42,
+        },
+        {
+          type: "link",
+          href: "https://apps.apple.com/in/app/tvs-connect/id1453965748",
+          image:
+            "https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg",
+          alt: "Download on the App Store",
+          width: 140,
+          height: 42,
         },
       ],
     },
   ];
 
-  const contactInfo = [
-    { title: "CONTACT", icon: Phone, content: "18002587555" },
-    { title: "EMAIL", icon: Mail, content: "customercare@tvsmotor.com" },
-    {
-      title: "NEED ROAD SIDE ASSISTANCE?",
-      icon: LifeBuoy,
-      content: 'Dial 1800-258-7111 and Press "1"',
-    },
-  ];
+  useEffect(() => {
+    async function fetchFooterData() {
+      const data = await getFooterData();
+      if (data) {
+        setVehicleCategories(data);
+      }
+      setIsLoading(false);
+    }
+    fetchFooterData();
+  }, []);
 
-  const socialLinks = [
-    {
-      href: "#",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-        </svg>
-      ),
-    },
-    {
-      href: "#",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-          <rect width="4" height="12" x="2" y="9" />
-          <circle cx="4" cy="4" r="2" />
-        </svg>
-      ),
-    },
-    {
-      href: "#",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-        </svg>
-      ),
-    },
-    {
-      href: "#",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-          <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-        </svg>
-      ),
-    },
-    {
-      href: "#",
-      svg: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-5 h-5"
-        >
-          <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
-          <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
-        </svg>
-      ),
-    },
-  ];
-
-  const copyrightLinks = [
-    { text: "Privacy Policy", href: "#" },
-    { text: "Disclaimer", href: "#" },
-    { text: "Cookie Policy", href: "#" },
-  ];
+  if (isLoading) {
+    return (
+      <div className="w-full py-12 px-4 bg-gradient-to-b from-[#0a2669] to-[#051440] animate-pulse">
+        <div className="container mx-auto h-96"></div>
+      </div>
+    );
+  }
 
   return (
-    <footer className="w-full py-12 px-4 bg-customBlue">
-      <div className="container mx-auto">
-        {/* Branding Section */}
-        <div className="mb-8">
-          <Link href="/" className="md:hidden block">
-            <Image src={FooterLogo} alt="TVS Motors" width={100} height={50} />
+    <footer className="w-full bg-gradient-to-b from-[#0a2669] to-[#051440] text-white">
+      {/* Top wave decoration */}
+      <div className="w-full overflow-hidden">
+        <svg
+          viewBox="0 0 1200 120"
+          preserveAspectRatio="none"
+          className="w-full h-12 text-white fill-current"
+        >
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+        </svg>
+      </div>
+
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        {/* Logo and brand section */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+          <Link
+            href="/"
+            className="mb-8 md:mb-0 transition-transform hover:scale-105"
+          >
+            <Image
+              src={FooterLogo || "/placeholder.svg"}
+              alt="TVS Motors"
+              width={170}
+              height={120}
+              className="w-32 md:w-40 lg:w-48 h-auto"
+            />
           </Link>
-          <Link href="/" className="hidden md:block">
-            <Image src={FooterLogo} alt="TVS Motors" width={170} height={120} />
-          </Link>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            {socialLinks.map((social, idx) => (
+              <Link
+                key={idx}
+                href={social.href}
+                className="bg-white/10 hover:bg-white/20 p-3 rounded-full transition-all duration-300 hover:scale-110"
+                aria-label={social.href.split("/").pop()}
+              >
+                {social.svg}
+              </Link>
+            ))}
+          </div>
         </div>
-        {/* Unified Grid: DesktopFooterSections + Contact/Social */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+        {/* Main footer content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10">
+          {/* Footer sections */}
           {desktopFooterSections.map((section, index) => (
-            <div key={index}>
-              <h3 className="font-bold mb-4 text-white ">{section.title}</h3>
-              <div className="space-y-2">
+            <div key={index} className="footer-section">
+              <div
+                className="flex justify-between items-center mb-4 pb-2 border-b border-white/20 cursor-pointer md:cursor-default"
+                onClick={() => toggleSection(section.title)}
+              >
+                <h3 className="text-lg font-bold tracking-wider">
+                  {section.title}
+                </h3>
+                <ChevronDown
+                  className={`w-5 h-5 md:hidden transition-transform duration-300 ${
+                    expandedSections[section.title] ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+
+              <div
+                className={`space-y-4 overflow-hidden transition-all duration-300 ${
+                  expandedSections[section.title]
+                    ? "max-h-[1000px]"
+                    : "max-h-0 md:max-h-[1000px]"
+                }`}
+              >
                 {section.items.map((item, idx) => {
-                  if (item.type === "text")
+                  // For subcategories WITH variants (like Apache Series)
+                  if (
+                    item.type === "list" &&
+                    item.items &&
+                    item.items.length > 0
+                  ) {
                     return (
-                      <p key={idx} className="text-gray-100">
-                        {item.content}
-                      </p>
+                      <div key={idx} className="space-y-3">
+                        {/* Render subcategory name as plain text heading */}
+                        <p className="text-gray-100 font-medium">
+                          {item.content}
+                        </p>
+                        {/* Render variants as a bulleted list with links */}
+                        <ul className="grid grid-cols-1 gap-y-1 pl-2">
+                          {item.items.map((vehicle, listIdx) => {
+                            if (typeof vehicle === "string") return null;
+
+                            return (
+                              <li
+                                key={listIdx}
+                                className="text-gray-300 text-sm"
+                              >
+                                <Link
+                                  href={`/product/${vehicle.type.toLowerCase()}/${vehicle.slug}`}
+                                  className="hover:text-white transition-colors hover:underline"
+                                >
+                                  {vehicle.model}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
                     );
-                  if (item.type === "list" && item.items)
-                    return (
-                      <ul
-                        key={idx}
-                        className="list-disc pl-5 space-y-1 text-gray-200"
-                      >
-                        {item.items.map((listItem, listIdx) => (
-                          <li key={listIdx}>{listItem}</li>
-                        ))}
-                      </ul>
-                    );
-                  if (item.type === "link")
+                  }
+                  // For subcategories WITHOUT variants (like Ronin)
+                  else if (item.type === "directLink") {
                     return (
                       <Link
                         key={idx}
                         href={item.href || "#"}
-                        className="inline-block"
+                        className="block text-gray-300 text-sm hover:text-white transition-colors hover:underline mb-2"
+                      >
+                        {item.content}
+                      </Link>
+                    );
+                  }
+                  // For about us section links
+                  else if (item.type === "text") {
+                    return (
+                      <Link
+                        key={idx}
+                        href={item.href || "#"}
+                        className="block text-gray-300 text-sm hover:text-white transition-colors hover:underline mb-2"
+                      >
+                        {item.content}
+                      </Link>
+                    );
+                  }
+                  // For app store links
+                  else if (item.type === "link") {
+                    return (
+                      <Link
+                        key={idx}
+                        href={item.href || "#"}
+                        className="inline-block hover:opacity-80 transition-opacity"
                       >
                         <Image
                           src={item.image || "/placeholder.png"}
@@ -330,98 +263,61 @@ export function Footer() {
                         />
                       </Link>
                     );
+                  }
+
                   return null;
                 })}
-                {section.extra &&
-                  section.extra.map((extraSection, eIdx) => (
-                    <div key={eIdx}>
-                      <h3 className="font-bold mt-6 mb-4 text-white">
-                        {extraSection.title}
-                      </h3>
-                      <div className="space-y-2">
-                        {extraSection.items.map((item, idx) => {
-                          if (item.type === "text")
-                            return (
-                              <p key={idx} className="text-gray-200">
-                                {item.content}
-                              </p>
-                            );
-                          if (item.type === "link")
-                            return (
-                              <Link
-                                key={idx}
-                                href={item.href || "#"}
-                                className="inline-block"
-                              >
-                                <Image
-                                  src={item.image || "/placeholder.png"}
-                                  alt={item.alt || "Placeholder"}
-                                  width={item.width}
-                                  height={item.height}
-                                  className="object-contain"
-                                />
-                              </Link>
-                            );
-                          return null;
-                        })}
-                      </div>
-                    </div>
-                  ))}
               </div>
             </div>
           ))}
-          {/* New Grid Item: Contact Info and Social Media */}
-          <div className="col-span-2 text-white">
-            {/* Contact Info Card */}
-            <div className="bg-[#0a2669] rounded-lg p-6 mb-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+          {/* Contact Info Card */}
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4">
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 shadow-xl">
+              <h3 className="text-lg font-bold tracking-wider mb-6 text-center">
+                CONTACT US
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {contactInfo.map((contact, idx) => (
-                  <div key={idx}>
-                    <h4 className="font-bold mb-1">{contact.title}</h4>
-                    <div className="flex items-center">
-                      <contact.icon className="w-4 h-4 mr-2" />
-                      <span>{contact.content}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Social Media Section */}
-            <div className="text-center">
-              <h4 className="font-bold mb-4">FOLLOW US</h4>
-              <div className="flex justify-center space-x-4">
-                {socialLinks.map((social, idx) => (
-                  <Link
+                  <div
                     key={idx}
-                    href={social.href}
-                    className="bg-[#0a2669] p-2 rounded-full"
+                    className="flex flex-col items-center text-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"
                   >
-                    {social.svg}
-                  </Link>
+                    <div className="bg-white/10 p-3 rounded-full mb-3">
+                      <contact.icon className="w-5 h-5" />
+                    </div>
+                    <h4 className="font-bold mb-2">{contact.title}</h4>
+                    <span className="text-gray-300">{contact.content}</span>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
-        {/* Copyright Section */}
-        <div className="mt-8 text-center text-sm text-gray-100">
-          <p>
-            © TVS Motor Company. All Rights Reserved |{" "}
-            {copyrightLinks.map((link, idx) => (
-              <React.Fragment key={idx}>
-                <Link href={link.href} className="hover:underline">
-                  {link.text}
-                </Link>
-                {idx < copyrightLinks.length - 1 && " | "}
-              </React.Fragment>
-            ))}
-          </p>
-        </div>
-        {/* Huge Centered Text */}
-        <div className="w-full flex mt-4 items-center justify-center">
-          <h1 className="text-center text-3xl md:text-5xl lg:text-[10rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500 select-none">
+
+        {/* Brand statement */}
+        <div className="w-full mt-16 mb-12 overflow-hidden">
+          <h1 className="text-center text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-white select-none tracking-tighter">
             TVS Motors
           </h1>
+        </div>
+
+        {/* Copyright Section */}
+        <div className="mt-12 pt-6 border-t border-white/20 text-center text-sm text-gray-300">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
+            {copyrightLinks.map((link, idx) => (
+              <Link
+                key={idx}
+                href={link.href}
+                className="hover:text-white transition-colors hover:underline"
+              >
+                {link.text}
+              </Link>
+            ))}
+          </div>
+          <p>
+            © {new Date().getFullYear()} TVS Motor Company. All Rights Reserved
+          </p>
         </div>
       </div>
     </footer>

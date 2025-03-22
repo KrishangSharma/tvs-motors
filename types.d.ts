@@ -226,3 +226,59 @@ export interface Award {
   organization?: string;
   image?: string;
 }
+
+interface Vehicle {
+  type: string;
+  model: string;
+  slug: string;
+  category: {
+    name: string;
+    parent?: {
+      name: string;
+    };
+  };
+  variants?: {
+    name: string;
+    slug: string;
+  }[];
+}
+
+interface Subcategory {
+  name: string;
+  vehicles: Vehicle[];
+  slug: string;
+  parentCategory: {
+    name: string;
+  };
+}
+
+interface Category {
+  name: string;
+  subcategories: Subcategory[];
+}
+
+export interface FooterSubItem {
+  type: "text";
+  content: string;
+}
+
+export interface FooterItem {
+  type: "text" | "list" | "link";
+  content?: string;
+  items?: string[];
+  href?: string;
+  image?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  subItems?: FooterSubItem[];
+}
+
+export interface FooterItems {
+  title: string;
+  items: FooterItem[];
+  extra?: {
+    title: string;
+    items: FooterItem[];
+  }[];
+}

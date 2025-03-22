@@ -109,6 +109,7 @@ export default function Navbar() {
         `}
         >
           <MobileNav />
+          <Search />
           <Link href="/">
             <Image
               src={Logo}

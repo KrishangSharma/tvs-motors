@@ -10,7 +10,6 @@ import ProductMenu from "../ProductMenu";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
-import Search from "../ui/search";
 
 export default function MobileNav() {
   return (
@@ -37,7 +36,6 @@ export default function MobileNav() {
               </Link>
             </SheetClose>
           </SheetTitle>
-          <Search />
           <div className="flex flex-col space-y-4">
             <div className="space-y-4">
               <div className="px-2 py-1 ">
