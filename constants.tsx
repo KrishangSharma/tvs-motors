@@ -1,9 +1,5 @@
 import { NavLinks } from "@/types";
 import ProductMenu from "@/components/ProductMenu";
-import Story1 from "@/public/yt-stories/story-1.jpg";
-import Story2 from "@/public/yt-stories/story-2.jpg";
-import Story3 from "@/public/yt-stories/story-3.jpg";
-import Story4 from "@/public/yt-stories/story-4.jpg";
 import {
   Bike,
   PackageSearch,
@@ -49,7 +45,6 @@ export const navLinks: NavLinks[] = [
     type: "link",
     href: "/awards",
   },
-
   {
     id: 4,
     label: "Company",
@@ -147,34 +142,6 @@ export const tabs = [
   "Chassis, Suspension and Electricals",
   "Wheels, Tyres and Brakes",
   "Dimensions, Weight and Fuel",
-];
-
-// Stories (YouTube Video Links)
-export const stories = [
-  {
-    id: 1,
-    thumbnail: Story1,
-    title: "Celebrating Mr. Venu Srinivasan's Llifetime Achievement Award",
-    source: "https://youtu.be/A90E-fu1e3o",
-  },
-  {
-    id: 2,
-    thumbnail: Story2,
-    title: "",
-    source: "https://youtu.be/n7Y89U8AjSs",
-  },
-  {
-    id: 3,
-    thumbnail: Story3,
-    title: "",
-    source: "https://youtu.be/ylNZddpP4YE",
-  },
-  {
-    id: 4,
-    thumbnail: Story4,
-    title: "",
-    source: "https://youtu.be/DHNsur93omY",
-  },
 ];
 
 export const timeSlots = [

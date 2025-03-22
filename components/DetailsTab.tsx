@@ -7,21 +7,85 @@ interface DetailsTabsProps {
   vehicle: VehicleDetails;
 }
 
+type SpecificationValue = string | number | Record<string, string | number>;
+type CategoryData = Record<string, SpecificationValue>;
+
+// Define the mapping of fields to categories
+const CATEGORY_MAPPINGS = {
+  // Engine & Performance category
+  enginePerformance: "Engine and Performance",
+
+  // Chassis, Suspension & Electricals category
+  suspension: "Chassis, Suspension and Electricals",
+  electricalLighting: "Chassis, Suspension and Electricals",
+  chassisSuspensionElectrical: "Chassis, Suspension and Electricals",
+
+  // Wheels, Tyres & Brakes category
+  brakesTyres: "Wheels, Tyres and Brakes",
+  wheelsTyresBrakes: "Wheels, Tyres and Brakes",
+
+  // Dimensions, Weight & Fuel category
+  dimensionsWeight: "Dimensions, Weight and Fuel",
+  storageFuel: "Dimensions, Weight and Fuel",
+  dimensionsWeightFuel: "Dimensions, Weight and Fuel",
+} as const;
+
 export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
-  // Map each tab to its corresponding vehicle data
-  const tabContent: Record<string, Record<string, string | number>> = {
-    "Engine and Performance": vehicle.enginePerformance,
-    "Chassis, Suspension and Electricals": vehicle.chassisSuspensionElectrical,
-    "Wheels, Tyres and Brakes": vehicle.wheelsTyresBrakes,
-    "Dimensions, Weight and Fuel": vehicle.dimensionsWeightFuel,
+  // Helper function to normalize vehicle data into consistent format
+  const normalizeVehicleData = (vehicle: VehicleDetails) => {
+    const normalized: Record<string, CategoryData> = {
+      "Engine and Performance": {},
+      "Chassis, Suspension and Electricals": {},
+      "Wheels, Tyres and Brakes": {},
+      "Dimensions, Weight and Fuel": {},
+    };
+
+    // Helper function to safely merge objects
+    const mergeObjects = (
+      target: CategoryData,
+      source: Record<string, unknown>
+    ) => {
+      if (typeof source === "object" && source !== null) {
+        Object.entries(source).forEach(([key, value]) => {
+          // Handle nested objects (like rimSize, brakeType, tyreSize in motorcycle schema)
+          if (typeof value === "object" && value !== null) {
+            target[key] = Object.entries(
+              value as Record<string, string | number>
+            ).reduce(
+              (acc, [subKey, subValue]) => ({
+                ...acc,
+                [`${key}${subKey.charAt(0).toUpperCase()}${subKey.slice(1)}`]:
+                  subValue,
+              }),
+              {}
+            );
+          } else {
+            target[key] = value as string | number;
+          }
+        });
+      }
+      return target;
+    };
+
+    // Process each field based on category mapping
+    Object.entries(vehicle).forEach(([key, value]) => {
+      if (key in CATEGORY_MAPPINGS) {
+        const category =
+          CATEGORY_MAPPINGS[key as keyof typeof CATEGORY_MAPPINGS];
+        normalized[category] = mergeObjects(normalized[category], value);
+      }
+    });
+
+    return normalized;
   };
 
+  // Map each tab to its corresponding normalized vehicle data
+  const tabContent = normalizeVehicleData(vehicle);
+
   // Helper function to chunk the data into groups of 4
-  const chunkData = (
-    data: [string, string | number | Record<string, string | number>][]
-  ) => {
+  const chunkData = (data: [string, SpecificationValue][]) => {
     const chunks = [];
     for (let i = 0; i < data.length; i += 4) {
       chunks.push(data.slice(i, i + 4));
@@ -29,42 +93,58 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
     return chunks;
   };
 
+  // Helper function to format key names with proper spacing
+  const formatKeyName = (key: string) => {
+    return key
+      .replace(/([A-Z])/g, " $1")
+      .replace(/^./, (str) => str.toUpperCase())
+      .trim();
+  };
+
+  // Helper function to format values
+  const formatValue = (value: string | number) => {
+    return String(value);
+  };
+
   // Helper function to render a field
-  const renderField = (
-    key: string,
-    value: string | number | Record<string, string | number>
-  ) => {
+  const renderField = (key: string, value: SpecificationValue) => {
     if (typeof value === "object" && value !== null) {
-      // Convert object entries to a comma-separated list on one line.
       const subEntries = Object.entries(value);
       return (
         <div key={key} className="py-2 capitalize">
-          <span className="font-medium text-gray-800">{key}: </span>
+          <span className="font-medium text-gray-800">
+            {formatKeyName(key)}:{" "}
+          </span>
           <span className="text-gray-600">
             {subEntries.map(([subKey, subValue], index) => (
               <span key={subKey}>
-                {subKey}: {subValue}
+                {formatKeyName(subKey)}:{" "}
+                {formatValue(subValue as string | number)}
                 {index < subEntries.length - 1 && ", "}
               </span>
             ))}
           </span>
         </div>
       );
-    } else {
-      return (
-        <div key={key} className="py-2 capitalize">
-          <span className="font-medium text-gray-800">{key}: </span>
-          <span className="text-gray-600">{value}</span>
-        </div>
-      );
     }
+
+    return (
+      <div key={key} className="py-2 capitalize">
+        <span className="font-medium text-gray-800">
+          {formatKeyName(key)}:{" "}
+        </span>
+        <span className="text-gray-600">
+          {formatValue(value as string | number)}
+        </span>
+      </div>
+    );
   };
 
-  // Render the content for the active tab.
+  // Render the content for the active tab
   const renderContent = () => {
     const content = tabContent[activeTab];
 
-    if (!content) {
+    if (!content || Object.keys(content).length === 0) {
       return (
         <div className="p-4">
           <p className="text-gray-600">No content available for {activeTab}</p>
@@ -72,7 +152,6 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
       );
     }
 
-    // Chunk the data into groups of 4 items
     const chunkedData = chunkData(Object.entries(content));
 
     return (
@@ -80,7 +159,7 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
         {chunkedData.map((chunk, chunkIndex) => (
           <div
             key={chunkIndex}
-            className="w-full bg-white rounded-lg shadow-md p-5 border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+            className="w-full bg-white rounded-lg p-5 border-2 border-gray-200 hover:shadow-lg transition-shadow duration-300"
           >
             {chunk.map(([key, value]) => renderField(key, value))}
           </div>
@@ -91,7 +170,6 @@ export default function DetailsTabs({ vehicle }: DetailsTabsProps) {
 
   return (
     <>
-      {/* Scrollable tab bar with hidden scrollbar */}
       <div className="flex space-x-4 pb-2 overflow-x-auto no-scrollbar">
         {tabs.map((tab) => (
           <button

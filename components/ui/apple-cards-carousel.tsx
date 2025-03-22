@@ -1,4 +1,5 @@
 "use client";
+
 import React, {
   useEffect,
   useRef,
@@ -23,7 +24,7 @@ interface CarouselProps {
 }
 
 type Card = {
-  src: StaticImageData;
+  src: StaticImageData | string;
   title: string;
   category: string;
   content: React.ReactNode;
@@ -279,22 +280,22 @@ export const BlurImage = ({
   ...rest
 }: ImageProps) => {
   const [isLoading, setLoading] = useState(true);
+
   return (
     <Image
-      className={cn(
-        "transition duration-300",
-        isLoading ? "blur-sm" : "blur-0",
-        className
-      )}
-      onLoad={() => setLoading(false)}
+      {...rest}
       src={src}
+      alt={alt}
       width={width}
       height={height}
-      loading="lazy"
-      decoding="async"
-      blurDataURL={typeof src === "string" ? src : undefined}
-      alt={alt ? alt : "Background of a beautiful view"}
-      {...rest}
+      className={cn(
+        "duration-700 ease-in-out",
+        isLoading
+          ? "scale-110 blur-2xl grayscale"
+          : "scale-100 blur-0 grayscale-0",
+        className
+      )}
+      onLoadingComplete={() => setLoading(false)}
     />
   );
 };

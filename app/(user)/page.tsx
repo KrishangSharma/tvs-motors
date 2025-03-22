@@ -1,6 +1,6 @@
 import Heading from "@/components/Heading";
 import { Hero, ServicesSection, YourRide } from "@/components/exports";
-import { VideoCarousel } from "@/components/VideoCarousel";
+import { VideoCarousel } from "@/components/VideoCarouselServer";
 
 export default function Home() {
   return (

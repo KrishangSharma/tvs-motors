@@ -3,8 +3,9 @@
 import { useState } from "react";
 import YouTube from "react-youtube";
 import { Play } from "lucide-react";
-import { stories } from "@/constants";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
+import { urlFor } from "@/sanity/lib/image";
+import { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
 // Extract YouTube Video ID from URL
 const getYouTubeID = (url: string) => {
@@ -49,16 +50,28 @@ const VideoCard = ({
   );
 };
 
-// Video Carousel Component
-export function VideoCarousel() {
-  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null); // Track currently playing video
+interface Story {
+  _id: string;
+  title: string;
+  source: string;
+  thumbnail: SanityImageSource;
+}
+
+// Client Component
+function VideoCarouselClient({ stories }: { stories: Story[] }) {
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null);
 
   const cards = stories.map((story, index) => {
     const videoId = getYouTubeID(story.source);
     if (!videoId) return null;
 
+    const imageUrl = urlFor(story.thumbnail).url();
+
     return (
-      <div className="relative flex items-center justify-center" key={story.id}>
+      <div
+        className="relative flex items-center justify-center"
+        key={story._id}
+      >
         {/* Play icon should be hidden if this video is playing */}
         {!playingVideoId || playingVideoId !== videoId ? (
           <Play
@@ -69,7 +82,7 @@ export function VideoCarousel() {
 
         <Card
           card={{
-            src: story.thumbnail,
+            src: imageUrl,
             title: story.title,
             category: "",
             content: (
@@ -88,3 +101,5 @@ export function VideoCarousel() {
 
   return <Carousel items={cards.filter(Boolean)} />;
 }
+
+export { VideoCarouselClient, type Story };
