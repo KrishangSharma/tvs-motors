@@ -6,16 +6,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
 import ProductMenu from "../ProductMenu";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
+import Search from "@/components/ui/search";
 
 export default function MobileNav() {
   return (
@@ -27,13 +22,13 @@ export default function MobileNav() {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="w-[400px] overflow-y-auto sm:w-[350px] flex flex-col gap-5"
+          className="w-[400px] overflow-y-auto sm:w-[350px]"
         >
           <SheetTitle>
             <SheetClose asChild>
               <Link href="/">
                 <Image
-                  src={Logo}
+                  src={Logo || "/placeholder.svg"}
                   alt="TVS Logo"
                   width={100}
                   height={40}
@@ -42,56 +37,67 @@ export default function MobileNav() {
               </Link>
             </SheetClose>
           </SheetTitle>
-          <NavigationMenu>
-            <NavigationMenuList className="flex-col items-start">
-              <div className="space-y-4 w-full min-h-screen">
+
+          {/* Search bar at the top of the menu */}
+          <div className="mt-6 mb-4">
+            <Search />
+          </div>
+
+          <div className="flex flex-col space-y-4 mt-4">
+            <div className="space-y-4 py-4">
+              <div className="px-2 py-1 ">
+                <h2 className="font-medium">Products</h2>
+                <ProductMenu />
+              </div>
+              <SheetClose asChild>
                 <div className="px-2 py-1">
-                  <h2 className="font-medium">Products</h2>
-                  <ProductMenu />
+                  <Link
+                    href="/services"
+                    className="block font-medium text-customBlue"
+                  >
+                    Services
+                  </Link>
                 </div>
-                <NavigationMenuItem className="px-2 py-1">
-                  <SheetClose asChild>
-                    <NavigationMenuLink
-                      asChild
-                      className="block font-medium text-customBlue"
-                    >
-                      <Link href="/our-services">Services</Link>
-                    </NavigationMenuLink>
-                  </SheetClose>
-                </NavigationMenuItem>
-                <NavigationMenuItem className="px-2 py-1">
-                  <SheetClose asChild>
-                    <NavigationMenuLink
-                      asChild
-                      className="block font-medium text-customBlue"
-                    >
-                      <Link href="/awards">Awards</Link>
-                    </NavigationMenuLink>
-                  </SheetClose>
-                </NavigationMenuItem>
-                <NavigationMenuItem className="px-2 py-1">
-                  <SheetClose asChild>
-                    <NavigationMenuLink
-                      asChild
-                      className="block font-medium text-customBlue"
-                    >
-                      <Link href="/company">Company</Link>
-                    </NavigationMenuLink>
-                  </SheetClose>
-                </NavigationMenuItem>
-                <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
-                  <SheetClose asChild>
-                    <Link
-                      href="/test-ride"
-                      className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
-                    >
-                      Book A Test Ride
-                    </Link>
-                  </SheetClose>
+              </SheetClose>
+              <div className="px-2 py-1">
+                <h2 className="mb-2 font-medium text-customBlue">Shop</h2>
+                <div className="space-y-2">
+                  {/* Add your shop links here */}
+                  <p className="text-sm">Shop content goes here</p>
                 </div>
               </div>
-            </NavigationMenuList>
-          </NavigationMenu>
+              <div className="px-2 py-1">
+                <h2 className="mb-2 font-medium text-customBlue">Company</h2>
+                <div className="space-y-2">
+                  {/* Add your company links here */}
+                  <p className="text-sm">Company content goes here</p>
+                </div>
+              </div>
+              {/* Secondary Links */}
+              <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
+                {/* <Link
+                    href="/buy-vehicle"
+                    className="flex flex-col items-start space-y-1"
+                  >
+                    <span className="text-gray-400">Buy Vehicle</span>
+                  </Link> */}
+                <SheetClose asChild>
+                  <Link
+                    href="/test-ride"
+                    className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
+                  >
+                    Book A Test Ride
+                  </Link>
+                </SheetClose>
+                {/* <Link
+                    href="/dealers"
+                    className="flex flex-col items-start space-y-1"
+                  >
+                    <span className="text-gray-400">Dealers</span>
+                  </Link> */}
+              </div>
+            </div>
+          </div>
         </SheetContent>
       </Sheet>
     </>

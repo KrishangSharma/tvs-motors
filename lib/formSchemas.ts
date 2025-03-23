@@ -36,17 +36,35 @@ export const careerFormSchema = z.object({
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
-  resume: z
-    .instanceof(FileList)
-    .refine((files) => files.length > 0, "Resume is required")
-    .refine(
-      (files) => files[0]?.size <= MAX_FILE_SIZE,
-      "File size must be less than 5MB"
-    )
-    .refine(
-      (files) => ACCEPTED_FILE_TYPES.includes(files[0]?.type),
-      "Only PDF and DOC/DOCX files are accepted"
-    ),
+  resume: z.any().superRefine((val, ctx) => {
+    if (typeof window !== "undefined") {
+      // Client-side validation
+      if (val instanceof FileList) {
+        if (val.length === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Resume is required",
+          });
+          return;
+        }
+
+        const file = val[0];
+        if (file.size > MAX_FILE_SIZE) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "File size must be less than 5MB",
+          });
+        }
+
+        if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Only PDF and DOC/DOCX files are accepted",
+          });
+        }
+      }
+    }
+  }),
   interestedProfile: z
     .string()
     .min(1, { message: "Please select an interested profile" }),

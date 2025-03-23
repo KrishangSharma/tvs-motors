@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet } from "../ui/sheet";
 import { navLinks } from "@/constants";
-import SearchCommand from "../search-command";
+import Search from "@/components/ui/search";
 
 export default function Navbar() {
   // Scroll management logic(state variable and useEffect)
@@ -52,7 +52,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center">
               <Link href="/" className="mr-4">
                 <Image
-                  src={Logo}
+                  src={Logo || "/placeholder.svg"}
                   alt="TVS Logo"
                   width={100}
                   height={40}
@@ -86,8 +86,8 @@ export default function Navbar() {
               </NavigationMenu>
             </div>
             <div className="hidden lg:flex items-center space-x-4">
+              <Search />
               <nav className="flex items-center space-x-2">
-                <SearchCommand />
                 <Link
                   href="/test-ride"
                   className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
@@ -105,14 +105,16 @@ export default function Navbar() {
           fixed top-0 left-0 right-0 z-50
           w-full py-5 bg-white/30 backdrop-blur-xl flex
           items-center justify-between lg:hidden
-          flex-row-reverse px-4
+          px-4
         `}
         >
-          <MobileNav />
-          <SearchCommand />
+          <div className="flex items-center gap-3">
+            <MobileNav />
+            <Search />
+          </div>
           <Link href="/">
             <Image
-              src={Logo}
+              src={Logo || "/placeholder.svg"}
               alt="TVS Logo"
               width={100}
               height={40}
