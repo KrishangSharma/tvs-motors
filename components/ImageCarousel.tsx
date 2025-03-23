@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,30 @@ export default function ImageCarousel({ images, model }: imageCarouselProps) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const thumbnailsRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Reset the interval whenever currentIndex changes
+  useEffect(() => {
+    // Clear any existing interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Set up a new interval
+    intervalRef.current = setInterval(() => {
+      const newIndex = (currentIndex + 1) % images.length;
+      setIsTransitioning(true);
+      setCurrentIndex(newIndex);
+      setTimeout(() => setIsTransitioning(false), 500);
+    }, 1500);
+
+    // Cleanup function to clear interval when component unmounts or currentIndex changes
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [currentIndex, images.length]);
 
   const goToSlide = (index: number) => {
     if (isTransitioning) return;
@@ -31,7 +55,7 @@ export default function ImageCarousel({ images, model }: imageCarouselProps) {
 
   const goToNext = () => {
     if (isTransitioning) return;
-    const newIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+    const newIndex = (currentIndex + 1) % images.length;
     goToSlide(newIndex);
   };
 
@@ -48,7 +72,6 @@ export default function ImageCarousel({ images, model }: imageCarouselProps) {
       {/* Main Image with Model Name Overlay */}
       <div className="relative overflow-hidden" ref={carouselRef}>
         <div className="absolute inset-0 z-10 pointer-events-none" />
-        {/* Model Name Overlay */}
         <h2
           className={`absolute top-4 left-4 text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-600 z-20 ${montserrat.className}`}
         >
@@ -94,7 +117,6 @@ export default function ImageCarousel({ images, model }: imageCarouselProps) {
         {images.map((image, index) => (
           <button
             key={index}
-            data-index={index}
             onClick={() => goToSlide(index)}
             className={cn(
               "flex-shrink-0 relative rounded-md overflow-hidden transition-all m-2",
