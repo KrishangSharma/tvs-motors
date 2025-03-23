@@ -102,13 +102,15 @@ export function FilterSheet({
   };
 
   const handleReset = () => {
-    setFilters({
-      priceRange: [minPrice, maxPrice],
+    const resetFilters: FilterOptions = {
+      priceRange: [minPrice, maxPrice] as [number, number],
       types: [],
       sortBy: "price-low",
       engineCapacity: [],
       colors: [],
-    });
+    };
+    setFilters(resetFilters);
+    onApplyFilters(resetFilters);
   };
 
   return (

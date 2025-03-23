@@ -127,7 +127,10 @@ export default function VehiclesPage({
         open={filterSheetOpen}
         onOpenChange={setFilterSheetOpen}
         initialFilters={filterOptions}
-        onApplyFilters={applyFilters}
+        onApplyFilters={(newFilters) => {
+          setFilterOptions(newFilters);
+          applyFilters(newFilters);
+        }}
         minPrice={minPrice}
         maxPrice={maxPrice}
       />
