@@ -2,32 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { VehicleItem } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ChevronRight, Filter } from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import Heading from "./Heading";
+import { FloatingDockDemo } from "./FloatingDock";
+import { FilterSheet, type FilterOptions } from "./filter-sheet";
 
 export default function VehiclesPage({
   vehicles,
@@ -36,93 +18,116 @@ export default function VehiclesPage({
 }) {
   const [filteredVehicles, setFilteredVehicles] =
     useState<VehicleItem[]>(vehicles);
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-  const [sortOrder, setSortOrder] = useState<string>("default");
-  const [selectedPriceRanges, setSelectedPriceRanges] = useState<string[]>([]);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("price-low");
 
-  // Filter vehicles by type and price range
-  const filterVehicles = () => {
-    let filtered = [...vehicles];
+  // Calculate min and max price for the price range slider
+  const minPrice = Math.min(...vehicles.map((v) => v.price));
+  const maxPrice = Math.max(...vehicles.map((v) => v.price));
 
-    // Apply vehicle type filter
-    if (activeFilter !== "all") {
-      filtered = filtered.filter((vehicle) => vehicle.type === activeFilter);
-    }
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    priceRange: [minPrice, maxPrice],
+    types: [],
+    sortBy: "price-low",
+    engineCapacity: [],
+    colors: [],
+  });
 
-    // Apply price range filters
-    if (selectedPriceRanges.length > 0) {
-      filtered = filtered.filter((vehicle) => {
-        return selectedPriceRanges.some((range) => {
-          switch (range) {
-            case "price-1":
-              return vehicle.price < 50000;
-            case "price-2":
-              return vehicle.price >= 50000 && vehicle.price < 100000;
-            case "price-3":
-              return vehicle.price >= 100000 && vehicle.price < 150000;
-            case "price-4":
-              return vehicle.price >= 150000;
-            default:
-              return false;
-          }
-        });
-      });
-    }
+  // Handle filter click from the dock
+  const handleFilterClick = (value: string) => {
+    setActiveFilter(value);
 
-    setFilteredVehicles(filtered);
-  };
+    // Update the sort option in filter options
+    setFilterOptions({
+      ...filterOptions,
+      sortBy: value,
+    });
 
-  // Handle price range checkbox changes
-  const handlePriceRangeChange = (rangeId: string) => {
-    setSelectedPriceRanges((prev) => {
-      const newRanges = prev.includes(rangeId)
-        ? prev.filter((id) => id !== rangeId)
-        : [...prev, rangeId];
-      return newRanges;
+    // Apply the sorting
+    applyFilters({
+      ...filterOptions,
+      sortBy: value,
     });
   };
 
-  // Update filtered vehicles when filters change
-  useEffect(() => {
-    filterVehicles();
-  }, [activeFilter, selectedPriceRanges]);
-
-  // Filter vehicles by type
-  const handleFilterChange = (value: string) => {
-    setActiveFilter(value);
+  // Handle more options click from the dock
+  const handleMoreOptionsClick = () => {
+    setFilterSheetOpen(true);
   };
 
-  // Sort vehicles
-  const handleSortChange = (value: string) => {
-    setSortOrder(value);
-    let sorted = [...filteredVehicles];
+  // Apply all filters and sorting
+  const applyFilters = (options: FilterOptions) => {
+    let result = [...vehicles];
 
-    switch (value) {
-      case "price-low":
-        sorted.sort((a, b) => a.price - b.price);
-        break;
-      case "price-high":
-        sorted.sort((a, b) => b.price - a.price);
-        break;
-      case "name-asc":
-        sorted.sort((a, b) => a.model.localeCompare(b.model));
-        break;
-      case "name-desc":
-        sorted.sort((a, b) => b.model.localeCompare(a.model));
-        break;
-      default:
-        // Keep original order
-        sorted =
-          activeFilter === "all"
-            ? vehicles
-            : vehicles.filter((vehicle) => vehicle.type === activeFilter);
+    // Filter by price range
+    result = result.filter(
+      (vehicle) =>
+        vehicle.price >= options.priceRange[0] &&
+        vehicle.price <= options.priceRange[1]
+    );
+
+    // Filter by vehicle type
+    if (options.types.length > 0) {
+      result = result.filter((vehicle) => options.types.includes(vehicle.type));
     }
 
-    setFilteredVehicles(sorted);
+    // Filter by engine capacity (this would need to be added to the vehicle type)
+    if (options.engineCapacity.length > 0) {
+      // Assuming vehicle has an engineCapacity property
+      // result = result.filter(vehicle => options.engineCapacity.includes(vehicle.engineCapacity));
+    }
+
+    // Filter by color (this would need to be added to the vehicle type)
+    if (options.colors.length > 0) {
+      // Assuming vehicle has a color property
+      // result = result.filter(vehicle => options.colors.includes(vehicle.color));
+    }
+
+    // Apply sorting
+    result = sortVehicles(result, options.sortBy);
+
+    setFilteredVehicles(result);
   };
+
+  // Sort vehicles based on the selected sort option
+  const sortVehicles = (vehicles: VehicleItem[], sortBy: string) => {
+    switch (sortBy) {
+      case "price-low":
+        return [...vehicles].sort((a, b) => a.price - b.price);
+      case "price-high":
+        return [...vehicles].sort((a, b) => b.price - a.price);
+      case "name-asc":
+        return [...vehicles].sort((a, b) => a.model.localeCompare(b.model));
+      case "name-desc":
+        return [...vehicles].sort((a, b) => b.model.localeCompare(a.model));
+      default:
+        // Default to price-low
+        return [...vehicles].sort((a, b) => a.price - b.price);
+    }
+  };
+
+  // Apply initial filters
+  useEffect(() => {
+    applyFilters(filterOptions);
+  }, [vehicles]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <FloatingDockDemo
+        onFilterClick={handleFilterClick}
+        onMoreOptionsClick={handleMoreOptionsClick}
+      />
+
+      {/* Filter Sheet */}
+      <FilterSheet
+        open={filterSheetOpen}
+        onOpenChange={setFilterSheetOpen}
+        initialFilters={filterOptions}
+        onApplyFilters={applyFilters}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
+      />
+
       {/* Hero Section */}
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
@@ -134,135 +139,13 @@ export default function VehiclesPage({
             lgText="Premium Vehicles"
           />
         </div>
-      </div>
 
-      {/* Filters Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 my-2 sticky top-0 z-10 bg-background/80 backdrop-blur-sm py-4">
-        <Tabs
-          defaultValue="all"
-          value={activeFilter}
-          onValueChange={handleFilterChange}
-          className="hidden sm:inline-block sm:w-auto"
-        >
-          <TabsList className="grid w-full grid-cols-4 sm:w-auto">
-            <TabsTrigger value="all" className="w-full sm:w-auto">
-              All
-            </TabsTrigger>
-            <TabsTrigger value="Motorcycle" className="w-[95px] sm:w-auto">
-              Motorcycles
-            </TabsTrigger>
-            <TabsTrigger value="Scooter" className="w-full sm:w-auto">
-              Scooters
-            </TabsTrigger>
-            <TabsTrigger value="Moped" className="w-full sm:w-auto">
-              Mopeds
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Select value={sortOrder} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">No Sorting</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="name-asc">Name: A to Z</SelectItem>
-              <SelectItem value="name-desc">Name: Z to A</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="sm:flex">
-                <Filter className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader className="text-left">
-                <SheetTitle>Filter Vehicles</SheetTitle>
-                <SheetDescription>
-                  Refine your search with these filters
-                </SheetDescription>
-              </SheetHeader>
-              <Separator className="my-4" />
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium">Vehicle Type</h3>
-                  <RadioGroup
-                    defaultValue="all"
-                    value={activeFilter}
-                    onValueChange={handleFilterChange}
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="all" id="all" />
-                      <Label htmlFor="all">All Vehicles</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Motorcycle" id="motorcycle" />
-                      <Label htmlFor="motorcycle">Motorcycles</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Scooter" id="scooter" />
-                      <Label htmlFor="scooter">Scooters</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="Moped" id="moped" />
-                      <Label htmlFor="moped">Mopeds</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <Separator />
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium">Price Range</h3>
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="price-1"
-                        checked={selectedPriceRanges.includes("price-1")}
-                        onCheckedChange={() =>
-                          handlePriceRangeChange("price-1")
-                        }
-                      />
-                      <Label htmlFor="price-1">Under ₹50,000</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="price-2"
-                        checked={selectedPriceRanges.includes("price-2")}
-                        onCheckedChange={() =>
-                          handlePriceRangeChange("price-2")
-                        }
-                      />
-                      <Label htmlFor="price-2">₹50,000 - ₹100,000</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="price-3"
-                        checked={selectedPriceRanges.includes("price-3")}
-                        onCheckedChange={() =>
-                          handlePriceRangeChange("price-3")
-                        }
-                      />
-                      <Label htmlFor="price-3">₹100,000 - ₹150,000</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="price-4"
-                        checked={selectedPriceRanges.includes("price-4")}
-                        onCheckedChange={() =>
-                          handlePriceRangeChange("price-4")
-                        }
-                      />
-                      <Label htmlFor="price-4">Above ₹150,000</Label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+        {/* Active filter indicator */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Active filter:</span>
+          <Badge variant="secondary" className="capitalize">
+            {activeFilter.replace("-", " ")}
+          </Badge>
         </div>
       </div>
 
@@ -334,7 +217,7 @@ function VehicleCard({ vehicle }: { vehicle: VehicleItem }) {
           <h3 className="font-semibold text-xl tracking-tight">
             TVS {vehicle.model}
           </h3>
-          <p className="text-2xl font-bold">
+          <p className="text-2xl font-semibold text-gray-700">
             {formatIndianPrice(vehicle.price)}
           </p>
         </div>

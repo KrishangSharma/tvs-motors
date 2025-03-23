@@ -17,7 +17,7 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="py-4 md:py-16 pb-8` px-4 md:px-6 lg:px-8">
+      <div className="container mx-auto py-4 md:py-16 pb-8 px-4 md:px-6 lg:px-8">
         <div className="w-full md:container max-w-7xl mx-auto">
           <Heading
             smText="Discover our comprehensive range of services."

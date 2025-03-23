@@ -460,7 +460,7 @@ export const contactInfo = [
 
 export const socialLinks = [
   {
-    href: "#",
+    href: "https://x.com/tvsmotorcompany",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -479,7 +479,7 @@ export const socialLinks = [
     ),
   },
   {
-    href: "#",
+    href: "https://www.linkedin.com/company/tvs-motor-company/",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -500,7 +500,7 @@ export const socialLinks = [
     ),
   },
   {
-    href: "#",
+    href: "https://www.facebook.com/tvsmotorcompany/",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -519,7 +519,7 @@ export const socialLinks = [
     ),
   },
   {
-    href: "#",
+    href: "https://www.instagram.com/tvsmotorcompany/",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -540,7 +540,7 @@ export const socialLinks = [
     ),
   },
   {
-    href: "#",
+    href: "https://www.youtube.com/@tvsmotorcompany",
     svg: (
       <svg
         xmlns="http://www.w3.org/2000/svg"

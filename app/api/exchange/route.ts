@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "exchange@resend.dev",
+      from: `exchange@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
       subject: `Confirmation: Vehicle Exchange Request for ${currentVehicleModel}`,
       react: VehicleExchangeConfirmationEmail({

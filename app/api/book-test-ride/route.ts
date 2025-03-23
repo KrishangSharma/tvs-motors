@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "testride@resend.dev",
+      from: `testride@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
       subject: `Your TVS Motors Test Ride Confirmation - ${bookingReference}`,
       react: TestRideConfirmationEmail({

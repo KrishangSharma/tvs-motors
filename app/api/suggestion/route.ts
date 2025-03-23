@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     let emailResponse = null;
     if (email) {
       const emailData = {
-        from: "feedback@resend.dev",
+        from: `feedback@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
         to: email,
         subject: `Feedback Received: ${subject}`,
         react: SuggestionFeedbackEmail({

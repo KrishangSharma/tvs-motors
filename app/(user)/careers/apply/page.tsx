@@ -2,7 +2,7 @@
 import React from "react";
 import CareerApplicattionForm from "@/components/Forms/CareerForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/career-form.jpg";
 
 const page = () => {
   return (

@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "loans@resend.dev",
+      from: `loans@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
       subject: `Vehicle Loan Application Confirmation: ${applicationId}`,
       react: LoanApplicationEmail({

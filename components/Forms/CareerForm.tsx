@@ -35,8 +35,8 @@ type FormValues = z.infer<typeof careerFormSchema>;
 
 export default function CareerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
@@ -53,14 +53,30 @@ export default function CareerForm() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
+      const formData = new FormData();
+      const values = form.getValues();
+
+      // Append form fields to FormData
+      formData.append("fullName", values.fullName);
+      formData.append("email", values.email);
+      formData.append("phone", values.phone);
+      formData.append("interestedProfile", values.interestedProfile);
+      if (values.coverLetter) {
+        formData.append("coverLetter", values.coverLetter);
+      }
+      if (values.resume?.[0]) {
+        formData.append("resume", values.resume[0]);
+      }
+
       const response = await fetch("/api/career-application", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
+        body: formData,
       });
+
       if (!response.ok) {
         throw new Error("Form submission failed");
       }
+
       setIsSubmitting(false);
       form.reset({
         fullName: "",
@@ -69,8 +85,8 @@ export default function CareerForm() {
         interestedProfile: "",
         coverLetter: "",
       });
+      setFileName("");
       captchaRef.current?.reset();
-      setCaptchaValue("");
       toast.success(
         "Application submitted successfully! We'll review your application and get back to you."
       );
@@ -82,8 +98,6 @@ export default function CareerForm() {
   };
 
   const handleCaptchaChange = async (value: string | null) => {
-    setCaptchaValue(value || "");
-
     const captchaResponse = await fetch("/api/verify-captcha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,7 +105,6 @@ export default function CareerForm() {
     });
 
     if (!captchaResponse.ok) {
-      // Handle error appropriately
       setIsCaptchaVerified(false);
       throw new Error("Captcha verification failed");
     }
@@ -167,18 +180,27 @@ export default function CareerForm() {
             />
           </div>
 
-          {/* <FormField
+          <FormField
             control={form.control}
             name="resume"
-            render={({ field: { onChange, value, ...fieldProps } }) => (
+            render={({ field: { onChange, value: _, ...fieldProps } }) => (
               <FormItem>
                 <FormLabel>Resume</FormLabel>
                 <FormControl>
                   <FileInput
                     id="resume-upload"
-                    placeholder="Upload your resume (PDF/DOC)"
+                    placeholder={fileName || "Upload your resume (PDF/DOC)"}
                     accept=".pdf,.doc,.docx"
-                    onChange={(e) => onChange(e.target.files)}
+                    onChange={(e) => {
+                      const files = e.target.files;
+                      if (files && files.length > 0) {
+                        setFileName(files[0].name);
+                        onChange(files);
+                      } else {
+                        setFileName("");
+                        onChange(null);
+                      }
+                    }}
                     {...fieldProps}
                   />
                 </FormControl>
@@ -188,7 +210,7 @@ export default function CareerForm() {
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
 
           <FormField
             control={form.control}

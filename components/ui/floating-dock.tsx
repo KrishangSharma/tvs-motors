@@ -5,41 +5,60 @@
  **/
 "use client";
 
+import type React from "react";
+
 import { cn } from "@/lib/utils";
-import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
+import { Filter } from "lucide-react";
 import {
   AnimatePresence,
-  MotionValue,
+  type MotionValue,
   motion,
   useMotionValue,
   useSpring,
   useTransform,
 } from "motion/react";
-import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 
 export const FloatingDock = ({
   items,
+  onFilterClick,
+  onMoreOptionsClick,
   desktopClassName,
   mobileClassName,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; value: string }[];
+  onFilterClick: (value: string) => void;
+  onMoreOptionsClick: () => void;
   desktopClassName?: string;
   mobileClassName?: string;
 }) => {
   return (
     <>
-      <FloatingDockDesktop items={items} className={desktopClassName} />
-      <FloatingDockMobile items={items} className={mobileClassName} />
+      <FloatingDockDesktop
+        items={items}
+        onFilterClick={onFilterClick}
+        onMoreOptionsClick={onMoreOptionsClick}
+        className={desktopClassName}
+      />
+      <FloatingDockMobile
+        items={items}
+        onFilterClick={onFilterClick}
+        onMoreOptionsClick={onMoreOptionsClick}
+        className={mobileClassName}
+      />
     </>
   );
 };
 
 const FloatingDockMobile = ({
   items,
+  onFilterClick,
+  onMoreOptionsClick,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; value: string }[];
+  onFilterClick: (value: string) => void;
+  onMoreOptionsClick: () => void;
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
@@ -72,14 +91,21 @@ const FloatingDockMobile = ({
                 <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                   {item.title}
                 </p>
-                <Link
-                  href={item.href}
-                  key={item.title}
-                  onClick={() => setOpen(false)}
-                  className="h-8 w-8 rounded-full bg-gray-50 dark:bg-neutral-900 flex items-center justify-center"
+                <button
+                  onClick={() => {
+                    if (item.value === "more") {
+                      onMoreOptionsClick();
+                    } else {
+                      onFilterClick(item.value);
+                    }
+                    setOpen(false);
+                  }}
+                  className="h-8 w-8 rounded-full bg-gray-100 dark:bg-neutral-900 flex items-center justify-center"
                 >
-                  <div className="h-4 w-4">{item.icon}</div>
-                </Link>
+                  <div className="h-5 w-5 flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                </button>
               </motion.div>
             ))}
           </motion.div>
@@ -89,7 +115,7 @@ const FloatingDockMobile = ({
         onClick={() => setOpen(!open)}
         className="h-10 w-10 rounded-full bg-gray-50 dark:bg-neutral-800 flex items-center justify-center"
       >
-        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
+        <Filter className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
       </button>
     </div>
   );
@@ -97,12 +123,16 @@ const FloatingDockMobile = ({
 
 const FloatingDockDesktop = ({
   items,
+  onFilterClick,
+  onMoreOptionsClick,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: { title: string; icon: React.ReactNode; value: string }[];
+  onFilterClick: (value: string) => void;
+  onMoreOptionsClick: () => void;
   className?: string;
 }) => {
-  const mouseX = useMotionValue(Infinity);
+  const mouseX = useMotionValue(Number.POSITIVE_INFINITY);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
@@ -118,23 +148,30 @@ const FloatingDockDesktop = ({
 
   // Reset mouseX when route changes
   useEffect(() => {
-    mouseX.set(Infinity);
+    mouseX.set(Number.POSITIVE_INFINITY);
   }, [mouseX]);
 
   return (
     <motion.div
       onMouseMove={(e) => isLargeScreen && mouseX.set(e.pageX)}
-      onMouseLeave={() => isLargeScreen && mouseX.set(Infinity)}
+      onMouseLeave={() => isLargeScreen && mouseX.set(Number.POSITIVE_INFINITY)}
       className={cn(
         "mx-auto flex h-20 gap-8 items-end rounded-2xl bg-gray-50 dark:bg-neutral-900 px-8 pb-3",
         className
       )}
     >
       {items.map((item) => (
-        <IconContainer
+        <FilterIconContainer
           mouseX={mouseX}
           key={item.title}
           {...item}
+          onClick={() => {
+            if (item.value === "more") {
+              onMoreOptionsClick();
+            } else {
+              onFilterClick(item.value);
+            }
+          }}
           isLargeScreen={isLargeScreen}
         />
       ))}
@@ -142,17 +179,19 @@ const FloatingDockDesktop = ({
   );
 };
 
-function IconContainer({
+function FilterIconContainer({
   mouseX,
   title,
   icon,
-  href,
+  value,
+  onClick,
   isLargeScreen,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
-  href: string;
+  value: string;
+  onClick: () => void;
   isLargeScreen: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -169,12 +208,12 @@ function IconContainer({
   const widthTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [16, 32, 16] // Reduced from [20, 40, 20]
   );
   const heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [16, 32, 16] // Reduced from [20, 40, 20]
   );
 
   const width = useSpring(widthTransform, {
@@ -200,7 +239,7 @@ function IconContainer({
   });
 
   return (
-    <Link href={href} className="flex flex-col items-center gap-1">
+    <button onClick={onClick} className="flex flex-col items-center gap-1">
       <motion.div
         ref={ref}
         style={{
@@ -222,6 +261,6 @@ function IconContainer({
       <span className="text-xs text-neutral-700 dark:text-neutral-200 whitespace-nowrap">
         {title}
       </span>
-    </Link>
+    </button>
   );
 }

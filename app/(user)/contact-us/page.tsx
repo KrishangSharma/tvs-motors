@@ -2,7 +2,7 @@
 import React from "react";
 import ContactForm from "@/components/Forms/ContactForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/contact-form.jpg";
 
 const page = () => {
   return (

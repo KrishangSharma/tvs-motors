@@ -6,7 +6,7 @@ export interface VehicleDetails {
   _id: string;
   model: string;
   price: number;
-  type: string;
+  type: string; //! define standalone types and render functions for each type
   images: string[];
   slug: Slug;
   enginePerformance: Record<string, string | number>;

@@ -19,22 +19,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      interestedProfile,
-      coverLetter,
-      resume, // Note: File handling is usually done differently in APIs
-    } = await req.json();
+    const formData = await req.formData();
+    const fullName = formData.get("fullName") as string;
+    const email = formData.get("email") as string;
+    const phone = formData.get("phone") as string;
+    const interestedProfile = formData.get("interestedProfile") as string;
+    const coverLetter = formData.get("coverLetter") as string;
+    const resume = formData.get("resume") as File;
 
     const applicationId = generateApplicationId();
     const applicationDate = new Date();
     const hasCoverLetter = !!coverLetter && coverLetter.trim() !== "";
 
-    // Send confirmation email
-    const emailData = {
-      from: "careers@resend.dev",
+    // Convert resume to base64 for email attachment
+    const resumeBuffer = await resume.arrayBuffer();
+    const resumeBase64 = Buffer.from(resumeBuffer).toString("base64");
+
+    // Send confirmation email to applicant
+    const applicantEmailData = {
+      from: `careers@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
       subject: `Application Received: ${interestedProfile} Position`,
       react: CareerApplicationEmail({
@@ -48,7 +51,35 @@ export async function POST(req: NextRequest) {
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
+    // Send notification email to admin with resume attachment
+    const adminEmailData = {
+      from: `careers@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+      to: process.env.ADMIN_EMAIL!, // Make sure to set this in your environment variables
+      subject: `New Job Application: ${interestedProfile}`,
+      html: `
+        <h2>New Job Application Received</h2>
+        <p><strong>Application ID:</strong> ${applicationId}</p>
+        <p><strong>Date:</strong> ${applicationDate.toLocaleString()}</p>
+        <p><strong>Name:</strong> ${fullName}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Position:</strong> ${interestedProfile}</p>
+        ${hasCoverLetter ? `<p><strong>Cover Letter:</strong><br>${coverLetter}</p>` : ""}
+      `,
+      attachments: [
+        {
+          filename: resume.name,
+          content: resumeBase64,
+          contentType: resume.type,
+        },
+      ],
+    };
+
+    // Send both emails
+    await Promise.all([
+      resend.emails.send(applicantEmailData),
+      resend.emails.send(adminEmailData),
+    ]);
 
     // Return success response
     return NextResponse.json(
@@ -56,7 +87,6 @@ export async function POST(req: NextRequest) {
         success: true,
         message: "Application submitted successfully",
         applicationId,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

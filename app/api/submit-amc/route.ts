@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "testride@resend.dev",
+      from: `amc@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
       subject: `Confirmation: AMC Booking for ${vehicleMake} ${vehicleModel}`,
       react: AMCConfirmationEmail({

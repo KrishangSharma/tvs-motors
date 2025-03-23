@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "insurance@resend.dev",
+      from: `insurance@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: emailId,
       subject: "Insurance Renewal Request Confirmation",
       react: InsuranceRenewalEmail({

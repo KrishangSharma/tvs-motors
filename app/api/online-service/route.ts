@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation email
     const emailData = {
-      from: "service@resend.dev",
+      from: `service@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: emailId,
       subject: `Service Booking Confirmation: ${bookingId}`,
       react: ServiceBookingConfirmationEmail({
