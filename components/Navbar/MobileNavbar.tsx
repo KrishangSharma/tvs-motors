@@ -11,6 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/TVSLogo-hr.svg";
 import Search from "@/components/ui/search";
+import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 export default function MobileNav() {
   return (
@@ -43,7 +44,7 @@ export default function MobileNav() {
             <Search />
           </div>
 
-          <div className="flex flex-col space-y-4 mt-4">
+          <NavigationMenu>
             <div className="space-y-4 py-4">
               <div className="px-2 py-1 ">
                 <h2 className="font-medium">Products</h2>
@@ -74,13 +75,7 @@ export default function MobileNav() {
                 </div>
               </div>
               {/* Secondary Links */}
-              <div className="w-full flex flex-col gap-4 items-start justify-start mt-5 px-2">
-                {/* <Link
-                    href="/buy-vehicle"
-                    className="flex flex-col items-start space-y-1"
-                  >
-                    <span className="text-gray-400">Buy Vehicle</span>
-                  </Link> */}
+              <div className="px-2 py-1">
                 <SheetClose asChild>
                   <Link
                     href="/test-ride"
@@ -89,15 +84,9 @@ export default function MobileNav() {
                     Book A Test Ride
                   </Link>
                 </SheetClose>
-                {/* <Link
-                    href="/dealers"
-                    className="flex flex-col items-start space-y-1"
-                  >
-                    <span className="text-gray-400">Dealers</span>
-                  </Link> */}
               </div>
             </div>
-          </div>
+          </NavigationMenu>
         </SheetContent>
       </Sheet>
     </>

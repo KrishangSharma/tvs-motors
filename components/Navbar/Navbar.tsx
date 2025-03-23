@@ -108,10 +108,6 @@ export default function Navbar() {
           px-4
         `}
         >
-          <div className="flex items-center gap-3">
-            <MobileNav />
-            <Search />
-          </div>
           <Link href="/">
             <Image
               src={Logo || "/placeholder.svg"}
@@ -121,6 +117,8 @@ export default function Navbar() {
               className="h-4 w-auto"
             />
           </Link>
+          <Search />
+          <MobileNav />
         </nav>
       </Sheet>
     </>
