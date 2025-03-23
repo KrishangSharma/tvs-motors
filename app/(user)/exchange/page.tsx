@@ -2,7 +2,7 @@
 import React from "react";
 import ExchangeForm from "@/components/Forms/ExchangeForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/exchange-form.jpg";
 
 const page = () => {
   return (

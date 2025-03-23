@@ -2,7 +2,7 @@
 import React from "react";
 import BuyAMCForm from "@/components/Forms/BuyAMC";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/amc-form.jpg";
 
 const page = () => {
   return (

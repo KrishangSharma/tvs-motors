@@ -2,7 +2,7 @@
 import React from "react";
 import EMICalculatorForm from "@/components/Forms/EMIForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/emi-form.jpg";
 
 const page = () => {
   return (

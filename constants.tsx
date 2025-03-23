@@ -24,6 +24,7 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import { IconHome } from "@tabler/icons-react";
+import Leader from "@/public/about/leader.jpg";
 
 // NAVBAR CONSTANTS
 export const navLinks: NavLinks[] = [
@@ -333,19 +334,14 @@ export const services = [
 // Company features data
 export const companyFeatures = [
   {
-    icon: <Factory className="h-5 w-5 text-primary" />,
-    title: "Manufacturing Excellence",
-    description: "State-of-the-art facilities across India",
-  },
-  {
     icon: <Globe className="h-5 w-5 text-primary" />,
-    title: "Global Presence",
-    description: "Exports to over 60 countries worldwide",
+    title: "Manufacturing Excellence",
+    description: "State-of-the-art facilities across Delhi NCR",
   },
   {
     icon: <Users className="h-5 w-5 text-primary" />,
-    title: "Strong Workforce",
-    description: "Over 7,000 dedicated employees",
+    title: "Professionals at Work",
+    description: "Professionals with over a decade of experience",
   },
   {
     icon: <Award className="h-5 w-5 text-primary" />,
@@ -427,24 +423,14 @@ export const globalPresence = [
 // Leadership team data
 export const leadershipTeam = [
   {
-    name: "Venu Srinivasan",
-    position: "Chairman Emeritus",
-    image: "/placeholder.svg?height=300&width=300",
+    name: "Mr. CM Sabharwal",
+    position: "Owner of the Sabharwal Group",
+    image: Leader,
   },
   {
-    name: "Sudarshan Venu",
+    name: "Mr. Mayank Sabharwal",
     position: "Managing Director",
-    image: "/placeholder.svg?height=300&width=300",
-  },
-  {
-    name: "K.N. Radhakrishnan",
-    position: "Director & CEO",
-    image: "/placeholder.svg?height=300&width=300",
-  },
-  {
-    name: "Sir Ralf Speth",
-    position: "Chairman",
-    image: "/placeholder.svg?height=300&width=300",
+    image: Leader,
   },
 ];
 

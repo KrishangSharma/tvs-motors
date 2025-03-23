@@ -2,7 +2,7 @@
 import React from "react";
 import InsuranceRenewalForm from "@/components/Forms/InsuranceRenewal";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/insurance-form.jpg";
 
 const page = () => {
   return (

@@ -20,6 +20,8 @@ import {
   visionPoints,
 } from "@/constants";
 import HeroImage from "@/public/header-images/tvs-sabhrawal.jpg";
+import TVSFactory from "@/public/about/main.jpg";
+import Main from "@/public/about/tvs-sabhrawal.jpg";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
@@ -54,17 +56,17 @@ export default function CompanyPage() {
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-4">
               <Badge className="inline-block rounded-full px-3 py-1 text-sm">
-                About TVS Motors
+                About Sabharwal TVS
               </Badge>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 A Legacy of Excellence
               </h2>
               <p className="text-muted-foreground md:text-xl">
-                TVS Motor Company is the third largest two-wheeler manufacturer
-                in India and one among the top ten in the world, with annual
-                revenue of more than ₹20,000 crore (US$2.5 billion), and is the
-                flagship company of the ₹50,000 crore (US$6.26 billion) TVS
-                Group.
+                With over two decades of quality experience in diverse
+                businesses, the Sabharwal Group has carved a unique niche for
+                itself in North India. Sabharwal TVS has raised the bar even
+                higher for others emulate. It is one of the leading dealership
+                for TVS Motor Company in Delhi & NCR.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                 {companyFeatures.map((feature, index) => (
@@ -82,48 +84,13 @@ export default function CompanyPage() {
                 ))}
               </div>
             </div>
-            <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-300">
+            <div className="relative aspect-square overflow-hidden rounded-xl">
               <Image
-                src="/placeholder.svg?height=600&width=600"
+                src={Main}
                 alt="TVS Motors Factory"
-                width={600}
-                height={600}
-                className="object-cover"
+                fill
+                className="object-fill"
               />
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-muted">
-          <div className="container py-12 md:py-24">
-            <div className="flex flex-col items-center justify-center text-center space-y-4 mb-12">
-              <Badge className="inline-block rounded-full px-3 py-1 text-sm">
-                Our Journey
-              </Badge>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Milestones That Define Us
-              </h2>
-              <p className="text-muted-foreground md:text-xl max-w-3xl">
-                From our humble beginnings to becoming a global automotive
-                leader, our journey has been marked by innovation, perseverance,
-                and a commitment to excellence.
-              </p>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {milestones.map((milestone, index) => (
-                <Card key={index}>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2">
-                      <History className="h-5 w-5 text-primary" />
-                      {milestone.year}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{milestone.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
             </div>
           </div>
         </section>
@@ -165,13 +132,12 @@ export default function CompanyPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="relative aspect-video overflow-hidden rounded-xl bg-gray-300">
+                <div className="relative aspect-video overflow-hidden rounded-xl ">
                   <Image
-                    src="/placeholder.svg?height=400&width=600"
+                    src={TVSFactory}
                     alt="TVS Vision"
-                    width={600}
-                    height={400}
-                    className="object-cover"
+                    fill
+                    className="object-fill"
                   />
                 </div>
               </div>
@@ -195,13 +161,12 @@ export default function CompanyPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="relative aspect-video overflow-hidden rounded-xl bg-gray-300">
+                <div className="relative aspect-video overflow-hidden rounded-xl">
                   <Image
-                    src="/placeholder.svg?height=400&width=600"
+                    src={TVSFactory}
                     alt="TVS Mission"
-                    width={600}
-                    height={400}
-                    className="object-cover"
+                    fill
+                    className="object-fill"
                   />
                 </div>
               </div>
@@ -224,59 +189,17 @@ export default function CompanyPage() {
                     ))}
                   </ul>
                 </div>
-                <div className="relative aspect-video overflow-hidden rounded-xl bg-gray-300">
+                <div className="relative aspect-video overflow-hidden rounded-xl">
                   <Image
-                    src="/placeholder.svg?height=400&width=600"
-                    alt="TVS Values"
-                    width={600}
-                    height={400}
-                    className="object-cover"
+                    src={TVSFactory}
+                    alt="TVS Mission"
+                    fill
+                    className="object-fill"
                   />
                 </div>
               </div>
             </TabsContent>
           </Tabs>
-        </section>
-
-        <section className="bg-primary text-primary-foreground">
-          <div className="container py-12 md:py-24">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                  Global Presence
-                </h2>
-                <p className="md:text-xl">
-                  TVS Motor Company has established a strong global footprint
-                  with operations spanning across continents, serving customers
-                  in over 60 countries worldwide.
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                  {globalPresence.map((item, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <div className="rounded-full bg-primary-foreground/10 p-1">
-                        {item.icon}
-                      </div>
-                      <div>
-                        <h3 className="font-medium">{item.title}</h3>
-                        <p className="text-sm text-primary-foreground/80">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-300">
-                <Image
-                  src="/placeholder.svg?height=600&width=600"
-                  alt="TVS Global Presence"
-                  width={600}
-                  height={600}
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
         </section>
 
         <section className="container py-12 md:py-24">
@@ -294,9 +217,9 @@ export default function CompanyPage() {
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 place-items-center max-w-3xl mx-auto">
             {leadershipTeam.map((leader, index) => (
-              <Card key={index} className="overflow-hidden">
+              <Card key={index} className="overflow-hidden w-[300px]">
                 <div className="aspect-square relative bg-gray-300">
                   <Image
                     src={leader.image || "/placeholder.svg"}
@@ -306,8 +229,8 @@ export default function CompanyPage() {
                     className="object-cover w-full h-full"
                   />
                 </div>
-                <CardHeader>
-                  <CardTitle>{leader.name}</CardTitle>
+                <CardHeader className="h-[120px]">
+                  <CardTitle className="text-xl">{leader.name}</CardTitle>
                   <CardDescription>{leader.position}</CardDescription>
                 </CardHeader>
               </Card>
@@ -315,64 +238,29 @@ export default function CompanyPage() {
           </div>
         </section>
 
-        <section className="bg-muted/50">
+        <section className="bg-gray-200 mb-10">
           <div className="container py-12 md:py-24">
-            <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-              <div className="space-y-4">
-                <Badge className="inline-block rounded-full px-3 py-1 text-sm">
-                  Join Our Journey
-                </Badge>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                  Be Part of Our Success Story
-                </h2>
-                <p className="text-muted-foreground md:text-xl">
-                  At TVS Motors, we&apos;re always looking for talented
-                  individuals who share our passion for innovation and
-                  excellence. Join us in shaping the future of mobility.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                  <Link href="/careers/apply">
-                    <Button size="lg" className="w-full ">
-                      Explore Careers
-                    </Button>
-                  </Link>
-                  <Link href="/contact-us">
-                    <Button variant="outline" size="lg" className="w-full">
-                      Contact Us
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-4">
-                  <div className="overflow-hidden rounded-lg bg-gray-300">
-                    <Image
-                      src="/placeholder.svg?height=300&width=300"
-                      alt="TVS Workplace"
-                      width={300}
-                      height={300}
-                      className="aspect-square object-cover"
-                    />
-                  </div>
-                  <div className="overflow-hidden rounded-lg bg-gray-300">
-                    <Image
-                      src="/placeholder.svg?height=300&width=300"
-                      alt="TVS Team"
-                      width={300}
-                      height={300}
-                      className="aspect-square object-cover"
-                    />
-                  </div>
-                </div>
-                <div className="overflow-hidden rounded-lg bg-gray-300">
-                  <Image
-                    src="/placeholder.svg?height=600&width=300"
-                    alt="TVS Culture"
-                    width={300}
-                    height={600}
-                    className="h-full object-cover"
-                  />
-                </div>
+            <div className="max-w-2xl mx-auto text-center space-y-6">
+              <Badge className="inline-block rounded-full px-3 py-1 text-sm">
+                Join Our Journey
+              </Badge>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
+                Be Part of Our Success Story
+              </h2>
+              <p className="text-muted-foreground md:text-xl">
+                At TVS Motors, we&apos;re always looking for talented
+                individuals who share our passion for innovation and excellence.
+                Join us in shaping the future of mobility.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+                <Link href="/careers/apply">
+                  <Button size="lg">Explore Careers</Button>
+                </Link>
+                <Link href="/contact-us">
+                  <Button variant="outline" size="lg">
+                    Contact Us
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

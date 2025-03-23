@@ -2,7 +2,7 @@
 import React from "react";
 import TestRideForm from "@/components/Forms/TestRideForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/header-images/Corporate landing page Desk-1366x600 -20250214-034900.jpg";
 
 const page = () => {
   return (

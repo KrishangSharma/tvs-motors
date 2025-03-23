@@ -2,7 +2,7 @@
 import React from "react";
 import SuggestionForm from "@/components/Forms/SuggestionForm";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/feedback.jpg";
 
 const page = () => {
   return (

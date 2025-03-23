@@ -2,7 +2,7 @@
 import React from "react";
 import LoanApplicationForm from "@/components/Forms/LoanApplication";
 import Image from "next/image";
-import FormImage from "@/public/form-image.jpg";
+import FormImage from "@/public/loan-form.jpg";
 
 const page = () => {
   return (
