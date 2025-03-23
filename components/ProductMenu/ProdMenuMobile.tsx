@@ -55,7 +55,7 @@ export default function ProdMenuMobile() {
     }
   };
   return (
-    <div className="flex flex-col gap-3 p-2 lg:hidden ">
+    <div className="flex flex-col gap-3 p-2 lg:hidden">
       {/* Vehicle type categories */}
       <Accordion
         type="single"
@@ -85,7 +85,7 @@ export default function ProdMenuMobile() {
                       <SheetClose asChild key={vehicle._id}>
                         <Link
                           href={`/product/${activeType.toLowerCase()}/${vehicle.slug.current}`}
-                          className="flex gap-3 items-center hover:bg-gray-200/50 p-2 rounded-md transition-colors"
+                          className="flex gap-3 items-center w-full hover:bg-gray-200/50 p-2 rounded-md transition-colors"
                         >
                           <div className="w-[100px] h-[60px] relative flex-shrink-0 overflow-hidden flex items-center justify-center">
                             <Image

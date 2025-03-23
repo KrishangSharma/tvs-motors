@@ -68,7 +68,7 @@ export function Footer() {
     {
       title: "ABOUT US",
       items: [
-        { type: "text", content: "Awarrds", href: "/achievements" },
+        { type: "text", content: "Awards", href: "/awards" },
         { type: "text", content: "Careers", href: "/careers/apply" },
         { type: "text", content: "Contact Us", href: "/contact-us" },
       ],

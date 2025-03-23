@@ -17,17 +17,13 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="container mx-auto py-4 md:py-16 pb-8 px-4 md:px-6 lg:px-8">
-        <div className="w-full md:container max-w-7xl mx-auto">
-          <Heading
-            smText="Discover our comprehensive range of services."
-            lgText="Our Services"
-          />
-        </div>
-      </div>
+      <div className="container flex flex-col gap-5 mx-auto py-4 md:py-16 pb-8">
+        <Heading
+          smText="Discover our comprehensive range of services."
+          lgText="Our Services"
+        />
 
-      {/* Services Grid */}
-      <div className="container max-w-7xl mx-auto py-6 px-4 md:px-6 lg:px-8">
+        {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => (
             <ServiceCard key={service.id} service={service} />
@@ -52,7 +48,7 @@ function ServiceCard({ service }: { service: Service }) {
           {service.description}
         </CardDescription>
       </CardHeader>
-      <CardFooter className="pt-2 mt-auto">
+      <CardFooter className="pt-2 mt-auto -ml-2 ">
         <Link href={service.link} passHref>
           <Button className="w-full bg-black text-white hover:bg-gray-800">
             Learn More

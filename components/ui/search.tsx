@@ -35,8 +35,8 @@ export default function Search() {
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onFocus={() => setIsFocused(true)}
-        placeholder="Search TSV Motors"
-        className=" focus-visible:ring-0 focus:shadow-md bg-white"
+        placeholder="Search TVS Motors"
+        className=" focus-visible:ring-0 focus:shadow-md bg-white md:min-w-[300px]"
       />
       {value ? (
         <XIcon

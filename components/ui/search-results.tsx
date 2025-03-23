@@ -69,7 +69,7 @@ export default function SearchResults({ query, onClose }: SearchResultsProps) {
   if (!query.trim()) return null;
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border z-50 max-h-[400px] overflow-y-auto">
+    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border z-[100] max-h-[400px] overflow-y-auto">
       {loading ? (
         <div className="p-4 text-center text-gray-500">Searching...</div>
       ) : results.length > 0 ? (

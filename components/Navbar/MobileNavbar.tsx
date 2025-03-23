@@ -23,7 +23,7 @@ export default function MobileNav() {
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="w-[400px] overflow-y-auto sm:w-[350px]"
+          className="w-[400px] bg-white overflow-y-auto sm:w-[350px]"
         >
           <SheetTitle>
             <SheetClose asChild>
@@ -45,34 +45,40 @@ export default function MobileNav() {
           </div>
 
           <NavigationMenu>
-            <div className="space-y-4 py-4">
-              <div className="px-2 py-1 ">
+            <div className="space-y-4 py-4 w-[330px]">
+              <div className="px-2 py-1">
                 <h2 className="font-medium">Products</h2>
                 <ProductMenu />
               </div>
-              <SheetClose asChild>
-                <div className="px-2 py-1">
+              <div className="px-2 py-1">
+                <SheetClose asChild>
                   <Link
-                    href="/services"
+                    href="/our-services"
                     className="block font-medium text-customBlue"
                   >
                     Services
                   </Link>
-                </div>
-              </SheetClose>
-              <div className="px-2 py-1">
-                <h2 className="mb-2 font-medium text-customBlue">Shop</h2>
-                <div className="space-y-2">
-                  {/* Add your shop links here */}
-                  <p className="text-sm">Shop content goes here</p>
-                </div>
+                </SheetClose>
               </div>
               <div className="px-2 py-1">
-                <h2 className="mb-2 font-medium text-customBlue">Company</h2>
-                <div className="space-y-2">
-                  {/* Add your company links here */}
-                  <p className="text-sm">Company content goes here</p>
-                </div>
+                <SheetClose asChild>
+                  <Link
+                    href="/awards"
+                    className="block font-medium text-customBlue"
+                  >
+                    Awards
+                  </Link>
+                </SheetClose>
+              </div>
+              <div className="px-2 py-1">
+                <SheetClose asChild>
+                  <Link
+                    href="/company"
+                    className="block font-medium text-customBlue"
+                  >
+                    Company
+                  </Link>
+                </SheetClose>
               </div>
               {/* Secondary Links */}
               <div className="px-2 py-1">
