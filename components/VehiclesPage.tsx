@@ -68,7 +68,11 @@ export default function VehiclesPage({
 
     // Filter by vehicle type
     if (options.types.length > 0) {
-      result = result.filter((vehicle) => options.types.includes(vehicle.type));
+      result = result.filter((vehicle) =>
+        options.types.some((type) =>
+          vehicle.type.toLowerCase().includes(type.toLowerCase())
+        )
+      );
     }
 
     // Filter by engine capacity (this would need to be added to the vehicle type)

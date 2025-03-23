@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Sheet,
   SheetContent,
@@ -41,7 +41,26 @@ export function FilterSheet({
   minPrice,
   maxPrice,
 }: FilterSheetProps) {
-  const [filters, setFilters] = useState<FilterOptions>(initialFilters);
+  const [filters, setFilters] = useState<FilterOptions>({
+    ...initialFilters,
+    priceRange: initialFilters.priceRange || [minPrice, maxPrice],
+    types: initialFilters.types || [],
+    sortBy: initialFilters.sortBy || "price-low",
+    engineCapacity: initialFilters.engineCapacity || [],
+    colors: initialFilters.colors || [],
+  });
+
+  // Update filters when initialFilters changes
+  useEffect(() => {
+    setFilters({
+      ...initialFilters,
+      priceRange: initialFilters.priceRange || [minPrice, maxPrice],
+      types: initialFilters.types || [],
+      sortBy: initialFilters.sortBy || "price-low",
+      engineCapacity: initialFilters.engineCapacity || [],
+      colors: initialFilters.colors || [],
+    });
+  }, [initialFilters, minPrice, maxPrice]);
 
   const handlePriceChange = (value: number[]) => {
     setFilters({
@@ -51,22 +70,24 @@ export function FilterSheet({
   };
 
   const handleTypeChange = (type: string, checked: boolean) => {
+    const updatedTypes = checked
+      ? [...filters.types, type]
+      : filters.types.filter((t) => t !== type);
+
     setFilters({
       ...filters,
-      types: checked
-        ? [...filters.types, type]
-        : filters.types.filter((t) => t !== type),
+      types: updatedTypes,
     });
   };
 
-  const handleEngineCapacityChange = (capacity: string, checked: boolean) => {
-    setFilters({
-      ...filters,
-      engineCapacity: checked
-        ? [...filters.engineCapacity, capacity]
-        : filters.engineCapacity.filter((c) => c !== capacity),
-    });
-  };
+  // const handleEngineCapacityChange = (capacity: string, checked: boolean) => {
+  //   setFilters({
+  //     ...filters,
+  //     engineCapacity: checked
+  //       ? [...filters.engineCapacity, capacity]
+  //       : filters.engineCapacity.filter((c) => c !== capacity),
+  //   });
+  // };
 
   const handleSortChange = (value: string) => {
     setFilters({
