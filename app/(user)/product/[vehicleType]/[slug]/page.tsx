@@ -31,40 +31,51 @@ export default async function VehiclePage({ params }: Props) {
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<VehicleDetails>(query);
-  // console.log(vehicle);
 
   return (
-    <div className="w-full mx-auto container lg:max-w-7xl pb-8 min-h-screen px-4 md:px-6 ">
-      <div className="relative mb-8 md:mb-16 overflow-hidden">
-        {/* Vehicle Name in Big Bold Letters */}
-        <h1
-          className={`text-6xl md:text-8xl lg:text-9xl font-extrabold text-gray-100 pt-8 md:pt-12 pb-4 md:pb-8 z-10 relative ${montserrat.className}`}
-        >
-          {vehicle.model.toUpperCase()}
-        </h1>
+    <div className="bg-white min-h-screen ">
+      {/* Hero Section with Vehicle Name */}
+      <div className="relative overflow-hidden text-black bg-white">
+        <div className="sm:container mx-auto md:px-0 pt-8 pb-20 md:pt-12 md:pb-32 relative z-10">
+          <h1
+            className={`container max-w-7xl text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold
+                       tracking-tight leading-none ${montserrat.className} animate-fadeIn`}
+          >
+            {vehicle.model.toUpperCase()}
+          </h1>
+        </div>
+      </div>
 
-        {/* Main Image Carousel */}
-        <div className="relative z-20 -mt-16 md:-mt-24 lg:-mt-32">
+      {/* Image Carousel Section */}
+      <div className="container mx-auto max-w-7xl px-4 -mt-16 md:-mt-24 lg:-mt-32 relative z-20">
+        <div className="bg-background p-2 sm:p-4 rounded-xl md:shadow-xl">
           <ImageCarousel images={vehicle.images} model={vehicle.model} />
         </div>
       </div>
 
       {/* Main Content Section */}
-      <div className="flex flex-col lg:flex-row gap-8 relative">
-        {/* Left Side: Vehicle Specifications */}
-        <div className="lg:w-2/3">
-          <h2
-            className={`text-2xl md:text-3xl font-bold mb-6 ${montserrat.className}`}
-          >
-            Vehicle Specifications
-          </h2>
-          <DetailsTabs vehicle={vehicle} />
-        </div>
+      <div className="container mx-auto px-4 py-12">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          {/* Left Side: Vehicle Specifications */}
+          <div className="lg:w-2/3">
+            <h2
+              className={`text-2xl md:text-3xl font-bold mb-6 ${montserrat.className}
+                         border-b pb-3 border-border/50`}
+            >
+              Vehicle Specifications
+            </h2>
+            <div className=" overflow-hidden">
+              <DetailsTabs vehicle={vehicle} />
+            </div>
+          </div>
 
-        {/* Right Side: Configure Form (Fixed Position on Desktop) */}
-        <div className="lg:w-1/3 mt-8 lg:mt-0">
-          <div className="lg:sticky lg:top-24">
-            <ConfigureForm vehicle={vehicle} />
+          {/* Right Side: Configure Form */}
+          <div className="lg:w-1/3 lg:mt-0">
+            <div
+              className={`lg:sticky lg:top-24 bg-card rounded-xl shadow-md overflow-hidden border border-border/50 ${montserrat.className}`}
+            >
+              <ConfigureForm vehicle={vehicle} />
+            </div>
           </div>
         </div>
       </div>

@@ -32,7 +32,11 @@ export default function ConfigureForm({ vehicle }: ConfigureFormProps) {
   return (
     <Card className="shadow-lg border">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-bold">TVS {vehicle.model}</CardTitle>
+        <CardTitle className="text-xl font-bold">
+          <span className="max-w-max text-2xl md:text-4xl font-bold block uppercase tracking-wider bg-gradient-to-r from-red-500 to-blue-500 text-transparent bg-clip-text">
+            TVS {vehicle.model}
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Price */}
