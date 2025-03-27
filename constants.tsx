@@ -137,14 +137,6 @@ export const dockLinks = [
   },
 ];
 
-// DETAILS TAB CONSTANTS
-export const tabs = [
-  "Engine and Performance",
-  "Chassis, Suspension and Electricals",
-  "Wheels, Tyres and Brakes",
-  "Dimensions, Weight and Fuel",
-];
-
 export const timeSlots = [
   { id: "morning1", time: "09:00 AM - 10:00 AM", period: "Morning" },
   { id: "morning2", time: "10:00 AM - 11:00 AM", period: "Morning" },

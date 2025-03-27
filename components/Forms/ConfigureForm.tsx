@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { VehicleDetails } from "@/types";
+import { VehicleDetails } from "@/VehicleTypes/VehicleTypes";
 
 interface ConfigureFormProps {
   vehicle: VehicleDetails;

@@ -1,19 +1,7 @@
 import React from "react";
 import { Slug } from "sanity";
+import { VehicleImage } from "@/VehicleTypes/interfaces";
 
-// Individual Vehicle Details
-export interface VehicleDetails {
-  _id: string;
-  model: string;
-  price: number;
-  type: string; //! define standalone types and render functions for each type
-  images: string[];
-  slug: Slug;
-  enginePerformance: Record<string, string | number>;
-  chassisSuspensionElectrical: Record<string, string | number>;
-  wheelsTyresBrakes: Record<string, string | number>;
-  dimensionsWeightFuel: Record<string, string | number>;
-}
 // Al Vehicle Page
 export interface VehicleItem {
   slug: {
@@ -73,7 +61,7 @@ export interface FormWrapperProps {
 }
 
 export interface imageCarouselProps {
-  images: string[];
+  images: VehicleImage[];
   model: string;
 }
 

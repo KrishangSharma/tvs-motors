@@ -1,6 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-import type { VehicleDetails } from "@/types";
+import type { Motorcycle } from "@/VehicleTypes/VehicleTypes";
 import dynamic from "next/dynamic";
 import { Montserrat } from "next/font/google";
 
@@ -30,7 +30,7 @@ export default async function VehiclePage({ params }: Props) {
   const formatType =
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
-  const vehicle = await client.fetch<VehicleDetails>(query);
+  const vehicle = await client.fetch<Motorcycle>(query);
 
   return (
     <div className="bg-white min-h-screen ">
