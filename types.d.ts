@@ -270,3 +270,14 @@ export interface FooterItems {
     items: FooterItem[];
   }[];
 }
+export interface Color {
+  name: string;
+  hexCode: string;
+  image: ImageAsset;
+}
+
+export interface Variant {
+  variantName: string;
+  colors: Color[];
+  variantFeatures: string[];
+}

@@ -47,6 +47,58 @@ const Scooter = {
       type: "array",
       of: [{ type: "string" }],
     },
+    // Variants Field
+    {
+      name: "variants",
+      title: "Variants",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "variantName",
+              title: "Variant Name",
+              type: "string",
+            },
+            {
+              name: "colors",
+              title: "Colors",
+              type: "array",
+              of: [
+                {
+                  type: "object",
+                  fields: [
+                    {
+                      name: "name",
+                      title: "Color Name",
+                      type: "string",
+                    },
+                    {
+                      name: "hexCode",
+                      title: "Hex Code",
+                      type: "string",
+                    },
+                    {
+                      name: "image",
+                      title: "Color Image",
+                      type: "image",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: "variantFeatures",
+              title: "Variant Features",
+              type: "array",
+              of: [{ type: "string" }],
+            },
+          ],
+        },
+      ],
+    },
+
     // Category 1: Engine & Performance
     {
       name: "enginePerformance",

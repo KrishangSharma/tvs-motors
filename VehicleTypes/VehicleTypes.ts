@@ -25,6 +25,13 @@ export interface VehicleDetails {
   type: string; // Could be "Motorcycle", "Scooter", "Car", etc.
   _createdAt: string;
   _updatedAt: string;
+  variants?: vehicleVariant[];
+}
+interface vehicleVariant {
+  name: string;
+  colors: string[];
+  images: string[];
+  features: string[];
 }
 
 // Final Motorcycle Interface extending base details

@@ -18,6 +18,7 @@ export default function DetailsTabs({
     "_createdAt",
     "images",
     "type",
+    "variants",
   ];
 
   const availableTabs = Object.keys(vehicle)

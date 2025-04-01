@@ -25,12 +25,19 @@ const ConfigureForm = dynamic(
   }
 );
 
+const VariantSelector = dynamic(() => import("@/components/VariantSelector"), {
+  ssr: true,
+});
+
 export default async function VehiclePage({ params }: Props) {
   const { vehicleType, slug } = await params;
   const formatType =
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<Motorcycle>(query);
+
+  // Sample variant data - replace with actual data from your Sanity schema
+  const variants = vehicle.variants && vehicle.variants;
 
   return (
     <div className="bg-white min-h-screen ">
@@ -47,14 +54,21 @@ export default async function VehiclePage({ params }: Props) {
       </div>
 
       {/* Image Carousel Section */}
-      <div className="container mx-auto max-w-7xl px-4 -mt-16 md:-mt-24 lg:-mt-32 relative z-20">
+      <div className="container mx-auto max-w-7xl px-4 -mt-16 md:-mt-24 lg:-mtw-32 relative z-20">
         <div className="bg-background p-2 sm:p-4 rounded-xl md:shadow-xl">
           <ImageCarousel images={vehicle.images} model={vehicle.model} />
         </div>
       </div>
 
+      {/* Variant Selector Section */}
+      <div className="container mx-auto max-w-7xl px-4 mt-12">
+        <div className="bg-background p-4 sm:p-6 rounded-xl border border-border/50">
+          <VariantSelector vehicleName={vehicle.model} variants={variants} />
+        </div>
+      </div>
+
       {/* Main Content Section */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container max-w-7xl mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left Side: Vehicle Specifications */}
           <div className="lg:w-2/3">
