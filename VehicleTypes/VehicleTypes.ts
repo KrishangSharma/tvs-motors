@@ -12,6 +12,7 @@ import {
   ElectricalLightingScooter,
   StorageFuelScooter,
   BrakesTyresScooter,
+  ImageAsset,
 } from "./interfaces";
 
 // Base VehicleDetails interface
@@ -25,13 +26,19 @@ export interface VehicleDetails {
   type: string; // Could be "Motorcycle", "Scooter", "Car", etc.
   _createdAt: string;
   _updatedAt: string;
-  variants?: vehicleVariant[];
+  variants?: Variant[];
 }
-interface vehicleVariant {
+
+export interface Color {
   name: string;
-  colors: string[];
-  images: string[];
-  features: string[];
+  hexCode: string;
+  image: ImageAsset;
+}
+
+export interface Variant {
+  variantName: string;
+  colors: Color[];
+  variantFeatures: string[];
 }
 
 // Final Motorcycle Interface extending base details

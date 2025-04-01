@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { urlFor } from "@/sanity/lib/image";
-import { Color, Variant } from "@/types";
+import { Color, Variant } from "@/VehicleTypes/VehicleTypes";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 

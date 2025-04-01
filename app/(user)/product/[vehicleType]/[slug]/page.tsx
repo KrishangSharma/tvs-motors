@@ -1,6 +1,6 @@
 import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-import type { Motorcycle } from "@/VehicleTypes/VehicleTypes";
+import type { Motorcycle, Variant } from "@/VehicleTypes/VehicleTypes";
 import dynamic from "next/dynamic";
 import { Montserrat } from "next/font/google";
 
@@ -9,22 +9,18 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 interface Props {
   params: Promise<{ slug: string; vehicleType: string }>;
 }
-
 const ImageCarousel = dynamic(() => import("@/components/ImageCarousel"), {
   ssr: true,
 });
-
 const DetailsTabs = dynamic(() => import("@/components/DetailsTab"), {
   ssr: true,
 });
-
 const ConfigureForm = dynamic(
   () => import("@/components/Forms/ConfigureForm"),
   {
     ssr: true,
   }
 );
-
 const VariantSelector = dynamic(() => import("@/components/VariantSelector"), {
   ssr: true,
 });
@@ -37,7 +33,7 @@ export default async function VehiclePage({ params }: Props) {
   const vehicle = await client.fetch<Motorcycle>(query);
 
   // Sample variant data - replace with actual data from your Sanity schema
-  const variants = vehicle.variants && vehicle.variants;
+  const variants: Variant[] = vehicle.variants ?? [];
 
   return (
     <div className="bg-white min-h-screen ">
@@ -63,7 +59,7 @@ export default async function VehiclePage({ params }: Props) {
       {/* Variant Selector Section */}
       <div className="container mx-auto max-w-7xl px-4 mt-12">
         <div className="bg-background p-4 sm:p-6 rounded-xl border border-border/50">
-          <VariantSelector vehicleName={vehicle.model} variants={variants} />
+          <VariantSelector variants={variants} />
         </div>
       </div>
 
