@@ -157,33 +157,6 @@ export const vehicles = [
   { id: "5", name: "TVS NTORQ" },
 ];
 
-export const vehicleVariants = {
-  "1": [
-    { id: "1-1", name: "Standard" },
-    { id: "1-2", name: "BTO" },
-  ],
-  "2": [
-    { id: "2-1", name: "Single Channel ABS" },
-    { id: "2-2", name: "Dual Channel ABS" },
-  ],
-  "3": [
-    { id: "3-1", name: "Single Tone" },
-    { id: "3-2", name: "Dual Tone" },
-    { id: "3-3", name: "Triple Tone" },
-  ],
-  "4": [
-    { id: "4-1", name: "Standard" },
-    { id: "4-2", name: "ZX" },
-    { id: "4-3", name: "ZX Disc" },
-    { id: "4-4", name: "Classic" },
-  ],
-  "5": [
-    { id: "5-1", name: "Race XP" },
-    { id: "5-2", name: "Super Squad Edition" },
-    { id: "5-3", name: "Standard" },
-  ],
-} as const;
-
 export const sampleDealers = [
   { id: "d1", name: "TVS Motors Authorized Dealer - City Center" },
   { id: "d2", name: "TVS Motors Authorized Dealer - Highway Road" },
@@ -272,14 +245,6 @@ export const services = [
       "Trade in your old vehicle for a new one with our hassle-free exchange program",
     icon: <RefreshCw className="h-10 w-10 text-primary" />,
     link: "/exchange",
-  },
-  {
-    id: 6,
-    title: "Express Service",
-    description:
-      "Quick maintenance services for your vehicle when you're short on time",
-    icon: <Clock className="h-10 w-10 text-primary" />,
-    link: "/express-service",
   },
   {
     id: 7,

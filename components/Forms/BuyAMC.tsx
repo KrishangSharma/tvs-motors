@@ -29,7 +29,7 @@ import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
 import { amcFormSchema } from "@/lib/formSchemas";
 import { toast } from "sonner";
-import { vehicles, vehicleVariants } from "@/constants";
+import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof amcFormSchema>;
 
@@ -48,7 +48,6 @@ export default function BuyAMCForm() {
       email: "",
       phone: "",
       vehicleMake: "",
-      vehicleModel: "",
       registrationNumber: "",
       amcPackage: "",
       startDate: undefined,
@@ -84,7 +83,6 @@ export default function BuyAMCForm() {
         email: "",
         phone: "",
         vehicleMake: "",
-        vehicleModel: "",
         registrationNumber: "",
         amcPackage: "",
         startDate: undefined,
@@ -118,26 +116,9 @@ export default function BuyAMCForm() {
     setIsCaptchaVerified(true);
   };
 
-  const [vehicleModels, setVehicleModels] = useState<string[]>([]);
-
-  // Update models when make changes
-  React.useEffect(() => {
-    const make = form.watch("vehicleMake");
-    if (make) {
-      const selectedVehicle = vehicles.find((v) => v.name === make);
-      if (selectedVehicle) {
-        const variants =
-          vehicleVariants[selectedVehicle.id as keyof typeof vehicleVariants] ||
-          [];
-        setVehicleModels(variants.map((v) => v.name));
-        form.setValue("vehicleModel", "");
-      }
-    }
-  }, [form.watch("vehicleMake"), form]);
-
   return (
     <FormWrapper
-      title="Buy Annual Maintenance Contract (AMC)"
+      title="Get Annual Maintenance Contract (AMC)"
       description="Purchase an AMC for your vehicle with easy payment options"
     >
       <Form {...form}>
@@ -214,35 +195,6 @@ export default function BuyAMCForm() {
                       {vehicles.map((vehicle) => (
                         <SelectItem key={vehicle.id} value={vehicle.name}>
                           {vehicle.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="vehicleModel"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Vehicle Model</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={vehicleModels.length === 0}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select vehicle model" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {vehicleModels.map((model) => (
-                        <SelectItem key={model} value={model}>
-                          {model}
                         </SelectItem>
                       ))}
                     </SelectContent>

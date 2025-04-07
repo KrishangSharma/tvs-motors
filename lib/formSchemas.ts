@@ -107,37 +107,6 @@ export const exchangeFormSchema = z.object({
   additionalComments: z.string().optional(),
 });
 
-// Express Service Form Schema
-export const expressServiceFormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  contactNumber: z.string().regex(/^\d{10}$/, {
-    message: "Contact number must be 10 digits.",
-  }),
-  emailId: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  model: z.string().min(1, {
-    message: "Vehicle model is required.",
-  }),
-  registrationNumber: z.string().regex(/^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/, {
-    message: "Please enter a valid registration number (e.g., MH02AB1234).",
-  }),
-  serviceType: z.enum(["free", "paid"], {
-    required_error: "Please select a service type.",
-  }),
-  pickupRequired: z.enum(["yes", "no"], {
-    required_error: "Please select if pickup is required.",
-  }),
-  bookingDate: z.date({
-    required_error: "Please select a booking date.",
-  }),
-  bookingTime: z.string({
-    required_error: "Please select a booking time.",
-  }),
-});
-
 // Generic Payment Form Schema
 export const genericPaymentFormSchema = z.object({
   fullName: z

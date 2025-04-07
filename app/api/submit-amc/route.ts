@@ -25,7 +25,6 @@ export async function POST(req: NextRequest) {
       email,
       phone,
       vehicleMake,
-      vehicleModel,
       registrationNumber,
       amcPackage,
       startDate,
@@ -36,13 +35,12 @@ export async function POST(req: NextRequest) {
     const emailData = {
       from: `amc@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: email,
-      subject: `Confirmation: AMC Booking for ${vehicleMake} ${vehicleModel}`,
+      subject: `Confirmation: AMC Booking for ${vehicleMake}`,
       react: AMCConfirmationEmail({
         ownerName,
         email,
         phone,
         vehicleMake,
-        vehicleModel,
         registrationNumber,
         amcPackage,
         startDate,

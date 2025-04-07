@@ -81,7 +81,6 @@ export interface AMCConfirmationEmailProps {
   email: string;
   phone: string;
   vehicleMake: string;
-  vehicleModel: string;
   registrationNumber: string;
   amcPackage: string;
   startDate: Date;
