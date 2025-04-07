@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
@@ -66,17 +65,6 @@ export function FilterSheet({
     setFilters({
       ...filters,
       priceRange: [value[0], value[1]],
-    });
-  };
-
-  const handleTypeChange = (type: string, checked: boolean) => {
-    const updatedTypes = checked
-      ? [...filters.types, type]
-      : filters.types.filter((t) => t !== type);
-
-    setFilters({
-      ...filters,
-      types: updatedTypes,
     });
   };
 
@@ -168,27 +156,6 @@ export function FilterSheet({
           </div>
 
           <Separator />
-
-          {/* Vehicle Type */}
-          <div className="space-y-4">
-            <h3 className="font-medium">Vehicle Type</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {["scooter", "motorcycle", "electric", "sport"].map((type) => (
-                <div key={type} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`type-${type}`}
-                    checked={filters.types.includes(type)}
-                    onCheckedChange={(checked) =>
-                      handleTypeChange(type, checked as boolean)
-                    }
-                  />
-                  <Label htmlFor={`type-${type}`} className="capitalize">
-                    {type}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
 
           <Separator />
 

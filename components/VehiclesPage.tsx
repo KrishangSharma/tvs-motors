@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import Heading from "./Heading";
 import { FloatingDockDemo } from "./FloatingDock";
 import { FilterSheet, type FilterOptions } from "./filter-sheet";
+// Import the Tabs components at the top of the file
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function VehiclesPage({
   vehicles,
@@ -44,10 +46,13 @@ export default function VehiclesPage({
     });
 
     // Apply the sorting
-    applyFilters({
-      ...filterOptions,
-      sortBy: value,
-    });
+    applyFilters(
+      {
+        ...filterOptions,
+        sortBy: value,
+      },
+      activeTab
+    );
   };
 
   // Handle more options click from the dock
@@ -55,8 +60,8 @@ export default function VehiclesPage({
     setFilterSheetOpen(true);
   };
 
-  // Apply all filters and sorting
-  const applyFilters = (options: FilterOptions) => {
+  // Replace the existing applyFilters function with this updated version that handles the active tab
+  const applyFilters = (options: FilterOptions, activeTab = "all") => {
     let result = [...vehicles];
 
     // Filter by price range
@@ -66,8 +71,13 @@ export default function VehiclesPage({
         vehicle.price <= options.priceRange[1]
     );
 
-    // Filter by vehicle type
-    if (options.types.length > 0) {
+    // Filter by vehicle type based on the active tab instead of options.types
+    if (activeTab !== "all") {
+      result = result.filter((vehicle) =>
+        vehicle.type.toLowerCase().includes(activeTab.toLowerCase())
+      );
+    } else if (options.types.length > 0) {
+      // If we're on "all" tab but have specific types selected in the filter
       result = result.filter((vehicle) =>
         options.types.some((type) =>
           vehicle.type.toLowerCase().includes(type.toLowerCase())
@@ -110,10 +120,19 @@ export default function VehiclesPage({
     }
   };
 
-  // Apply initial filters
+  // Add a new state for the active tab
+  const [activeTab, setActiveTab] = useState("all");
+
+  // Add a new function to handle tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    applyFilters(filterOptions, value);
+  };
+
+  // Update the useEffect to include activeTab in the dependency array
   useEffect(() => {
-    applyFilters(filterOptions);
-  }, [vehicles]); // eslint-disable-line react-hooks/exhaustive-deps
+    applyFilters(filterOptions, activeTab);
+  }, [vehicles, activeTab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -129,13 +148,13 @@ export default function VehiclesPage({
         initialFilters={filterOptions}
         onApplyFilters={(newFilters) => {
           setFilterOptions(newFilters);
-          applyFilters(newFilters);
+          applyFilters(newFilters, activeTab);
         }}
         minPrice={minPrice}
         maxPrice={maxPrice}
       />
 
-      {/* Hero Section */}
+      {/* Hero Section with Tabs */}
       <div className="flex flex-col gap-6">
         <div className="space-y-2">
           <Badge className="px-3 py-1 mb-2 text-sm font-medium bg-primary/10 text-primary border-none">
@@ -145,6 +164,50 @@ export default function VehiclesPage({
             smText="Discover our curated selection of high-performance vehicles."
             lgText="Premium Vehicles"
           />
+        </div>
+
+        {/* Vehicle Type Tabs - Completely revamped for better responsiveness */}
+        <div className="w-full">
+          <Tabs
+            defaultValue="all"
+            value={activeTab}
+            onValueChange={handleTabChange}
+            className="w-full"
+          >
+            {/* Mobile tabs (scrollable) */}
+            <div className="block md:hidden w-full overflow-x-auto pb-2 no-scrollbar">
+              <div className="inline-flex min-w-max">
+                <TabsList className="flex p-1 bg-muted">
+                  <TabsTrigger value="all" className="flex-1 px-4 py-2">
+                    All
+                  </TabsTrigger>
+                  <TabsTrigger value="scooter" className="flex-1 px-4 py-2">
+                    Scooter
+                  </TabsTrigger>
+                  <TabsTrigger value="motorcycle" className="flex-1 px-4 py-2">
+                    Motorcycle
+                  </TabsTrigger>
+                  <TabsTrigger value="electric" className="flex-1 px-4 py-2">
+                    Electric
+                  </TabsTrigger>
+                  <TabsTrigger value="moped" className="flex-1 px-4 py-2">
+                    Moped
+                  </TabsTrigger>
+                </TabsList>
+              </div>
+            </div>
+
+            {/* Desktop tabs */}
+            <div className="hidden md:block">
+              <TabsList className="grid grid-cols-5 w-full max-w-md">
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="scooter">Scooter</TabsTrigger>
+                <TabsTrigger value="motorcycle">Motorcycle</TabsTrigger>
+                <TabsTrigger value="electric">Electric</TabsTrigger>
+                <TabsTrigger value="sport">Sport</TabsTrigger>
+              </TabsList>
+            </div>
+          </Tabs>
         </div>
 
         {/* Active filter indicator */}
