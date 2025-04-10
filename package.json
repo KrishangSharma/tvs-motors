@@ -38,18 +38,18 @@
     "fs": "^0.0.1-security",
     "lucide-react": "^0.475.0",
     "motion": "^12.5.0",
-    "next": "15.1.7",
+    "next": "15.3.0",
     "next-sanity": "^9.8.59",
     "next-themes": "^0.4.6",
     "pincode-search": "^1.0.0",
     "postal-codes-js": "^2.5.2",
-    "react": "^19.0.0",
+    "react": "19.1.0",
     "react-day-picker": "^9.6.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "19.1.0",
     "react-geolocated": "^4.3.0",
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.54.2",
-    "react-is": "^19.0.0",
+    "react-is": "19.1.0",
     "react-youtube": "^10.1.0",
     "resend": "^4.1.2",
     "sanity": "^3.76.3",
@@ -62,11 +62,11 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2",
     "@types/react-google-recaptcha": "^2.1.9",
     "eslint": "^9",
-    "eslint-config-next": "15.1.7",
+    "eslint-config-next": "15.3.0",
     "postcss": "^8.5.3",
     "prisma": "^6.4.1",
     "react-email": "3.0.7",
@@ -77,6 +77,8 @@
     "cmdk": {
       "react": "^19.0.0",
       "react-dom": "^19.0.0"
-    }
+    },
+    "@types/react": "19.1.0",
+    "@types/react-dom": "19.1.2"
   }
 }
