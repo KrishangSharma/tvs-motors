@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -53,13 +52,21 @@ export default function SuggestionForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/suggestion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      if (form.getValues("email") !== "") {
+        const response = await fetch("/api/suggestion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form.getValues()),
+        });
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+        setIsSubmitting(false);
+        form.reset();
+        setRating(0);
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success("Thank you for your feedback!");
       }
       setIsSubmitting(false);
       form.reset();

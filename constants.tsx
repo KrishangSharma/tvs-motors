@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { IconHome } from "@tabler/icons-react";
 import Leader from "@/public/about/leader.jpg";
+import { DisclaimerPage } from "./components/WebsitePolicies";
 
 // NAVBAR CONSTANTS
 export const navLinks: NavLinks[] = [
@@ -505,7 +506,7 @@ export const socialLinks = [
 ];
 
 export const copyrightLinks = [
-  { text: "Privacy Policy", href: "#" },
-  { text: "Disclaimer", href: "#" },
-  { text: "Cookie Policy", href: "#" },
+  { text: "Privacy Policy", href: "/information/privacy-policies" },
+  { text: "Disclaimer", href: "/information/disclaimer" },
+  { text: "Terms and Conditions", href: "/information/terms-and-conditions" },
 ];

@@ -66,28 +66,27 @@ export default function BuyAMCForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/submit-amc", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      const formData = form.getValues();
+
+      if (formData.email !== "") {
+        const response = await fetch("/api/submit-amc", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
       }
+
+      // Reset form and states regardless of API call
       setIsSubmitting(false);
       captchaRef.current?.reset();
       setCaptchaValue("");
       setStartDate(undefined);
-      form.reset({
-        ownerName: "",
-        email: "",
-        phone: "",
-        vehicleMake: "",
-        registrationNumber: "",
-        amcPackage: "",
-        startDate: undefined,
-        additionalComments: "",
-      });
+      form.reset();
+
       toast.success(
         "Form submitted successfully and a confirmation email has been sent to the shared email"
       );

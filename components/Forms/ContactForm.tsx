@@ -55,17 +55,26 @@ export default function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      if (data.email !== "") {
+        const response = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Form submission failed");
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Form submission failed");
+        }
+
+        form.reset();
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        setIsCaptchaVerified(false);
+        toast.success(
+          "Message sent successfully! We'll respond to your inquiry shortly."
+        );
       }
-
       form.reset();
       captchaRef.current?.reset();
       setCaptchaValue("");

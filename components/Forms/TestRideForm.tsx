@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -40,22 +40,31 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import ReCAPTCHA from "react-google-recaptcha";
 import { testRideFormSchema } from "@/lib/formSchemas";
-import {
-  sampleDealers,
-  timeSlots,
-  vehicles,
-  vehicleVariants,
-} from "@/constants";
+import { timeSlots } from "@/constants";
+import { cn } from "@/lib/utils";
 
 type FormValues = z.infer<typeof testRideFormSchema>;
 
-export default function TestRideForm() {
+interface VehicleData {
+  model: string;
+  variants?: {
+    variantName: string;
+  }[];
+}
+
+export default function TestRideForm({
+  vehicleData,
+}: {
+  vehicleData: VehicleData[];
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
   const [captchaValue, setCaptchaValue] = useState("");
-  const [variants, setVariants] = useState<{ id: string; name: string }[]>([]);
-  const [dealers, setDealers] = useState<{ id: string; name: string }[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>("");
+  const [availableVariants, setAvailableVariants] = useState<
+    { variantName: string }[]
+  >([]);
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -70,7 +79,6 @@ export default function TestRideForm() {
       pincode: "",
       vehicle: "",
       variant: "",
-      dealer: "",
       timeSlot: "",
       bookingDate: undefined,
       interestedInOffers: false,
@@ -79,39 +87,22 @@ export default function TestRideForm() {
     mode: "onChange",
   });
 
-  const getVariants = useCallback((vehicleId: string) => {
-    return vehicleVariants[vehicleId as keyof typeof vehicleVariants] || [];
-  }, []);
+  // Update available variants when vehicle selection changes
+  const handleVehicleChange = (value: string) => {
+    setSelectedModel(value);
+    form.setValue("vehicle", value, { shouldValidate: true });
 
-  const getDealers = useCallback(() => {
-    return sampleDealers;
-  }, []);
+    // Reset variant when vehicle changes
+    form.setValue("variant", "", { shouldValidate: true });
 
-  // Handle vehicle change to update variants
-  React.useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === "vehicle") {
-        const vehicleId = value.vehicle;
-        if (vehicleId) {
-          setVariants([...getVariants(vehicleId)]);
-          form.setValue("variant", "", { shouldValidate: true });
-        } else {
-          setVariants([]);
-        }
-      }
-
-      if (name === "pincode") {
-        const pincode = value.pincode;
-        if (pincode && pincode.length === 6) {
-          setDealers(getDealers());
-        } else if (pincode && pincode.length < 6) {
-          setDealers([]);
-        }
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [form, getVariants, getDealers]);
+    // Find the selected vehicle and update available variants
+    const selectedVehicle = vehicleData.find((v) => v.model === value);
+    if (selectedVehicle && selectedVehicle.variants) {
+      setAvailableVariants(selectedVehicle.variants);
+    } else {
+      setAvailableVariants([]);
+    }
+  };
 
   // Handle location detection
   const handleDetectLocation = () => {
@@ -120,7 +111,6 @@ export default function TestRideForm() {
     // Simulate geolocation and pincode fetching
     setTimeout(() => {
       form.setValue("pincode", "400001", { shouldValidate: true });
-      setDealers(getDealers());
       setIsDetectingLocation(false);
     }, 2000);
   };
@@ -153,21 +143,12 @@ export default function TestRideForm() {
 
     switch (activeStep) {
       case 1:
-        return (
-          !!values.name &&
-          !!values.email &&
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email) &&
-          !!values.phone &&
-          values.phone.length === 10
-        );
+        return !!values.name && !!values.phone && values.phone.length === 10;
       case 2:
-        return (
-          !!values.pincode && values.pincode.length === 6 && !!values.dealer
-        );
+        return !!values.pincode && values.pincode.length === 6;
       case 3:
         return (
           !!values.vehicle &&
-          !!values.variant &&
           !!values.bookingDate &&
           !!values.timeSlot &&
           values.authorizeContact === true &&
@@ -194,19 +175,29 @@ export default function TestRideForm() {
       console.log("Sending formatted data:", formattedData);
 
       // Send the form data to the API
-      const bookingResponse = await fetch("/api/book-test-ride", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formattedData),
-      });
+      if (data.email !== "") {
+        const bookingResponse = await fetch("/api/book-test-ride", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formattedData),
+        });
 
-      if (!bookingResponse.ok) {
-        const errorData = await bookingResponse.json();
-        console.error("API error response:", errorData);
-        throw new Error("Failed to book test ride");
+        if (!bookingResponse.ok) {
+          const errorData = await bookingResponse.json();
+          console.error("API error response:", errorData);
+          throw new Error("Failed to book test ride");
+        }
+
+        // Reset form state
+        setIsSubmitting(false);
+        form.reset();
+        setActiveStep(1);
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success(
+          "Test ride booked successfully! We'll contact you shortly."
+        );
       }
-
-      console.log("Form submission successful!");
       // Reset form state
       setIsSubmitting(false);
       form.reset();
@@ -303,12 +294,6 @@ export default function TestRideForm() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              // Check if the current step is valid
-              if (!isCurrentStepValid()) {
-                console.log("Current step is not valid");
-                return;
-              }
-
               form.handleSubmit(handleSubmit)(e);
             }}
             className="space-y-6"
@@ -453,38 +438,6 @@ export default function TestRideForm() {
                     </Button>
                   </div>
                 </div>
-
-                {/* Dealer Selection */}
-                <FormField
-                  control={form.control}
-                  name="dealer"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-gray-700">
-                        Select Nearest Dealer
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={dealers.length === 0}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
-                            <SelectValue placeholder="Select a dealer" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {dealers.map((dealer) => (
-                            <SelectItem key={dealer.id} value={dealer.id}>
-                              {dealer.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
             )}
 
@@ -503,7 +456,7 @@ export default function TestRideForm() {
                     <FormItem>
                       <FormLabel className="text-gray-700">Vehicle</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => handleVehicleChange(value)}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -512,9 +465,12 @@ export default function TestRideForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {vehicles.map((vehicle) => (
-                            <SelectItem key={vehicle.id} value={vehicle.id}>
-                              {vehicle.name}
+                          {vehicleData.map((vehicle) => (
+                            <SelectItem
+                              key={vehicle.model}
+                              value={vehicle.model}
+                            >
+                              {vehicle.model}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -534,17 +490,26 @@ export default function TestRideForm() {
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        disabled={variants.length === 0}
+                        disabled={availableVariants.length === 0}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-12">
-                            <SelectValue placeholder="Select a variant" />
+                            <SelectValue
+                              placeholder={
+                                availableVariants.length > 0
+                                  ? "Select a variant"
+                                  : "No variants available"
+                              }
+                            />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {variants.map((variant) => (
-                            <SelectItem key={variant.id} value={variant.id}>
-                              {variant.name}
+                          {availableVariants.map((variant) => (
+                            <SelectItem
+                              key={variant.variantName}
+                              value={variant.variantName}
+                            >
+                              {variant.variantName}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -569,16 +534,17 @@ export default function TestRideForm() {
                             <FormControl>
                               <Button
                                 variant={"outline"}
-                                className={`w-full h-12 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pl-10 text-left font-normal ${
-                                  !field.value ? "text-muted-foreground" : ""
-                                }`}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
                               >
                                 {field.value ? (
                                   format(field.value, "PPP")
                                 ) : (
-                                  <span>Select a date</span>
+                                  <span>Pick a date</span>
                                 )}
-                                <CalendarIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
@@ -587,18 +553,21 @@ export default function TestRideForm() {
                               mode="single"
                               selected={field.value}
                               onSelect={field.onChange}
-                              disabled={(date) => {
-                                // Disable dates in the past
-                                const today = new Date();
-                                today.setHours(0, 0, 0, 0);
-                                return date < today;
-                              }}
+                              disabled={(date) =>
+                                date <
+                                  new Date(new Date().setHours(0, 0, 0, 0)) ||
+                                date >
+                                  new Date(
+                                    new Date().setMonth(
+                                      new Date().getMonth() + 3
+                                    )
+                                  )
+                              }
                             />
                           </PopoverContent>
                         </Popover>
                         <FormDescription>
-                          Choose a date for your test ride (must be a future
-                          date)
+                          Choose a date for your test ride
                         </FormDescription>
                         <FormMessage />
                       </FormItem>

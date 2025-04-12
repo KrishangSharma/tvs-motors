@@ -269,3 +269,26 @@ export interface FooterItems {
     items: FooterItem[];
   }[];
 }
+
+export interface ListBlock {
+  _type: "listBlock";
+  listType: "bullet" | "number";
+  items: string[];
+}
+
+interface ContentBlock {
+  _type: string;
+  [key: string]: any;
+}
+
+interface Section {
+  sectionId: string;
+  sectionTitle: string;
+  content: (ContentBlock | ListBlock)[];
+}
+
+export interface TermsAndConditionsData {
+  title: string;
+  sections: Section[];
+  lastUpdated: string;
+}

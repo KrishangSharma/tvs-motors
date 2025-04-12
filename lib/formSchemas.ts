@@ -5,12 +5,12 @@ export const amcFormSchema = z.object({
   ownerName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
   vehicleMake: z.string().min(1, { message: "Please select a vehicle make" }),
-  vehicleModel: z.string().min(1, { message: "Please select a vehicle model" }),
   registrationNumber: z
     .string()
     .min(1, { message: "Registration number is required" }),
@@ -32,7 +32,9 @@ export const careerFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" })
+  // .optional(),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -90,7 +92,8 @@ export const exchangeFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -107,24 +110,6 @@ export const exchangeFormSchema = z.object({
   additionalComments: z.string().optional(),
 });
 
-// Generic Payment Form Schema
-export const genericPaymentFormSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  serviceDescription: z
-    .string()
-    .min(5, { message: "Description must be at least 5 characters" }),
-  amount: z.coerce
-    .number()
-    .positive({ message: "Amount must be greater than 0" }),
-  additionalInfo: z.string().optional(),
-});
-
 // Insurance Renewal Form Schema
 export const insuranceRenewalFormSchema = z.object({
   customerName: z.string().min(2, {
@@ -133,9 +118,10 @@ export const insuranceRenewalFormSchema = z.object({
   contactNumber: z.string().regex(/^\d{10}$/, {
     message: "Contact number must be 10 digits.",
   }),
-  emailId: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
+  emailId: z.string(),
+  // .email({
+  // message: "Please enter a valid email address.",
+  // }),
   model: z.string().min(1, {
     message: "Vehicle model is required.",
   }),
@@ -155,7 +141,8 @@ export const loanFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -189,9 +176,10 @@ export const serviceFormSchema = z.object({
   contactNumber: z.string().regex(/^\d{10}$/, {
     message: "Contact number must be 10 digits.",
   }),
-  emailId: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
+  emailId: z.string(),
+  // .email({
+  //   message: "Please enter a valid email address.",
+  // }),
   model: z.string().min(1, {
     message: "Vehicle model is required.",
   }),
@@ -215,10 +203,9 @@ export const serviceFormSchema = z.object({
 // Suggestion Form Schema
 export const suggestionFormSchema = z.object({
   name: z.string(),
-  email: z
-    .string()
-    .email({ message: "Please enter a valid email address" })
-    .or(z.literal("")),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" })
+  // .or(z.literal("")),
   subject: z.string().min(5, { message: "Subject is required" }),
   message: z
     .string()
@@ -229,7 +216,8 @@ export const suggestionFormSchema = z.object({
 // Test Ride Form Schema
 export const testRideFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
+  email: z.string(),
+  // .email({ message: "Please enter a valid email address" }),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })
@@ -246,7 +234,7 @@ export const testRideFormSchema = z.object({
     .max(6, { message: "Pincode must be 6 digits" })
     .regex(/^\d+$/, { message: "Pincode must contain only digits" }),
   vehicle: z.string().min(1, { message: "Please select a vehicle" }),
-  variant: z.string().min(1, { message: "Please select a variant" }),
+  variant: z.string(),
   dealer: z.string().min(1, { message: "Please select a dealer" }),
   timeSlot: z.string().min(1, "Please select a time slot"),
   bookingDate: z.date({
@@ -261,9 +249,11 @@ export const testRideFormSchema = z.object({
     }),
 });
 
+// Contact Form Schema
 export const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string(),
+  // .email("Please enter a valid email address"),
   phoneNumber: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })

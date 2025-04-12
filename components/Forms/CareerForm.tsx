@@ -58,7 +58,7 @@ export default function CareerForm() {
 
       // Append form fields to FormData
       formData.append("fullName", values.fullName);
-      formData.append("email", values.email);
+      formData.append("email", values.email || "");
       formData.append("phone", values.phone);
       formData.append("interestedProfile", values.interestedProfile);
       if (values.coverLetter) {
@@ -68,15 +68,30 @@ export default function CareerForm() {
         formData.append("resume", values.resume[0]);
       }
 
-      const response = await fetch("/api/career-application", {
-        method: "POST",
-        body: formData,
-      });
+      if (values.email !== "") {
+        const response = await fetch("/api/career-application", {
+          method: "POST",
+          body: formData,
+        });
 
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+
+        setIsSubmitting(false);
+        form.reset({
+          fullName: "",
+          email: "",
+          phone: "",
+          interestedProfile: "",
+          coverLetter: "",
+        });
+        setFileName("");
+        captchaRef.current?.reset();
+        toast.success(
+          "Application submitted successfully! We'll review your application and get back to you."
+        );
       }
-
       setIsSubmitting(false);
       form.reset({
         fullName: "",
@@ -88,7 +103,7 @@ export default function CareerForm() {
       setFileName("");
       captchaRef.current?.reset();
       toast.success(
-        "Application submitted successfully! We'll review your application and get back to you."
+        "Application submitted successfully! We will go over it and contact you soon."
       );
     } catch (error) {
       console.error("Form submission error:", error);

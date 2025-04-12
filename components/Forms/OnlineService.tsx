@@ -103,13 +103,30 @@ export default function OnlineServiceBookingForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/online-service", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      if (form.getValues("emailId") !== "") {
+        const response = await fetch("/api/online-service", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form.getValues()),
+        });
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+        setIsSubmitting(false);
+        form.reset({
+          name: "",
+          contactNumber: "",
+          emailId: "",
+          model: "",
+          registrationNumber: "",
+          serviceType: undefined,
+          pickupRequired: undefined,
+          bookingTime: "",
+          bookingDate: undefined,
+        });
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success("Service booking request submitted successfully!");
       }
       setIsSubmitting(false);
       form.reset({

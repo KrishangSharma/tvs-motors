@@ -57,13 +57,31 @@ export default function ExchangeForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/exchange", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      if (form.getValues("email") !== "") {
+        const response = await fetch("/api/exchange", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form.getValues()),
+        });
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+        setIsSubmitting(false);
+        form.reset({
+          fullName: "",
+          email: "",
+          phone: "",
+          currentVehicleModel: "",
+          currentVehicleYear: "",
+          currentVehicleRegistration: "",
+          desiredVehicleDetails: "",
+          additionalComments: "",
+        });
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success(
+          "Exchange request submitted successfully! Our team will contact you shortly."
+        );
       }
       setIsSubmitting(false);
       form.reset({

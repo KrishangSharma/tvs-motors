@@ -21,8 +21,6 @@ export interface TestRideConfirmationEmailProps {
   phone: string;
   vehicleName: string;
   variantName: string;
-  dealerName: string;
-  dealerAddress: string;
   bookingDate: Date;
   bookingTime: string;
   bookingReference: string;
@@ -34,8 +32,6 @@ export const TestRideConfirmationEmail = ({
   phone,
   vehicleName,
   variantName,
-  dealerName,
-  dealerAddress,
   bookingDate,
   bookingTime,
   bookingReference,

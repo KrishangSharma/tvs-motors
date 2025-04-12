@@ -66,13 +66,34 @@ export default function LoanApplicationForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/loan-application", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      if (form.getValues("email") !== "") {
+        const response = await fetch("/api/loan-application", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form.getValues()),
+        });
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+        setIsSubmitting(false);
+        form.reset({
+          fullName: "",
+          email: "",
+          phone: "",
+          employmentStatus: "",
+          annualIncome: 0,
+          loanAmount: 0,
+          loanTenure: 0,
+          residentialAddress: "",
+          additionalInfo: "",
+          dateOfBirth: undefined,
+        });
+        setDateOfBirth(undefined);
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success(
+          "Loan application submitted successfully! Our team will review your application."
+        );
       }
       setIsSubmitting(false);
       form.reset({

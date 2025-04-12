@@ -69,13 +69,28 @@ export default function InsuranceRenewalForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/insurance-renewal", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form.getValues()),
-      });
-      if (!response.ok) {
-        throw new Error("Form submission failed");
+      if (form.getValues("emailId") !== "") {
+        const response = await fetch("/api/insurance-renewal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form.getValues()),
+        });
+        if (!response.ok) {
+          throw new Error("Form submission failed");
+        }
+        setIsSubmitting(false);
+        form.reset({
+          customerName: "",
+          contactNumber: "",
+          emailId: "",
+          model: "",
+          registrationNumber: "",
+          registrationYear: "",
+          previousInsuranceCompany: "",
+        });
+        captchaRef.current?.reset();
+        setCaptchaValue("");
+        toast.success("Insurance renewal request submitted successfully!");
       }
       setIsSubmitting(false);
       form.reset({
@@ -282,6 +297,10 @@ export default function InsuranceRenewalForm() {
                   onChange={handleCaptchaChange}
                 />
               </div>
+              <span className="text-red-500 text-sm">
+                <b>NOTE:</b> Request process will take sometime to go through,
+                we request you to be patient while we go over your application.
+              </span>
             </CardContent>
             <CardFooter>
               <Button

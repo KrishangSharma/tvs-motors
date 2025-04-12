@@ -1,8 +1,8 @@
 // import Image from "next/image";
 import React from "react";
-import TestRideForm from "@/components/Forms/TestRideForm";
 import Image from "next/image";
 import FormImage from "@/public/header-images/Corporate landing page Desk-1366x600 -20250214-034900.jpg";
+import TestRideContainer from "@/components/TestRideContainer";
 
 const page = () => {
   return (
@@ -31,7 +31,7 @@ const page = () => {
       {/* Right side - Scrollable form */}
       <div className="w-full md:w-1/2 min-h-screen overflow-y-auto md:p-0 flex items-start justify-center">
         <div className="p-2 md:p-8 w-full">
-          <TestRideForm />
+          <TestRideContainer />
         </div>
       </div>
     </main>

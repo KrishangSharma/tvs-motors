@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
       phone,
       vehicle,
       variant,
-      dealer,
       pincode,
       bookingDate,
       timeSlot,
@@ -77,10 +76,6 @@ export async function POST(req: NextRequest) {
       vehicleMap[vehicle as keyof typeof vehicleMap] || "Unknown Vehicle";
     const variantName =
       variantMap[variant as keyof typeof variantMap] || "Unknown Variant";
-    const dealerDetails = dealerMap[dealer as keyof typeof dealerMap] || {
-      name: "Unknown Dealer",
-      address: `Pincode: ${pincode}`,
-    };
 
     console.log("Preparing to send email with data:", {
       name,
@@ -88,7 +83,6 @@ export async function POST(req: NextRequest) {
       phone,
       vehicleName,
       variantName,
-      dealerName: dealerDetails.name,
       bookingDate: parsedBookingDate,
       bookingTime,
     });
@@ -104,8 +98,6 @@ export async function POST(req: NextRequest) {
         phone,
         vehicleName,
         variantName,
-        dealerName: dealerDetails.name,
-        dealerAddress: dealerDetails.address,
         bookingDate: parsedBookingDate,
         bookingTime,
         bookingReference,
