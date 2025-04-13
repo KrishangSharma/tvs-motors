@@ -1,4 +1,4 @@
-import { PaymentConfirmationEmailProps } from "@/types";
+import type { ContactEmailProps } from "@/types";
 import {
   Body,
   Container,
@@ -13,71 +13,56 @@ import {
   Row,
   Column,
   Hr,
+  Button,
 } from "@react-email/components";
 import { format } from "date-fns";
 
-export const PaymentConfirmationEmail = ({
-  fullName = "John Doe",
+export const AdminContactEmail = ({
+  name = "John Doe",
   email = "john.doe@example.com",
-  phone = "9876543210",
-  serviceDescription = "General Service",
-  amount = 1000,
-  additionalInfo = "",
-  transactionId = "TXN-12345678",
-  paymentDate = new Date(),
-}: PaymentConfirmationEmailProps) => {
-  const formattedDate = format(new Date(paymentDate), "dd MMMM yyyy");
-  const formattedTime = format(new Date(paymentDate), "hh:mm a");
+  phoneNumber = "1234567890",
+  message = "This is a sample message.",
+  requestId = "CONTACT-123456",
+  requestDate = new Date(),
+}: ContactEmailProps) => {
+  const formattedDate = format(new Date(requestDate), "dd MMMM yyyy");
+  const formattedTime = format(new Date(requestDate), "hh:mm a");
 
   return (
     <Html>
       <Head />
-      <Preview>
-        Payment Confirmation - {transactionId} - ₹
-        {amount.toLocaleString("en-IN")}
-      </Preview>
+      <Preview>New Contact Form Submission - {requestId}</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* Header with Logo */}
-          <Section style={header}>
+          <Section style={adminHeader}>
             <Img
               src="https://www.tvsmotor.com/-/media/Feature/Header/TVSLogo-hr.svg"
               width="150"
               height="50"
-              alt="Auto Service Logo"
+              alt="Company Logo"
               style={logo}
             />
+            <Text style={adminHeaderText}>ADMIN NOTIFICATION</Text>
           </Section>
 
           {/* Main Content */}
           <Section style={content}>
-            <Heading style={heading}>Payment Confirmation</Heading>
+            <Heading style={heading}>New Contact Form Submission</Heading>
 
             <Text style={paragraph}>
-              Dear <strong>{fullName}</strong>,
+              A new contact form has been submitted with the following details:
             </Text>
 
-            <Text style={paragraph}>
-              Thank you for your payment. Your transaction has been successfully
-              processed with the following details:
-            </Text>
-
-            {/* Payment Details */}
+            {/* Request Details */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
-                Payment Details
+                Submission Details
               </Heading>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Transaction ID:</Column>
-                <Column style={detailValue}>{transactionId}</Column>
-              </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Amount:</Column>
-                <Column style={detailValue}>
-                  ₹{amount.toLocaleString("en-IN")}
-                </Column>
+                <Column style={detailLabel}>Reference ID:</Column>
+                <Column style={detailValue}>{requestId}</Column>
               </Row>
 
               <Row style={detailRow}>
@@ -91,25 +76,6 @@ export const PaymentConfirmationEmail = ({
               </Row>
             </Section>
 
-            {/* Service Details */}
-            <Section style={detailsSection}>
-              <Heading as="h2" style={subheading}>
-                Service/Product Details
-              </Heading>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Description:</Column>
-                <Column style={detailValue}>{serviceDescription}</Column>
-              </Row>
-
-              {additionalInfo && (
-                <Row style={detailRow}>
-                  <Column style={detailLabel}>Additional Information:</Column>
-                  <Column style={detailValue}>{additionalInfo}</Column>
-                </Row>
-              )}
-            </Section>
-
             {/* Customer Information */}
             <Section style={detailsSection}>
               <Heading as="h2" style={subheading}>
@@ -118,7 +84,7 @@ export const PaymentConfirmationEmail = ({
 
               <Row style={detailRow}>
                 <Column style={detailLabel}>Name:</Column>
-                <Column style={detailValue}>{fullName}</Column>
+                <Column style={detailValue}>{name}</Column>
               </Row>
 
               <Row style={detailRow}>
@@ -127,63 +93,64 @@ export const PaymentConfirmationEmail = ({
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Phone:</Column>
-                <Column style={detailValue}>{phone}</Column>
+                <Column style={detailLabel}>Phone Number:</Column>
+                <Column style={detailValue}>{phoneNumber}</Column>
               </Row>
+            </Section>
+
+            {/* Message Content */}
+            <Section style={messageSection}>
+              <Heading as="h2" style={subheading}>
+                Message
+              </Heading>
+              <Text style={messageText}>{message}</Text>
             </Section>
 
             <Hr style={divider} />
 
-            {/* Contact Information */}
+            {/* Action Buttons */}
+            <Section style={actionSection}>
+              <Text style={actionText}>
+                Please review this contact submission and take appropriate
+                action:
+              </Text>
+              <Section style={buttonContainer}>
+                <Button
+                  href={`https://admin.tvsmotor.com/contacts/${requestId}`}
+                  style={primaryButton}
+                >
+                  View Full Details
+                </Button>
+                <Button
+                  href={`https://admin.tvsmotor.com/contacts/${requestId}/respond`}
+                  style={secondaryButton}
+                >
+                  Respond to Customer
+                </Button>
+              </Section>
+            </Section>
+
             <Text style={paragraph}>
-              If you have any questions about this payment or need further
-              assistance, please contact our customer support:
-            </Text>
-
-            <Text style={contactInfo}>
-              Phone:{" "}
-              <Link href="tel:1800-123-4567" style={link}>
-                1800-123-4567
-              </Link>
-            </Text>
-
-            <Text style={contactInfo}>
-              Email:{" "}
-              <Link href="mailto:support@autoservice.com" style={link}>
-                support@autoservice.com
-              </Link>
-            </Text>
-
-            <Text style={paragraph}>
-              Thank you for your business. We appreciate your trust in our
-              services!
-            </Text>
-
-            <Text style={signature}>
-              Best regards,
-              <br />
-              The Auto Service Team
+              This is an automated notification. Please do not reply to this
+              email.
             </Text>
           </Section>
 
           {/* Footer */}
           <Section style={footer}>
             <Text style={footerText}>
-              © {new Date().getFullYear()} Auto Service. All rights reserved.
+              © {new Date().getFullYear()} TVS Motor. All rights reserved.
             </Text>
             <Text style={footerLinks}>
-              <Link
-                href="https://www.autoservice.com/privacy-policy"
-                style={footerLink}
-              >
-                Privacy Policy
+              <Link href="https://admin.tvsmotor.com" style={footerLink}>
+                Admin Portal
               </Link>{" "}
               •{" "}
               <Link
-                href="https://www.autoservice.com/terms-of-service"
+                href="https://admin.tvsmotor.com/settings"
                 style={footerLink}
               >
-                Terms of Service
+                Notification Settings
               </Link>
             </Text>
           </Section>
@@ -193,7 +160,7 @@ export const PaymentConfirmationEmail = ({
   );
 };
 
-export default PaymentConfirmationEmail;
+export default AdminContactEmail;
 
 // Styles
 const main = {
@@ -208,13 +175,21 @@ const container = {
   maxWidth: "600px",
 };
 
-const header = {
-  backgroundColor: "#ffffff",
+const adminHeader = {
+  backgroundColor: "#1e293b", // Dark blue header for admin emails
   padding: "20px",
   borderTopLeftRadius: "4px",
   borderTopRightRadius: "4px",
-  borderBottom: "1px solid #eaeaea",
   textAlign: "center" as const,
+};
+
+const adminHeaderText = {
+  color: "#ffffff",
+  fontSize: "12px",
+  fontWeight: "bold",
+  textTransform: "uppercase" as const,
+  letterSpacing: "1px",
+  margin: "10px 0 0",
 };
 
 const logo = {
@@ -230,7 +205,7 @@ const heading = {
   fontSize: "24px",
   lineHeight: "1.3",
   fontWeight: "700",
-  color: "#0066cc",
+  color: "#1e293b", // Dark blue for admin emails
   textAlign: "center" as const,
   margin: "0 0 30px",
 };
@@ -257,6 +232,22 @@ const detailsSection = {
   margin: "20px 0",
 };
 
+const messageSection = {
+  backgroundColor: "#f0f7ff",
+  padding: "20px",
+  borderRadius: "4px",
+  margin: "20px 0",
+  borderLeft: "4px solid #1e293b",
+};
+
+const messageText = {
+  fontSize: "15px",
+  lineHeight: "1.6",
+  color: "#333333",
+  margin: "10px 0",
+  whiteSpace: "pre-line" as const,
+};
+
 const detailRow = {
   margin: "8px 0",
 };
@@ -279,23 +270,46 @@ const divider = {
   margin: "30px 0",
 };
 
-const contactInfo = {
-  fontSize: "14px",
-  lineHeight: "1.5",
-  color: "#333333",
-  margin: "8px 0",
+const actionSection = {
+  margin: "20px 0",
 };
 
-const link = {
-  color: "#0066cc",
-  textDecoration: "none",
-};
-
-const signature = {
+const actionText = {
   fontSize: "16px",
   lineHeight: "1.5",
   color: "#333333",
-  margin: "30px 0 0",
+  margin: "0 0 15px",
+  textAlign: "center" as const,
+};
+
+const buttonContainer = {
+  textAlign: "center" as const,
+  margin: "20px 0",
+};
+
+const primaryButton = {
+  backgroundColor: "#1e293b",
+  borderRadius: "4px",
+  color: "#fff",
+  fontWeight: "600",
+  padding: "12px 20px",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "inline-block",
+  margin: "0 10px 10px 0",
+};
+
+const secondaryButton = {
+  backgroundColor: "#ffffff",
+  borderRadius: "4px",
+  color: "#1e293b",
+  fontWeight: "600",
+  padding: "12px 20px",
+  textDecoration: "none",
+  textAlign: "center" as const,
+  display: "inline-block",
+  margin: "0 0 10px 10px",
+  border: "1px solid #1e293b",
 };
 
 const footer = {
@@ -322,7 +336,7 @@ const footerLinks = {
 };
 
 const footerLink = {
-  color: "#0066cc",
+  color: "#1e293b",
   textDecoration: "none",
   margin: "0 5px",
 };
