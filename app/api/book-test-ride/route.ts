@@ -1,7 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { TestRideConfirmationEmail } from "@/react-email-starter/emails/test-ride-confirmation";
-import { dealerMap, variantMap, vehicleMap } from "@/constants";
+import { AdminTestRideEmail } from "@/react-email-starter/emails/admin-test-ride";
+import { variantMap, vehicleMap } from "@/constants";
 
 const resend = new Resend();
 
@@ -15,18 +16,9 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.json();
-    console.log("Received form data:", formData);
 
-    const {
-      name,
-      email,
-      phone,
-      vehicle,
-      variant,
-      pincode,
-      bookingDate,
-      timeSlot,
-    } = formData;
+    const { name, email, phone, vehicle, variant, bookingDate, timeSlot } =
+      formData;
 
     // Ensure bookingDate is a valid date string before creating a Date object
     let parsedBookingDate;
@@ -34,7 +26,6 @@ export async function POST(req: NextRequest) {
       // Create date object and set hours to 0 to ignore time
       parsedBookingDate = bookingDate ? new Date(bookingDate) : new Date();
       parsedBookingDate.setHours(0, 0, 0, 0);
-      console.log("Parsed booking date (time removed):", parsedBookingDate);
 
       // Validate that the parsed date is valid
       if (isNaN(parsedBookingDate.getTime())) {
@@ -87,12 +78,12 @@ export async function POST(req: NextRequest) {
       bookingTime,
     });
 
-    // Send confirmation email
-    const emailData = {
+    // Admin email data
+    const adminEmailData = {
       from: `testride@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: email,
-      subject: `Your TVS Motors Test Ride Confirmation - ${bookingReference}`,
-      react: TestRideConfirmationEmail({
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Test Ride Booking: ${bookingReference}`,
+      react: AdminTestRideEmail({
         name,
         email,
         phone,
@@ -104,8 +95,35 @@ export async function POST(req: NextRequest) {
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
-    console.log("Email response:", emailResponse);
+    // Send emails based on whether user provided an email
+    if (email && email.trim() !== "") {
+      const customerEmailData = {
+        from: `testride@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: email,
+        subject: `Your TVS Motors Test Ride Confirmation - ${bookingReference}`,
+        react: TestRideConfirmationEmail({
+          name,
+          email,
+          phone,
+          vehicleName,
+          variantName,
+          bookingDate: parsedBookingDate,
+          bookingTime,
+          bookingReference,
+        }),
+      };
+
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
+
+    console.log("Emails sent successfully");
 
     // Return success response
     return NextResponse.json(
@@ -113,7 +131,6 @@ export async function POST(req: NextRequest) {
         success: true,
         message: "Test ride booked successfully",
         bookingReference,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

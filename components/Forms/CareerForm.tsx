@@ -27,16 +27,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FileInput } from "@/components/ui/file-input";
 import { FormWrapper } from "../FormWrapper";
 import { careerFormSchema } from "@/lib/formSchemas";
+import FileUpload from "@/components/FileUpload";
 
 type FormValues = z.infer<typeof careerFormSchema>;
 
 export default function CareerForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
-  const [fileName, setFileName] = useState<string>("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resetFileUpload, setResetFileUpload] = useState(false);
   const captchaRef = useRef<ReCAPTCHA>(null);
 
   const form = useForm<FormValues>({
@@ -64,35 +65,22 @@ export default function CareerForm() {
       if (values.coverLetter) {
         formData.append("coverLetter", values.coverLetter);
       }
-      if (values.resume?.[0]) {
-        formData.append("resume", values.resume[0]);
+
+      // Append the file from our FileUpload component
+      if (resumeFile) {
+        formData.append("resume", resumeFile);
       }
 
-      if (values.email !== "") {
-        const response = await fetch("/api/career-application", {
-          method: "POST",
-          body: formData,
-        });
+      const response = await fetch("/api/career-application", {
+        method: "POST",
+        body: formData,
+      });
 
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
-
-        setIsSubmitting(false);
-        form.reset({
-          fullName: "",
-          email: "",
-          phone: "",
-          interestedProfile: "",
-          coverLetter: "",
-        });
-        setFileName("");
-        captchaRef.current?.reset();
-        toast.success(
-          "Application submitted successfully! We'll review your application and get back to you."
-        );
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
-      setIsSubmitting(false);
+
+      // Always reset the form after successful submission
       form.reset({
         fullName: "",
         email: "",
@@ -100,15 +88,35 @@ export default function CareerForm() {
         interestedProfile: "",
         coverLetter: "",
       });
-      setFileName("");
+
+      // Reset file upload by toggling the reset state
+      setResumeFile(null);
+      setResetFileUpload(true);
+
       captchaRef.current?.reset();
-      toast.success(
-        "Application submitted successfully! We will go over it and contact you soon."
-      );
+
+      // Check if email was provided for different success messages
+      const hasEmail = values.email && values.email.trim() !== "";
+      if (hasEmail) {
+        toast.success(
+          "Application submitted successfully! We'll review your application and get back to you."
+        );
+        setIsSubmitting(false);
+      } else {
+        toast.success(
+          "Application submitted successfully! We'll review your application."
+        );
+      }
+
+      // Reset the reset trigger after a short delay
+      setTimeout(() => {
+        setResetFileUpload(false);
+      }, 100);
     } catch (error) {
       console.error("Form submission error:", error);
-      setIsSubmitting(false);
       toast.error("Failed to submit application. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -195,37 +203,22 @@ export default function CareerForm() {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="resume"
-            render={({ field: { onChange, value: _, ...fieldProps } }) => (
-              <FormItem>
-                <FormLabel>Resume</FormLabel>
-                <FormControl>
-                  <FileInput
-                    id="resume-upload"
-                    placeholder={fileName || "Upload your resume (PDF/DOC)"}
-                    accept=".pdf,.doc,.docx"
-                    onChange={(e) => {
-                      const files = e.target.files;
-                      if (files && files.length > 0) {
-                        setFileName(files[0].name);
-                        onChange(files);
-                      } else {
-                        setFileName("");
-                        onChange(null);
-                      }
-                    }}
-                    {...fieldProps}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Upload your resume in PDF or DOC format (max 5MB)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <FormItem>
+            <FormLabel>Resume</FormLabel>
+            <FormControl>
+              <FileUpload
+                onFileChange={setResumeFile}
+                accept=".pdf,.doc,.docx"
+                label="Drag & drop your resume here or click to select"
+                value={resumeFile}
+                reset={resetFileUpload}
+              />
+            </FormControl>
+            <FormDescription>
+              Upload your resume in PDF or DOC format (max 5MB)
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
 
           <FormField
             control={form.control}
@@ -233,10 +226,7 @@ export default function CareerForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Interested Profile</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select job profile" />

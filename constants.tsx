@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { IconHome } from "@tabler/icons-react";
 import Leader from "@/public/about/leader.jpg";
-import { DisclaimerPage } from "./components/WebsitePolicies";
 
 // NAVBAR CONSTANTS
 export const navLinks: NavLinks[] = [

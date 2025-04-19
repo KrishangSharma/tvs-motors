@@ -28,11 +28,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof exchangeFormSchema>;
 
-export default function ExchangeForm() {
+interface VehicleData {
+  model: string;
+  variants?: {
+    variantName: string;
+  }[];
+}
+
+export default function ExchangeForm({
+  vehicleData,
+}: {
+  vehicleData: VehicleData[];
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
@@ -57,31 +67,13 @@ export default function ExchangeForm() {
     setIsSubmitting(true);
 
     try {
-      if (form.getValues("email") !== "") {
-        const response = await fetch("/api/exchange", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form.getValues()),
-        });
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
-        setIsSubmitting(false);
-        form.reset({
-          fullName: "",
-          email: "",
-          phone: "",
-          currentVehicleModel: "",
-          currentVehicleYear: "",
-          currentVehicleRegistration: "",
-          desiredVehicleDetails: "",
-          additionalComments: "",
-        });
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        toast.success(
-          "Exchange request submitted successfully! Our team will contact you shortly."
-        );
+      const response = await fetch("/api/exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form.getValues()),
+      });
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
       form.reset({
@@ -99,6 +91,7 @@ export default function ExchangeForm() {
       toast.success(
         "Exchange request submitted successfully! Our team will contact you shortly."
       );
+      captchaRef.current?.reset();
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
@@ -211,9 +204,9 @@ export default function ExchangeForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {vehicles.map((vehicle) => (
-                        <SelectItem key={vehicle.id} value={vehicle.name}>
-                          {vehicle.name}
+                      {vehicleData.map((vehicle, idx) => (
+                        <SelectItem key={idx} value={vehicle.model}>
+                          {vehicle.model}
                         </SelectItem>
                       ))}
                     </SelectContent>

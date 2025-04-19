@@ -1,4 +1,5 @@
 import { CareerApplicationEmail } from "@/react-email-starter/emails/career-application";
+import { AdminCareerApplicationEmail } from "@/react-email-starter/emails/admin-career-application";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -35,12 +36,12 @@ export async function POST(req: NextRequest) {
     const resumeBuffer = await resume.arrayBuffer();
     const resumeBase64 = Buffer.from(resumeBuffer).toString("base64");
 
-    // Send confirmation email to applicant
-    const applicantEmailData = {
-      from: `careers@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: email,
-      subject: `Application Received: ${interestedProfile} Position`,
-      react: CareerApplicationEmail({
+    // Prepare admin email data
+    const adminEmailData = {
+      from: `hr@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Job Application: ${interestedProfile}`,
+      react: AdminCareerApplicationEmail({
         fullName,
         email,
         phone,
@@ -49,23 +50,6 @@ export async function POST(req: NextRequest) {
         applicationDate,
         hasCoverLetter,
       }),
-    };
-
-    // Send notification email to admin with resume attachment
-    const adminEmailData = {
-      from: `careers@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: process.env.ADMIN_EMAIL!, // Make sure to set this in your environment variables
-      subject: `New Job Application: ${interestedProfile}`,
-      html: `
-        <h2>New Job Application Received</h2>
-        <p><strong>Application ID:</strong> ${applicationId}</p>
-        <p><strong>Date:</strong> ${applicationDate.toLocaleString()}</p>
-        <p><strong>Name:</strong> ${fullName}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Position:</strong> ${interestedProfile}</p>
-        ${hasCoverLetter ? `<p><strong>Cover Letter:</strong><br>${coverLetter}</p>` : ""}
-      `,
       attachments: [
         {
           filename: resume.name,
@@ -75,11 +59,32 @@ export async function POST(req: NextRequest) {
       ],
     };
 
-    // Send both emails
-    await Promise.all([
-      resend.emails.send(applicantEmailData),
-      resend.emails.send(adminEmailData),
-    ]);
+    // Send emails based on whether user provided an email
+    if (email && email.trim() !== "") {
+      const applicantEmailData = {
+        from: `hr@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: email,
+        subject: `Application Received: ${interestedProfile} Position`,
+        react: CareerApplicationEmail({
+          fullName,
+          email,
+          phone,
+          interestedProfile,
+          applicationId,
+          applicationDate,
+          hasCoverLetter,
+        }),
+      };
+
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(applicantEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
 
     // Return success response
     return NextResponse.json(

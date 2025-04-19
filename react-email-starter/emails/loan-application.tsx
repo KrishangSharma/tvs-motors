@@ -29,6 +29,8 @@ export const LoanApplicationEmail = ({
   additionalInfo = "",
   applicationId = "LOAN-12345678",
   applicationDate = new Date(),
+  documentType = "",
+  documentNumber = "",
 }: LoanApplicationEmailProps) => {
   const formattedDOB = format(new Date(dateOfBirth), "dd MMMM yyyy");
   const formattedApplicationDate = format(
@@ -47,6 +49,15 @@ export const LoanApplicationEmail = ({
       unemployed: "Unemployed",
     };
     return statusMap[status] || status;
+  };
+
+  // Format document type for display
+  const formatDocumentType = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      adhaar: "Adhaar Card",
+      pan: "PAN Card",
+    };
+    return typeMap[type] || "";
   };
 
   // Calculate estimated monthly EMI (simple calculation)
@@ -167,6 +178,21 @@ export const LoanApplicationEmail = ({
                   ₹{annualIncome.toLocaleString("en-IN")}
                 </Column>
               </Row>
+
+              {documentType && documentNumber && (
+                <>
+                  <Row style={detailRow}>
+                    <Column style={detailLabel}>Document Type:</Column>
+                    <Column style={detailValue}>
+                      {formatDocumentType(documentType)}
+                    </Column>
+                  </Row>
+                  <Row style={detailRow}>
+                    <Column style={detailLabel}>Document Number:</Column>
+                    <Column style={detailValue}>{documentNumber}</Column>
+                  </Row>
+                </>
+              )}
             </Section>
 
             {/* Address Information */}

@@ -1,4 +1,5 @@
 import { LoanApplicationEmail } from "@/react-email-starter/emails/loan-application";
+import { AdminLoanApplicationEmail } from "@/react-email-starter/emails/admin-loan-application-email";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,17 +31,19 @@ export async function POST(req: NextRequest) {
       loanTenure,
       residentialAddress,
       additionalInfo,
+      documentType,
+      documentNumber,
     } = await req.json();
 
     const applicationId = generateApplicationId();
     const applicationDate = new Date();
 
-    // Send confirmation email
-    const emailData = {
+    // Admin email data
+    const adminEmailData = {
       from: `loans@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: email,
-      subject: `Vehicle Loan Application Confirmation: ${applicationId}`,
-      react: LoanApplicationEmail({
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Vehicle Loan Application: ${applicationId}`,
+      react: AdminLoanApplicationEmail({
         fullName,
         email,
         phone,
@@ -53,28 +56,44 @@ export async function POST(req: NextRequest) {
         additionalInfo,
         applicationId,
         applicationDate,
+        documentType,
+        documentNumber,
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
+    // Send emails based on whether user provided an email
+    if (email && email.trim() !== "") {
+      const customerEmailData = {
+        from: `loans@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: email,
+        subject: `Vehicle Loan Application Confirmation: ${applicationId}`,
+        react: LoanApplicationEmail({
+          fullName,
+          email,
+          phone,
+          dateOfBirth: new Date(dateOfBirth),
+          employmentStatus,
+          annualIncome: parseFloat(annualIncome),
+          loanAmount: parseFloat(loanAmount),
+          loanTenure: parseInt(loanTenure),
+          residentialAddress,
+          additionalInfo,
+          applicationId,
+          applicationDate,
+          documentType,
+          documentNumber,
+        }),
+      };
 
-    // Store application data (you would normally save this to a database)
-    // This is just a placeholder for where you would add your database storage logic
-    const applicationData = {
-      applicationId,
-      applicationDate,
-      fullName,
-      email,
-      phone,
-      dateOfBirth,
-      employmentStatus,
-      annualIncome,
-      loanAmount,
-      loanTenure,
-      residentialAddress,
-      additionalInfo,
-      status: "Under Review",
-    };
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
 
     // Return success response
     return NextResponse.json(
@@ -82,7 +101,6 @@ export async function POST(req: NextRequest) {
         success: true,
         message: "Loan application submitted successfully",
         applicationId,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

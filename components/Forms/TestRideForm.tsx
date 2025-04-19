@@ -4,13 +4,7 @@ import React, { useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  Loader2,
-  MapPin,
-  ChevronRight,
-  Clock,
-  CalendarIcon,
-} from "lucide-react";
+import { Loader2, MapPin, ChevronRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,18 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
 import { toast } from "sonner";
 import ReCAPTCHA from "react-google-recaptcha";
 import { testRideFormSchema } from "@/lib/formSchemas";
 import { timeSlots } from "@/constants";
-import { cn } from "@/lib/utils";
+import { DatePicker } from "../ui/date-picker";
 
 type FormValues = z.infer<typeof testRideFormSchema>;
 
@@ -65,6 +52,7 @@ export default function TestRideForm({
   const [availableVariants, setAvailableVariants] = useState<
     { variantName: string }[]
   >([]);
+  const [startDate, setStartDate] = useState<Date>();
 
   const captchaRef = useRef<ReCAPTCHA>(null);
 
@@ -75,7 +63,6 @@ export default function TestRideForm({
       name: "",
       email: "",
       phone: "",
-      // otp: "",
       pincode: "",
       vehicle: "",
       variant: "",
@@ -161,10 +148,16 @@ export default function TestRideForm({
 
   // Handle form submission
   const handleSubmit = async (data: FormValues) => {
-    console.log("Form submission started!!", data);
     setIsSubmitting(true);
 
     try {
+      // Check if captcha is valid
+      if (!captchaValue) {
+        toast.error("Please complete the captcha verification");
+        setIsSubmitting(false);
+        return;
+      }
+
       const formattedData = {
         ...data,
         bookingDate: data.bookingDate
@@ -172,32 +165,19 @@ export default function TestRideForm({
           : undefined,
       };
 
-      console.log("Sending formatted data:", formattedData);
-
       // Send the form data to the API
-      if (data.email !== "") {
-        const bookingResponse = await fetch("/api/book-test-ride", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formattedData),
-        });
+      const bookingResponse = await fetch("/api/book-test-ride", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formattedData),
+      });
 
-        if (!bookingResponse.ok) {
-          const errorData = await bookingResponse.json();
-          console.error("API error response:", errorData);
-          throw new Error("Failed to book test ride");
-        }
-
-        // Reset form state
-        setIsSubmitting(false);
-        form.reset();
-        setActiveStep(1);
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        toast.success(
-          "Test ride booked successfully! We'll contact you shortly."
-        );
+      if (!bookingResponse.ok) {
+        const errorData = await bookingResponse.json();
+        console.error("API error response:", errorData);
+        throw new Error("Failed to book test ride");
       }
+
       // Reset form state
       setIsSubmitting(false);
       form.reset();
@@ -231,9 +211,7 @@ export default function TestRideForm({
   // Custom handler for phone number to only allow digits and validate the form
   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
-    if (value === "" || /^\d+$/.test(value)) {
-      form.setValue("phone", value, { shouldValidate: true });
-    }
+    form.setValue("phone", value, { shouldValidate: true });
   };
 
   return (
@@ -292,10 +270,7 @@ export default function TestRideForm({
 
         <Form {...form}>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit(handleSubmit)(e);
-            }}
+            onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-6"
           >
             {/* Step 1: Personal Information */}
@@ -365,7 +340,8 @@ export default function TestRideForm({
                           <Input
                             type="tel"
                             placeholder="Enter your mobile number"
-                            {...field}
+                            value={field.value}
+                            name={field.name}
                             autoComplete="off"
                             onChange={handlePhoneNumberChange}
                             maxLength={10}
@@ -529,43 +505,12 @@ export default function TestRideForm({
                         <FormLabel className="text-gray-700">
                           Preferred Date
                         </FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date <
-                                  new Date(new Date().setHours(0, 0, 0, 0)) ||
-                                date >
-                                  new Date(
-                                    new Date().setMonth(
-                                      new Date().getMonth() + 3
-                                    )
-                                  )
-                              }
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <DatePicker
+                          date={startDate}
+                          setDate={setStartDate}
+                          disablePastDates={true}
+                          placeholder="Select a date"
+                        />
                         <FormDescription>
                           Choose a date for your test ride
                         </FormDescription>

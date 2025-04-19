@@ -47,6 +47,14 @@ const Scooter = {
       type: "array",
       of: [{ type: "string" }],
     },
+    {
+      name: "brochure",
+      title: "Vehicle Brochure",
+      type: "file",
+      options: {
+        accept: "application/pdf",
+      },
+    },
     // Variants Field
     {
       name: "variants",

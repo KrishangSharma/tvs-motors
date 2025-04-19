@@ -27,6 +27,10 @@ export interface VehicleDetails {
   _createdAt: string;
   _updatedAt: string;
   variants?: Variant[];
+  brochure: {
+    _ref: string;
+    asset: { _ref: string };
+  };
 }
 
 export interface Color {

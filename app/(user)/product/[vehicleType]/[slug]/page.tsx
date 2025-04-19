@@ -3,6 +3,8 @@ import { groq } from "next-sanity";
 import type { Motorcycle, Variant } from "@/VehicleTypes/VehicleTypes";
 import dynamic from "next/dynamic";
 import { Montserrat } from "next/font/google";
+import { fileUrl } from "@/sanity/lib/image";
+import { DetailsHero } from "@/components/exports";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -15,12 +17,6 @@ const ImageCarousel = dynamic(() => import("@/components/ImageCarousel"), {
 const DetailsTabs = dynamic(() => import("@/components/DetailsTab"), {
   ssr: true,
 });
-const ConfigureForm = dynamic(
-  () => import("@/components/Forms/ConfigureForm"),
-  {
-    ssr: true,
-  }
-);
 const VariantSelector = dynamic(() => import("@/components/VariantSelector"), {
   ssr: true,
 });
@@ -31,23 +27,16 @@ export default async function VehiclePage({ params }: Props) {
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<Motorcycle>(query);
+  // URL for vehicle brochure
+  const brochureUrl = fileUrl(vehicle.brochure);
 
   // Sample variant data - replace with actual data from your Sanity schema
   const variants: Variant[] = vehicle.variants ?? [];
 
   return (
-    <div className="bg-white min-h-screen ">
+    <div className="bg-white min-h-screen overflow-x-hidden ">
       {/* Hero Section with Vehicle Name */}
-      <div className="relative overflow-hidden text-black bg-white">
-        <div className="sm:container mx-auto md:px-0 pt-8 pb-20 md:pt-12 md:pb-32 relative z-10">
-          <h1
-            className={`container max-w-7xl text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold
-                       tracking-tight leading-none ${montserrat.className} animate-fadeIn`}
-          >
-            {vehicle.model.toUpperCase()}
-          </h1>
-        </div>
-      </div>
+      <DetailsHero vehicle={vehicle} brochureUrl={brochureUrl} />
 
       {/* Image Carousel Section */}
       <div className="container mx-auto max-w-7xl px-4 -mt-16 md:-mt-24 lg:-mtw-32 relative z-20">
@@ -56,18 +45,11 @@ export default async function VehiclePage({ params }: Props) {
         </div>
       </div>
 
-      {/* Variant Selector Section */}
-      <div className="container mx-auto max-w-7xl px-4 mt-12">
-        <div className="bg-background p-4 sm:p-6 rounded-xl border border-border/50">
-          <VariantSelector variants={variants} />
-        </div>
-      </div>
-
       {/* Main Content Section */}
       <div className="container max-w-7xl mx-auto px-4 py-12">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left Side: Vehicle Specifications */}
-          <div className="lg:w-2/3">
+          <div className="lg:w-full">
             <h2
               className={`text-2xl md:text-3xl font-bold mb-6 ${montserrat.className}
                          border-b pb-3 border-border/50`}
@@ -77,15 +59,10 @@ export default async function VehiclePage({ params }: Props) {
             <div className=" overflow-hidden">
               <DetailsTabs vehicle={vehicle} />
             </div>
-          </div>
-
-          {/* Right Side: Configure Form */}
-          <div className="lg:w-1/3 lg:mt-0">
-            <div
-              className={`lg:sticky lg:top-24 bg-card rounded-xl shadow-md overflow-hidden border border-border/50 ${montserrat.className}`}
-            >
-              <ConfigureForm vehicle={vehicle} />
-            </div>
+            {/* Variant Selector Section */}
+            {variants && variants.length > 0 && (
+              <VariantSelector variants={variants} />
+            )}
           </div>
         </div>
       </div>

@@ -18,7 +18,6 @@ import { navLinks } from "@/constants";
 import Search from "@/components/ui/search";
 
 export default function Navbar() {
-  // Scroll management logic(state variable and useEffect)
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {
     const handleScroll = () => {

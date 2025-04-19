@@ -1,4 +1,5 @@
 import { ServiceBookingConfirmationEmail } from "@/react-email-starter/emails/online-service";
+import { AdminServiceBookingEmail } from "@/react-email-starter/emails/admin-service-booking";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -35,7 +36,6 @@ export async function POST(req: NextRequest) {
     if (
       !name ||
       !contactNumber ||
-      !emailId ||
       !model ||
       !registrationNumber ||
       !serviceType ||
@@ -51,12 +51,12 @@ export async function POST(req: NextRequest) {
 
     const bookingId = generateBookingId();
 
-    // Send confirmation email
-    const emailData = {
+    // Admin email data
+    const adminEmailData = {
       from: `service@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: emailId,
-      subject: `Service Booking Confirmation: ${bookingId}`,
-      react: ServiceBookingConfirmationEmail({
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Service Booking: ${bookingId}`,
+      react: AdminServiceBookingEmail({
         name,
         emailId,
         contactNumber,
@@ -70,7 +70,35 @@ export async function POST(req: NextRequest) {
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
+    // Send emails based on whether user provided an email
+    if (emailId && emailId.trim() !== "") {
+      const customerEmailData = {
+        from: `service@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: emailId,
+        subject: `Service Booking Confirmation: ${bookingId}`,
+        react: ServiceBookingConfirmationEmail({
+          name,
+          emailId,
+          contactNumber,
+          model,
+          registrationNumber,
+          serviceType,
+          pickupRequired,
+          bookingDate: new Date(bookingDate),
+          bookingTime,
+          bookingId,
+        }),
+      };
+
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
 
     // Return success response
     return NextResponse.json(
@@ -89,7 +117,6 @@ export async function POST(req: NextRequest) {
           bookingDate,
           bookingTime,
         },
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

@@ -1,3 +1,4 @@
+import AdminContactEmail from "@/react-email-starter/emails/admin-contact-email";
 import ContactEmail from "@/react-email-starter/emails/contact";
 import { resend } from "@/react-email-starter/lib/resend";
 import { type NextRequest, NextResponse } from "next/server";
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     const { name, email, phoneNumber, message } = await req.json();
 
     // Validate required fields
-    if (!name || !email || !phoneNumber || !message) {
+    if (!name || !phoneNumber || !message) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
@@ -30,12 +31,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { success: false, message: "Invalid email format" },
-        { status: 400 }
-      );
+    if (email && email.trim() !== "") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return NextResponse.json(
+          { success: false, message: "Invalid email format" },
+          { status: 400 }
+        );
+      }
     }
 
     // Validate phone number (10 digits)
@@ -57,12 +60,12 @@ export async function POST(req: NextRequest) {
     const requestId = generateRequestId();
     const requestDate = new Date();
 
-    // Send confirmation email to the user
-    const emailData = {
-      from: `contact@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: email,
-      subject: "Thank You for Contacting Us",
-      react: ContactEmail({
+    // Admin email data
+    const adminEmailData = {
+      from: `customercare@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+      to: process.env.ADMIN_EMAIL!,
+      subject: "New support query received!",
+      react: AdminContactEmail({
         name,
         email,
         phoneNumber,
@@ -72,15 +75,38 @@ export async function POST(req: NextRequest) {
       }),
     };
 
-    // Send emails
-    const emailResponse = await resend.emails.send(emailData);
+    // Send emails based on whether user provided an email
+    if (email && email.trim() !== "") {
+      const customerEmailData = {
+        from: `customercare@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: email,
+        subject: "Thank You for Contacting Us",
+        react: ContactEmail({
+          name,
+          email,
+          phoneNumber,
+          message,
+          requestId,
+          requestDate,
+        }),
+      };
 
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
+
+    // Return success response
     return NextResponse.json(
       {
         success: true,
-        message: "Contact form submitted successfully",
+        message: "Your message has been sent successfully",
         requestId,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

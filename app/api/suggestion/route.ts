@@ -33,17 +33,6 @@ export async function POST(req: NextRequest) {
     const feedbackId = generateFeedbackId();
     const submissionDate = new Date();
 
-    // Create feedback data object for storage and reporting
-    const feedbackData = {
-      id: feedbackId,
-      name: name || "Anonymous",
-      email: email || null,
-      subject,
-      message,
-      rating: rating || 0,
-      submissionDate,
-    };
-
     // Send confirmation email if email is provided
     let emailResponse = null;
     if (email) {
@@ -67,8 +56,8 @@ export async function POST(req: NextRequest) {
 
     // Send internal notification to admin/team
     const internalEmailData = {
-      from: "notifications@resend.dev",
-      to: "feedback-team@example.com", // Replace with your internal team email
+      from: `feedback@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+      to: process.env.ADMIN_EMAIL!,
       subject: `New Feedback: ${subject} (${feedbackId})`,
       react: SuggestionFeedbackEmail({
         name: name || "Anonymous",

@@ -47,6 +47,14 @@ const Motorcycle = {
       type: "array",
       of: [{ type: "string" }],
     },
+    {
+      name: "brochure",
+      title: "Vehicle Brochure",
+      type: "file",
+      options: {
+        accept: "application/pdf",
+      },
+    },
     // Category 1: Engine & Performance
     {
       name: "enginePerformance",

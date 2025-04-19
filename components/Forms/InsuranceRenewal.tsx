@@ -34,17 +34,26 @@ import {
 } from "@/components/ui/select";
 import { useRef, useState } from "react";
 import { insuranceRenewalFormSchema } from "@/lib/formSchemas";
-import { vehicles } from "@/constants";
 
-// Generate years for the dropdown (current year down to 20 years ago)
 const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 20 }, (_, i) =>
+const years = Array.from({ length: 10 }, (_, i) =>
   (currentYear - i).toString()
 );
 
 type FormValues = z.infer<typeof insuranceRenewalFormSchema>;
 
-export default function InsuranceRenewalForm() {
+interface VehicleData {
+  model: string;
+  variants?: {
+    variantName: string;
+  }[];
+}
+
+export default function InsuranceRenewalForm({
+  vehicleData,
+}: {
+  vehicleData: VehicleData[];
+}) {
   const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
@@ -69,28 +78,13 @@ export default function InsuranceRenewalForm() {
     setIsSubmitting(true);
 
     try {
-      if (form.getValues("emailId") !== "") {
-        const response = await fetch("/api/insurance-renewal", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form.getValues()),
-        });
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
-        setIsSubmitting(false);
-        form.reset({
-          customerName: "",
-          contactNumber: "",
-          emailId: "",
-          model: "",
-          registrationNumber: "",
-          registrationYear: "",
-          previousInsuranceCompany: "",
-        });
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        toast.success("Insurance renewal request submitted successfully!");
+      const response = await fetch("/api/insurance-renewal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form.getValues()),
+      });
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
       form.reset({
@@ -104,7 +98,14 @@ export default function InsuranceRenewalForm() {
       });
       captchaRef.current?.reset();
       setCaptchaValue("");
-      toast.success("Insurance renewal request submitted successfully!");
+      const email = form.getValues("emailId");
+      if (email && email.trim() !== "") {
+        toast.success(
+          "Thank you for reaching out! We will get back to you soon."
+        );
+      } else {
+        toast.success("Your request has been submitted successfully!");
+      }
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
@@ -223,9 +224,9 @@ export default function InsuranceRenewalForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {vehicles.map((vehicle) => (
-                            <SelectItem key={vehicle.id} value={vehicle.name}>
-                              {vehicle.name}
+                          {vehicleData.map((vehicle, idx) => (
+                            <SelectItem key={idx} value={vehicle.model}>
+                              {vehicle.model}
                             </SelectItem>
                           ))}
                         </SelectContent>

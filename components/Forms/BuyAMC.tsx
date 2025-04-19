@@ -29,11 +29,21 @@ import { FormWrapper } from "../FormWrapper";
 import ReCAPTCHA from "react-google-recaptcha";
 import { amcFormSchema } from "@/lib/formSchemas";
 import { toast } from "sonner";
-import { vehicles } from "@/constants";
 
 type FormValues = z.infer<typeof amcFormSchema>;
 
-export default function BuyAMCForm() {
+interface VehicleData {
+  model: string;
+  variants?: {
+    variantName: string;
+  }[];
+}
+
+export default function BuyAMCForm({
+  vehicleData,
+}: {
+  vehicleData: VehicleData[];
+}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [startDate, setStartDate] = useState<Date>();
   const [captchaValue, setCaptchaValue] = useState<string>("");
@@ -68,16 +78,14 @@ export default function BuyAMCForm() {
     try {
       const formData = form.getValues();
 
-      if (formData.email !== "") {
-        const response = await fetch("/api/submit-amc", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+      const response = await fetch("/api/submit-amc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
 
       // Reset form and states regardless of API call
@@ -87,9 +95,13 @@ export default function BuyAMCForm() {
       setStartDate(undefined);
       form.reset();
 
-      toast.success(
-        "Form submitted successfully and a confirmation email has been sent to the shared email"
-      );
+      if (formData.email && formData.email !== "") {
+        toast.success(
+          "Your query has been recieved and an email has been sent to you."
+        );
+      } else {
+        toast.success("Your query has been recieved!");
+      }
     } catch (error) {
       console.error("Form submission error:", error);
       toast.error("Form submission failed");
@@ -191,9 +203,9 @@ export default function BuyAMCForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {vehicles.map((vehicle) => (
-                        <SelectItem key={vehicle.id} value={vehicle.name}>
-                          {vehicle.name}
+                      {vehicleData.map((vehicle, idx) => (
+                        <SelectItem key={idx} value={vehicle.model}>
+                          {vehicle.model}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -202,23 +214,23 @@ export default function BuyAMCForm() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="registrationNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Registration Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter vehicle registration number"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-          <FormField
-            control={form.control}
-            name="registrationNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Registration Number</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter vehicle registration number"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="amcPackage"
@@ -272,10 +284,8 @@ export default function BuyAMCForm() {
                 <FormLabel>AMC Start Date</FormLabel>
                 <DatePicker
                   date={startDate}
-                  setDate={(date) => {
-                    setStartDate(date);
-                    field.onChange(date);
-                  }}
+                  setDate={setStartDate}
+                  disablePastDates={true}
                   placeholder="Select start date"
                 />
                 <FormMessage />

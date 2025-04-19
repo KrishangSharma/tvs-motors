@@ -17,6 +17,9 @@ interface DatePickerProps {
   setDate: (date: Date | undefined) => void;
   className?: string;
   placeholder?: string;
+  disablePastDates?: boolean;
+  disableFutureDates?: boolean;
+  disabledDates?: (date: Date) => boolean;
 }
 
 export function DatePicker({
@@ -24,8 +27,35 @@ export function DatePicker({
   setDate,
   className,
   placeholder = "Pick a date",
+  disablePastDates = false,
+  disableFutureDates = false,
+  disabledDates,
 }: DatePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // Handle disabled dates logic
+  const handleDisabledDates = (date: Date) => {
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    const twoDaysFromNow = new Date(today);
+    twoDaysFromNow.setDate(today.getDate() + 2);
+
+    // Apply custom disabled function if provided
+    if (disabledDates && disabledDates(date)) {
+      return true;
+    }
+
+    // Disable past dates and dates within 2 days if only future dates are allowed
+    if (disablePastDates && !disableFutureDates && date < twoDaysFromNow) {
+      return true;
+    }
+
+    // Disable future dates if specified
+    if (disableFutureDates && date > today) {
+      return true;
+    }
+
+    return false;
+  };
 
   return (
     <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
@@ -50,7 +80,7 @@ export function DatePicker({
             setDate(newDate);
             setIsCalendarOpen(false);
           }}
-          disabled={(date) => date > new Date(new Date().setHours(0, 0, 0, 0))}
+          disabled={handleDisabledDates}
         />
       </PopoverContent>
     </Popover>

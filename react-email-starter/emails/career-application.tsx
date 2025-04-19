@@ -134,7 +134,7 @@ export const CareerApplicationEmail = ({
 
             <Text style={contactInfo}>
               Email:{" "}
-              <Link href="mailto:careers@company.com" style={link}>
+              <Link href="mailto:hr@company.com" style={link}>
                 careers@company.com
               </Link>
             </Text>

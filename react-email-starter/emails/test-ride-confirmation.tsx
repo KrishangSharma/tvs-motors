@@ -107,23 +107,6 @@ export const TestRideConfirmationEmail = ({
               </Row>
             </Section>
 
-            {/* Dealer Information */}
-            <Section style={detailsSection}>
-              <Heading as="h2" style={subheading}>
-                Dealer Information
-              </Heading>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Name:</Column>
-                <Column style={detailValue}>{dealerName}</Column>
-              </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Address:</Column>
-                <Column style={detailValue}>{dealerAddress}</Column>
-              </Row>
-            </Section>
-
             <Hr style={divider} />
 
             {/* Next Steps */}

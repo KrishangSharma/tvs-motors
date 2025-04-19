@@ -1,4 +1,5 @@
 import { InsuranceRenewalEmail } from "@/react-email-starter/emails/insurance-renewal";
+import { AdminInsuranceRenewalEmail } from "@/react-email-starter/emails/admin-insurance-renewal-email";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
     } = await req.json();
 
     // Validate required fields
-    if (!customerName || !emailId || !registrationNumber) {
+    if (!customerName || !registrationNumber) {
       return NextResponse.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
@@ -40,12 +41,12 @@ export async function POST(req: NextRequest) {
     const requestId = generateRequestId();
     const requestDate = new Date();
 
-    // Send confirmation email
-    const emailData = {
+    // Admin email data
+    const adminEmailData = {
       from: `insurance@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: emailId,
-      subject: "Insurance Renewal Request Confirmation",
-      react: InsuranceRenewalEmail({
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Insurance Renewal Request: ${requestId}`,
+      react: AdminInsuranceRenewalEmail({
         customerName,
         contactNumber,
         emailId,
@@ -58,13 +59,40 @@ export async function POST(req: NextRequest) {
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
+    // Send emails based on whether user provided an email
+    if (emailId && emailId.trim() !== "") {
+      const customerEmailData = {
+        from: `insurance@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: emailId,
+        subject: "Insurance Renewal Request Confirmation",
+        react: InsuranceRenewalEmail({
+          customerName,
+          contactNumber,
+          emailId,
+          model,
+          registrationNumber,
+          registrationYear,
+          previousInsuranceCompany,
+          requestId,
+          requestDate,
+        }),
+      };
+
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
+
     return NextResponse.json(
       {
         success: true,
         message: "Insurance renewal request submitted successfully",
         requestId,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

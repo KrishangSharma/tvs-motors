@@ -5,3 +5,5 @@ export { default as ImageCarousel } from "./ImageCarousel";
 export { default as Detailstab } from "./DetailsTab";
 export { default as Hero } from "./Hero";
 export { default as ServicesSection } from "./Services";
+export { default as FileUpload } from "./FileUpload";
+export { default as DetailsHero } from "./DetailsHero";

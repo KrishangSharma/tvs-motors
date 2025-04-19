@@ -3,16 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format } from "date-fns";
-import {
-  CalendarIcon,
-  Car,
-  User,
-  Phone,
-  Mail,
-  FileText,
-  CheckCircle,
-} from "lucide-react";
+import { Car, User, Phone, Mail, FileText, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -42,18 +33,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { serviceFormSchema } from "@/lib/formSchemas";
-import { vehicles } from "@/constants";
+import { DatePicker } from "../ui/date-picker";
 
 type FormValues = z.infer<typeof serviceFormSchema>;
 
@@ -78,11 +62,23 @@ const timeSlots = [
   "05:00 PM",
 ];
 
-export default function OnlineServiceBookingForm() {
+interface VehicleData {
+  model: string;
+  variants?: {
+    variantName: string;
+  }[];
+}
+
+export default function OnlineServiceBookingForm({
+  vehicleData,
+}: {
+  vehicleData: VehicleData[];
+}) {
   const captchaRef = useRef<ReCAPTCHA>(null);
   const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [bookingDate, setBookingDate] = useState<Date>();
 
   // Initialize the form with React Hook Form
   const form = useForm<FormValues>({
@@ -99,49 +95,42 @@ export default function OnlineServiceBookingForm() {
     },
   });
 
+  useEffect(() => {
+    if (bookingDate) {
+      form.setValue("bookingDate", bookingDate);
+    }
+  }, [bookingDate, form]);
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
     try {
-      if (form.getValues("emailId") !== "") {
-        const response = await fetch("/api/online-service", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form.getValues()),
-        });
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
-        setIsSubmitting(false);
-        form.reset({
-          name: "",
-          contactNumber: "",
-          emailId: "",
-          model: "",
-          registrationNumber: "",
-          serviceType: undefined,
-          pickupRequired: undefined,
-          bookingTime: "",
-          bookingDate: undefined,
-        });
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        toast.success("Service booking request submitted successfully!");
+      const response = await fetch("/api/online-service", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form.getValues()),
+      });
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
+      // Reset form values
       form.reset({
         name: "",
         contactNumber: "",
         emailId: "",
         model: "",
         registrationNumber: "",
-        serviceType: undefined,
-        pickupRequired: undefined,
+        serviceType: "",
+        pickupRequired: " ",
         bookingTime: "",
         bookingDate: undefined,
       });
+      // Reset component states
+      setBookingDate(undefined);
       captchaRef.current?.reset();
       setCaptchaValue("");
+      setIsCaptchaVerified(false);
       toast.success("Service booking request submitted successfully!");
     } catch (error) {
       console.error("Form submission error:", error);
@@ -282,9 +271,9 @@ export default function OnlineServiceBookingForm() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {vehicles.map((vehicle) => (
-                            <SelectItem key={vehicle.id} value={vehicle.name}>
-                              {vehicle.name}
+                          {vehicleData.map((vehicle, idx) => (
+                            <SelectItem key={idx} value={vehicle.model}>
+                              {vehicle.model}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -380,41 +369,12 @@ export default function OnlineServiceBookingForm() {
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
                       <FormLabel>Service Booking Date</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date <
-                                new Date(new Date().setHours(0, 0, 0, 0)) ||
-                              date >
-                                new Date(
-                                  new Date().setMonth(new Date().getMonth() + 3)
-                                )
-                            }
-                          />
-                        </PopoverContent>
-                      </Popover>
+                      <DatePicker
+                        date={bookingDate}
+                        setDate={setBookingDate}
+                        placeholder="Select date"
+                        disablePastDates
+                      />
                       <FormMessage />
                     </FormItem>
                   )}

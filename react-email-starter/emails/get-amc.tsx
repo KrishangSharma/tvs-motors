@@ -154,11 +154,6 @@ export const AMCConfirmationEmail = ({
               </Row>
 
               <Row style={detailRow}>
-                <Column style={detailLabel}>Model:</Column>
-                <Column style={detailValue}>{vehicleModel}</Column>
-              </Row>
-
-              <Row style={detailRow}>
                 <Column style={detailLabel}>Registration:</Column>
                 <Column style={detailValue}>{registrationNumber}</Column>
               </Row>

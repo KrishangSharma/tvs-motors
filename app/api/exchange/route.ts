@@ -1,4 +1,5 @@
 import VehicleExchangeConfirmationEmail from "@/react-email-starter/emails/vehicle-exchange";
+import AdminExchangeEmail from "@/react-email-starter/emails/admin-exchange";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -32,13 +33,14 @@ export async function POST(req: NextRequest) {
 
     // Generate a unique reference number for this exchange request
     const exchangeReference = generateExchangeReference();
+    const requestDate = new Date();
 
-    // Send confirmation email
-    const emailData = {
+    // Admin email data
+    const adminEmailData = {
       from: `exchange@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
-      to: email,
-      subject: `Confirmation: Vehicle Exchange Request for ${currentVehicleModel}`,
-      react: VehicleExchangeConfirmationEmail({
+      to: process.env.ADMIN_EMAIL!,
+      subject: `New Vehicle Exchange Request: ${exchangeReference}`,
+      react: AdminExchangeEmail({
         fullName,
         email,
         phone,
@@ -48,10 +50,38 @@ export async function POST(req: NextRequest) {
         desiredVehicleDetails,
         additionalComments,
         exchangeReference,
+        requestDate,
       }),
     };
 
-    const emailResponse = await resend.emails.send(emailData);
+    // Send emails based on whether user provided an email
+    if (email && email.trim() !== "") {
+      const customerEmailData = {
+        from: `exchange@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
+        to: email,
+        subject: `Confirmation: Vehicle Exchange Request for ${currentVehicleModel}`,
+        react: VehicleExchangeConfirmationEmail({
+          fullName,
+          email,
+          phone,
+          currentVehicleModel,
+          currentVehicleYear,
+          currentVehicleRegistration,
+          desiredVehicleDetails,
+          additionalComments,
+          exchangeReference,
+        }),
+      };
+
+      // Send both emails
+      await Promise.all([
+        resend.emails.send(customerEmailData),
+        resend.emails.send(adminEmailData),
+      ]);
+    } else {
+      // Send only admin email
+      await resend.emails.send(adminEmailData);
+    }
 
     // Return success response
     return NextResponse.json(
@@ -59,7 +89,6 @@ export async function POST(req: NextRequest) {
         success: true,
         message: "Vehicle exchange request submitted successfully",
         exchangeReference,
-        emailSent: !!emailResponse?.data?.id,
       },
       { status: 200 }
     );

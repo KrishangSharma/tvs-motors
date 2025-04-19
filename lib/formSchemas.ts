@@ -5,8 +5,7 @@ export const amcFormSchema = z.object({
   ownerName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string(),
-  // .email({ message: "Please enter a valid email address" }),
+  email: z.string().optional(),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -32,9 +31,7 @@ export const careerFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string(),
-  // .email({ message: "Please enter a valid email address" })
-  // .optional(),
+  email: z.string().optional(),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -92,8 +89,7 @@ export const exchangeFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string(),
-  // .email({ message: "Please enter a valid email address" }),
+  email: z.string().optional(),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" }),
@@ -118,10 +114,13 @@ export const insuranceRenewalFormSchema = z.object({
   contactNumber: z.string().regex(/^\d{10}$/, {
     message: "Contact number must be 10 digits.",
   }),
-  emailId: z.string(),
-  // .email({
-  // message: "Please enter a valid email address.",
-  // }),
+  emailId: z
+    .string()
+    .email({
+      message: "Please enter a valid email address.",
+    })
+    .or(z.literal(""))
+    .optional(),
   model: z.string().min(1, {
     message: "Vehicle model is required.",
   }),
@@ -137,36 +136,72 @@ export const insuranceRenewalFormSchema = z.object({
 });
 
 // Loan Form Schema
-export const loanFormSchema = z.object({
-  fullName: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string(),
-  // .email({ message: "Please enter a valid email address" }),
-  phone: z
-    .string()
-    .min(10, { message: "Phone number must be at least 10 digits" }),
-  dateOfBirth: z.date({
-    required_error: "Date of birth is required",
-  }),
-  employmentStatus: z
-    .string()
-    .min(1, { message: "Please select your employment status" }),
-  annualIncome: z.coerce
-    .number()
-    .positive({ message: "Annual income must be greater than 0" }),
-  loanAmount: z.coerce
-    .number()
-    .positive({ message: "Loan amount must be greater than 0" }),
-  loanTenure: z.coerce
-    .number()
-    .int()
-    .positive({ message: "Loan tenure must be a positive number" }),
-  residentialAddress: z
-    .string()
-    .min(10, { message: "Please provide your complete address" }),
-  additionalInfo: z.string().optional(),
-});
+export const loanFormSchema = z
+  .object({
+    fullName: z
+      .string()
+      .min(2, { message: "Name must be at least 2 characters" }),
+    email: z.string(),
+    // .email({ message: "Please enter a valid email address" }),
+    phone: z
+      .string()
+      .min(10, { message: "Phone number must be at least 10 digits" }),
+    dateOfBirth: z.date({
+      required_error: "Date of birth is required",
+    }),
+    employmentStatus: z
+      .string()
+      .min(1, { message: "Please select your employment status" }),
+    annualIncome: z.coerce
+      .number()
+      .positive({ message: "Annual income must be greater than 0" }),
+    loanAmount: z.coerce
+      .number()
+      .positive({ message: "Loan amount must be greater than 0" }),
+    loanTenure: z.coerce
+      .number()
+      .int()
+      .positive({ message: "Loan tenure must be a positive number" }),
+    residentialAddress: z
+      .string()
+      .min(10, { message: "Please provide your complete address" }),
+    additionalInfo: z.string().optional(),
+    documentType: z.string().optional(),
+    documentNumber: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If documentType is provided, documentNumber must also be provided
+      if (data.documentType && !data.documentNumber) {
+        return false;
+      }
+
+      // If documentType is Adhaar Card, documentNumber must be numeric
+      if (
+        data.documentType === "adhaar" &&
+        data.documentNumber &&
+        !/^\d+$/.test(data.documentNumber)
+      ) {
+        return false;
+      }
+
+      // If documentType is PAN Card, documentNumber must be alphanumeric and 10 characters
+      if (
+        data.documentType === "pan" &&
+        data.documentNumber &&
+        !/^[A-Z0-9]{10}$/.test(data.documentNumber)
+      ) {
+        return false;
+      }
+
+      return true;
+    },
+    {
+      message:
+        "Please provide a valid document number for the selected document type",
+      path: ["documentNumber"],
+    }
+  );
 
 // Service Booking Form Schema
 export const serviceFormSchema = z.object({
@@ -176,20 +211,17 @@ export const serviceFormSchema = z.object({
   contactNumber: z.string().regex(/^\d{10}$/, {
     message: "Contact number must be 10 digits.",
   }),
-  emailId: z.string(),
-  // .email({
-  //   message: "Please enter a valid email address.",
-  // }),
+  emailId: z.string().optional(),
   model: z.string().min(1, {
     message: "Vehicle model is required.",
   }),
   registrationNumber: z.string().regex(/^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}$/, {
     message: "Please enter a valid registration number (e.g., MH02AB1234).",
   }),
-  serviceType: z.enum(["free", "paid"], {
-    required_error: "Please select a service type.",
+  serviceType: z.string().min(1, {
+    message: "Please select a service type.",
   }),
-  pickupRequired: z.enum(["yes", "no"], {
+  pickupRequired: z.enum(["yes", "no", " "], {
     required_error: "Please select if pickup is required.",
   }),
   bookingDate: z.date({
@@ -216,8 +248,7 @@ export const suggestionFormSchema = z.object({
 // Test Ride Form Schema
 export const testRideFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  email: z.string(),
-  // .email({ message: "Please enter a valid email address" }),
+  email: z.string().optional(),
   phone: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })
@@ -235,7 +266,6 @@ export const testRideFormSchema = z.object({
     .regex(/^\d+$/, { message: "Pincode must contain only digits" }),
   vehicle: z.string().min(1, { message: "Please select a vehicle" }),
   variant: z.string(),
-  dealer: z.string().min(1, { message: "Please select a dealer" }),
   timeSlot: z.string().min(1, "Please select a time slot"),
   bookingDate: z.date({
     required_error: "Please select a booking date",
@@ -252,8 +282,7 @@ export const testRideFormSchema = z.object({
 // Contact Form Schema
 export const contactFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  email: z.string(),
-  // .email("Please enter a valid email address"),
+  email: z.string().optional(),
   phoneNumber: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })

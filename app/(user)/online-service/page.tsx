@@ -3,8 +3,10 @@ import React from "react";
 import OnlineServiceBookingForm from "@/components/Forms/OnlineService";
 import Image from "next/image";
 import FormImage from "@/public/form-image.jpg";
+import fetchVehiclesForForm from "@/lib/fetchVehiclesForForm";
 
-const page = () => {
+const page = async () => {
+  const vehicleData = await fetchVehiclesForForm();
   return (
     <main className="flex flex-col md:flex-row min-h-screen w-full">
       {/* Left side - Fixed image and description (hidden on mobile) */}
@@ -31,7 +33,7 @@ const page = () => {
       {/* Right side - Scrollable form */}
       <div className="w-full md:w-1/2 min-h-screen overflow-y-auto p-4 md:p-0 flex items-start justify-center">
         <div className="p-8 w-full">
-          <OnlineServiceBookingForm />
+          <OnlineServiceBookingForm vehicleData={vehicleData} />
         </div>
       </div>
     </main>

@@ -101,6 +101,8 @@ export interface LoanApplicationEmailProps {
   additionalInfo?: string;
   applicationId: string;
   applicationDate: Date;
+  documentType?: string;
+  documentNumber?: string;
 }
 
 export interface ServiceBookingEmailProps {

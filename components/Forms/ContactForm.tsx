@@ -55,33 +55,28 @@ export default function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      if (data.email !== "") {
-        const response = await fetch("/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+      console.log();
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || "Form submission failed");
-        }
-
-        form.reset();
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        setIsCaptchaVerified(false);
-        toast.success(
-          "Message sent successfully! We'll respond to your inquiry shortly."
-        );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Form submission failed");
       }
       form.reset();
       captchaRef.current?.reset();
       setCaptchaValue("");
       setIsCaptchaVerified(false);
-      toast.success(
-        "Message sent successfully! We'll respond to your inquiry shortly."
-      );
+      if (data.email && data.email !== "") {
+        toast.success(
+          "Message sent successfully! We'll respond to your inquiry shortly."
+        );
+      } else {
+        toast.success("Message sent successfully!");
+      }
     } catch (error) {
       console.error("Form submission error:", error);
       toast.error(

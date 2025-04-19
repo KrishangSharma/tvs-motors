@@ -35,8 +35,8 @@ type FormValues = z.infer<typeof loanFormSchema>;
 export default function LoanApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dateOfBirth, setDateOfBirth] = useState<Date>();
-  const [captchaValue, setCaptchaValue] = useState<string>("");
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string>("");
 
   const captchaRef = React.useRef<ReCAPTCHA>(null);
 
@@ -52,6 +52,8 @@ export default function LoanApplicationForm() {
       loanTenure: 0,
       residentialAddress: "",
       additionalInfo: "",
+      documentType: "",
+      documentNumber: "",
     },
   });
 
@@ -66,34 +68,13 @@ export default function LoanApplicationForm() {
     setIsSubmitting(true);
 
     try {
-      if (form.getValues("email") !== "") {
-        const response = await fetch("/api/loan-application", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form.getValues()),
-        });
-        if (!response.ok) {
-          throw new Error("Form submission failed");
-        }
-        setIsSubmitting(false);
-        form.reset({
-          fullName: "",
-          email: "",
-          phone: "",
-          employmentStatus: "",
-          annualIncome: 0,
-          loanAmount: 0,
-          loanTenure: 0,
-          residentialAddress: "",
-          additionalInfo: "",
-          dateOfBirth: undefined,
-        });
-        setDateOfBirth(undefined);
-        captchaRef.current?.reset();
-        setCaptchaValue("");
-        toast.success(
-          "Loan application submitted successfully! Our team will review your application."
-        );
+      const response = await fetch("/api/loan-application", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form.getValues()),
+      });
+      if (!response.ok) {
+        throw new Error("Form submission failed");
       }
       setIsSubmitting(false);
       form.reset({
@@ -107,13 +88,22 @@ export default function LoanApplicationForm() {
         residentialAddress: "",
         additionalInfo: "",
         dateOfBirth: undefined,
+        documentType: "",
+        documentNumber: "",
       });
       setDateOfBirth(undefined);
       captchaRef.current?.reset();
-      setCaptchaValue("");
-      toast.success(
-        "Loan application submitted successfully! Our team will review your application."
-      );
+
+      const email = form.getValues("email");
+      if (email && email.trim() !== "") {
+        toast.success(
+          "Loan application submitted successfully! Check your email for updates."
+        );
+      } else {
+        toast.success(
+          "Thank you for your time! We have recieved your application!"
+        );
+      }
     } catch (error) {
       console.error("Form submission error:", error);
       setIsSubmitting(false);
@@ -122,8 +112,6 @@ export default function LoanApplicationForm() {
   };
 
   const handleCaptchaChange = async (value: string | null) => {
-    setCaptchaValue(value || "");
-
     const captchaResponse = await fetch("/api/verify-captcha", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -145,6 +133,38 @@ export default function LoanApplicationForm() {
     if (value === "" || /^\d+$/.test(value)) {
       form.setValue("phone", value);
     }
+  };
+
+  // Custom handler for document number based on document type
+  const handleDocumentNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    const documentType = form.getValues("documentType");
+
+    if (!documentType) {
+      form.setValue("documentNumber", value);
+      return;
+    }
+
+    if (documentType === "adhaar") {
+      // Only allow digits for Adhaar
+      if (value === "" || /^\d+$/.test(value)) {
+        form.setValue("documentNumber", value);
+      }
+    } else if (documentType === "pan") {
+      // Allow alphanumeric for PAN, uppercase
+      if (value === "" || /^[A-Z0-9]*$/.test(value)) {
+        form.setValue("documentNumber", value.toUpperCase());
+      }
+    }
+  };
+
+  // Handle document type change
+  const handleDocumentTypeChange = (value: string) => {
+    setSelectedDocumentType(value);
+    form.setValue("documentType", value);
+    form.setValue("documentNumber", ""); // Reset document number when type changes
   };
 
   return (
@@ -219,6 +239,7 @@ export default function LoanApplicationForm() {
                     date={dateOfBirth}
                     setDate={setDateOfBirth}
                     placeholder="Select date"
+                    disableFutureDates
                   />
                   <FormMessage />
                 </FormItem>
@@ -362,6 +383,74 @@ export default function LoanApplicationForm() {
               </FormItem>
             )}
           />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              control={form.control}
+              name="documentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Document Type (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      handleDocumentTypeChange(value);
+                    }}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select document type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      <SelectItem value="adhaar">Adhaar Card</SelectItem>
+                      <SelectItem value="pan">PAN Card</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="documentNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Document Number{" "}
+                    {selectedDocumentType ? "(Required)" : "(Optional)"}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder={
+                        selectedDocumentType === "adhaar"
+                          ? "Enter 12-digit Adhaar number"
+                          : selectedDocumentType === "pan"
+                            ? "Enter 10-character PAN number"
+                            : "Enter document number"
+                      }
+                      {...field}
+                      onChange={handleDocumentNumberChange}
+                      maxLength={
+                        selectedDocumentType === "adhaar"
+                          ? 12
+                          : selectedDocumentType === "pan"
+                            ? 10
+                            : undefined
+                      }
+                      disabled={
+                        !selectedDocumentType || selectedDocumentType === "none"
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <ReCAPTCHA
             ref={captchaRef}

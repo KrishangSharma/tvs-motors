@@ -13,6 +13,7 @@ export default function DetailsTabs({
     "price",
     "category",
     "slug",
+    "brochure",
     "_type",
     "_updatedAt",
     "_createdAt",
@@ -99,7 +100,7 @@ export default function DetailsTabs({
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-1 py-2">
+      <div className=" grid grid-cols-1 md:grid-cols-2 gap-6 px-1 py-2">
         {chunks.map((chunk, chunkIndex) => (
           <div
             key={chunkIndex}
@@ -126,7 +127,7 @@ export default function DetailsTabs({
 
   return (
     <div className="w-full">
-      <div className="bg-muted p-1 rounded-lg overflow-x-auto no-scrollbar">
+      <div className="bg-muted p-1 rounded-lg overflow-x-auto no-scrollbar max-w-min">
         <div className="flex space-x-2">
           {availableTabs.map((tab) => (
             <button

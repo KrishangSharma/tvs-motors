@@ -25,8 +25,6 @@ export interface AdminTestRideEmailProps {
   bookingDate: Date;
   bookingTime: string;
   bookingReference: string;
-  dealerName?: string;
-  dealerAddress?: string;
 }
 
 export const AdminTestRideEmail = ({
@@ -38,8 +36,6 @@ export const AdminTestRideEmail = ({
   bookingDate,
   bookingTime,
   bookingReference,
-  dealerName = "TVS Main Dealership",
-  dealerAddress = "123 Main Street, City, State, 123456",
 }: AdminTestRideEmailProps) => {
   const formattedDate = format(new Date(bookingDate), "dd MMMM yyyy");
 
@@ -127,23 +123,6 @@ export const AdminTestRideEmail = ({
               <Row style={detailRow}>
                 <Column style={detailLabel}>Variant:</Column>
                 <Column style={detailValue}>{variantName}</Column>
-              </Row>
-            </Section>
-
-            {/* Dealer Information */}
-            <Section style={detailsSection}>
-              <Heading as="h2" style={subheading}>
-                Dealer Information
-              </Heading>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Name:</Column>
-                <Column style={detailValue}>{dealerName}</Column>
-              </Row>
-
-              <Row style={detailRow}>
-                <Column style={detailLabel}>Dealer Address:</Column>
-                <Column style={detailValue}>{dealerAddress}</Column>
               </Row>
             </Section>
 
