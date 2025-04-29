@@ -27,6 +27,7 @@ export default async function VehiclePage({ params }: Props) {
     vehicleType.charAt(0).toLocaleLowerCase() + vehicleType.slice(1);
   const query = groq`*[_type == "${formatType}" && slug.current == "${slug}"][0]`;
   const vehicle = await client.fetch<Motorcycle>(query);
+
   // URL for vehicle brochure
   const brochureUrl = fileUrl(vehicle.brochure);
 

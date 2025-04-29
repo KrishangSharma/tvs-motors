@@ -31,7 +31,7 @@ export default function Navbar() {
   return (
     <>
       {/* Add a placeholder div to prevent layout shift */}
-      <div className="h-16 w-full" />
+      <div className="h-20 w-full" />
       <Sheet>
         <nav
           className={`

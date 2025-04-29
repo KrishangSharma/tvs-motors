@@ -5,12 +5,7 @@ import {
   TermsPage,
 } from "@/components/WebsitePolicies";
 
-// const policyComponents: Record<string, React.ReactNode> = {
-//   "privacy-policies": <PrivacyPage />,
-//   disclaimer: <DisclaimerPage />,
-//   "terms-and-conditions": <TermsPage />,
-// };
-const policyComponents = async (docType: string) => {
+const policyComponents = (docType: string) => {
   switch (docType) {
     case "privacy-policies":
       return <PrivacyPage />;
@@ -23,18 +18,21 @@ const policyComponents = async (docType: string) => {
   }
 };
 
-interface Props {
-  params: { docType: string };
+// Define the params type as expected by Next.js
+interface PageProps {
+  params: Promise<{ docType: string }>;
 }
 
-const Page = async ({ params }: Props) => {
-  const content = policyComponents(params.docType);
+const Page = async ({ params }: PageProps) => {
+  const resolvedParams = await params;
+  const { docType } = resolvedParams;
+
+  // Get the appropriate policy component
+  const content = policyComponents(docType);
 
   if (!content) {
     return (
-      <div className="p-4 text-red-500">
-        Invalid policy type: {params.docType}
-      </div>
+      <div className="p-4 text-red-500">Invalid policy type: {docType}</div>
     );
   }
 

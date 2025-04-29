@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FileDown, ChevronRight, Bike } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Montserrat } from "next/font/google";
+import Link from "next/link";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -13,6 +14,9 @@ interface VehicleHeroProps {
     model: string;
     year?: string;
     tagline?: string;
+    slug: {
+      current: string;
+    };
   };
   brochureUrl?: string | null;
   className?: string;
@@ -70,7 +74,9 @@ export default function DetailsHero({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center md:items-end">
-              <Button>Book Your {vehicle.model}</Button>
+              <Link href={`/book/${vehicle.slug.current}`}>
+                <Button>Book Your {vehicle.model}</Button>
+              </Link>
               {brochureUrl && (
                 <Button
                   className="flex items-center gap-2 group hover:shadow-lg transition-shadow duration-300"
@@ -125,7 +131,9 @@ export default function DetailsHero({
             {vehicle.model.toUpperCase()}
           </h2>
           <div className="flex flex-col items-end sm:flex-row sm:items-center gap-3">
-            <Button size="sm">Book Your {vehicle.model}</Button>
+            <Link href={`/book/${vehicle.slug.current}`}>
+              <Button size="sm">Book Your {vehicle.model}</Button>
+            </Link>
             {brochureUrl && (
               <Button
                 className="flex items-center gap-2 group"

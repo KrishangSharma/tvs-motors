@@ -85,18 +85,6 @@ export default function VehiclesPage({
       );
     }
 
-    // Filter by engine capacity (this would need to be added to the vehicle type)
-    if (options.engineCapacity.length > 0) {
-      // Assuming vehicle has an engineCapacity property
-      // result = result.filter(vehicle => options.engineCapacity.includes(vehicle.engineCapacity));
-    }
-
-    // Filter by color (this would need to be added to the vehicle type)
-    if (options.colors.length > 0) {
-      // Assuming vehicle has a color property
-      // result = result.filter(vehicle => options.colors.includes(vehicle.color));
-    }
-
     // Apply sorting
     result = sortVehicles(result, options.sortBy);
 
@@ -213,7 +201,7 @@ export default function VehiclesPage({
         {/* Active filter indicator */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Active filter:</span>
-          <Badge variant="secondary" className="capitalize">
+          <Badge variant="outline" className="capitalize">
             {activeFilter.replace("-", " ")}
           </Badge>
         </div>
@@ -246,7 +234,6 @@ export default function VehiclesPage({
 
 function VehicleCard({ vehicle }: { vehicle: VehicleItem }) {
   const formatIndianPrice = (price: number) => {
-    // Convert to 2 decimal places
     const priceWithDecimals = price.toFixed(2);
 
     // Split the number into whole and decimal parts
@@ -271,7 +258,7 @@ function VehicleCard({ vehicle }: { vehicle: VehicleItem }) {
     <div className="group relative flex flex-col overflow-hidden rounded-xl border bg-background transition-all hover:shadow-lg">
       <div className="relative aspect-[16/9] overflow-hidden bg-muted">
         <div className="absolute top-2 right-2 z-10">
-          <Badge variant="secondary" className="capitalize">
+          <Badge variant="default" className="capitalize">
             {vehicle.type}
           </Badge>
         </div>
@@ -285,13 +272,13 @@ function VehicleCard({ vehicle }: { vehicle: VehicleItem }) {
       <div className="flex flex-1 flex-col p-4 gap-2">
         <div className="space-y-1">
           <h3 className="font-semibold text-xl tracking-tight">
-            TVS {vehicle.model}
+            {vehicle.model}
           </h3>
           <p className="text-2xl font-semibold text-gray-700">
             {formatIndianPrice(vehicle.price)}
           </p>
         </div>
-        <div className="mt-auto pt-4">
+        <div className=" mt-auto pt-4">
           <Link href={`/product/${vehicle.type}/${vehicle.slug.current}`}>
             <Button className="w-full group">
               View Details
