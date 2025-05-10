@@ -7,3 +7,4 @@ export { default as Hero } from "./Hero";
 export { default as ServicesSection } from "./Services";
 export { default as FileUpload } from "./FileUpload";
 export { default as DetailsHero } from "./DetailsHero";
+export { default as VehicleBooking } from "./VehicleBooking";

@@ -2,6 +2,22 @@ import { CareerApplicationEmail } from "@/react-email-starter/emails/career-appl
 import { AdminCareerApplicationEmail } from "@/react-email-starter/emails/admin-career-application";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  CareerAdminConfirmation,
+  CareerUserConfirmation,
+} from "@/lib/whatsapp";
+
+// Add the profile names mapping
+const profileNames: { [key: string]: string } = {
+  frontend: "Frontend Developer",
+  backend: "Backend Developer",
+  fullstack: "Full Stack Developer",
+  "ui-ux": "UI/UX Designer",
+  product: "Product Manager",
+  qa: "QA Engineer",
+  devops: "DevOps Engineer",
+  other: "Other Position",
+};
 
 // Generate a unique application ID
 function generateApplicationId(): string {
@@ -28,6 +44,9 @@ export async function POST(req: NextRequest) {
     const coverLetter = formData.get("coverLetter") as string;
     const resume = formData.get("resume") as File;
 
+    // Get the display name for the profile
+    const displayProfile = profileNames[interestedProfile] || interestedProfile;
+
     const applicationId = generateApplicationId();
     const applicationDate = new Date();
     const hasCoverLetter = !!coverLetter && coverLetter.trim() !== "";
@@ -36,11 +55,44 @@ export async function POST(req: NextRequest) {
     const resumeBuffer = await resume.arrayBuffer();
     const resumeBase64 = Buffer.from(resumeBuffer).toString("base64");
 
+    // Empty array of promises to be populated later
+    const promises = [];
+
+    if (phone) {
+      // Format phone number to international format if needed
+      const formattedPhone = phone.startsWith("91") ? phone : `91${phone}`;
+
+      // Client Confiirmation msg
+      promises.push(
+        CareerUserConfirmation({
+          to: formattedPhone,
+          applicantName: fullName,
+          jobProfile: displayProfile,
+          requestID: applicationId,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+    }
+    // Admin WhatsApp message
+    promises.push(
+      CareerAdminConfirmation({
+        to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+        applicantName: fullName,
+        contactNumber: phone,
+        applicantEmail: email,
+        jobProfile: displayProfile,
+        requestID: applicationId,
+      }).catch((error) => {
+        console.error("Error sending WhatsApp message:", error);
+      })
+    );
+
     // Prepare admin email data
     const adminEmailData = {
       from: `hr@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
       to: process.env.ADMIN_EMAIL!,
-      subject: `New Job Application: ${interestedProfile}`,
+      subject: `New Job Application: ${displayProfile}`,
       react: AdminCareerApplicationEmail({
         fullName,
         email,
@@ -64,7 +116,7 @@ export async function POST(req: NextRequest) {
       const applicantEmailData = {
         from: `hr@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
         to: email,
-        subject: `Application Received: ${interestedProfile} Position`,
+        subject: `Application Received: ${displayProfile} Position`,
         react: CareerApplicationEmail({
           fullName,
           email,
@@ -76,16 +128,16 @@ export async function POST(req: NextRequest) {
         }),
       };
 
-      // Send both emails
-      await Promise.all([
+      promises.push(
         resend.emails.send(applicantEmailData),
-        resend.emails.send(adminEmailData),
-      ]);
+        resend.emails.send(adminEmailData)
+      );
     } else {
-      // Send only admin email
-      await resend.emails.send(adminEmailData);
+      promises.push(resend.emails.send(adminEmailData));
     }
 
+    // Execute all promises in parallel
+    await Promise.all(promises);
     // Return success response
     return NextResponse.json(
       {

@@ -84,10 +84,10 @@ export default function MobileNav() {
               <div className="px-2 py-1">
                 <SheetClose asChild>
                   <Link
-                    href="/test-ride"
+                    href="/book"
                     className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
                   >
-                    Book A Test Ride
+                    Book A Vehicle
                   </Link>
                 </SheetClose>
               </div>

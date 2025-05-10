@@ -2,7 +2,6 @@ import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { TestRideConfirmationEmail } from "@/react-email-starter/emails/test-ride-confirmation";
 import { AdminTestRideEmail } from "@/react-email-starter/emails/admin-test-ride";
-import { variantMap, vehicleMap } from "@/constants";
 
 const resend = new Resend();
 
@@ -63,10 +62,8 @@ export async function POST(req: NextRequest) {
       timeSlotMap[timeSlot as keyof typeof timeSlotMap] || "11:00 AM";
 
     // Get the vehicle, variant, and dealer details from the maps
-    const vehicleName =
-      vehicleMap[vehicle as keyof typeof vehicleMap] || "Unknown Vehicle";
-    const variantName =
-      variantMap[variant as keyof typeof variantMap] || "Unknown Variant";
+    const vehicleName = vehicle; // Use the actual model name directly
+    const variantName = variant; // Use the actual variant name directly
 
     console.log("Preparing to send email with data:", {
       name,

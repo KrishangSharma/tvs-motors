@@ -507,7 +507,14 @@ export default function TestRideForm({
                         </FormLabel>
                         <DatePicker
                           date={startDate}
-                          setDate={setStartDate}
+                          setDate={(date) => {
+                            if (date instanceof Date) {
+                              setStartDate(date);
+                              form.setValue("bookingDate", date, {
+                                shouldValidate: true,
+                              });
+                            }
+                          }}
                           disablePastDates={true}
                           placeholder="Select a date"
                         />

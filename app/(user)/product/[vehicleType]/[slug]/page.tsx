@@ -1,10 +1,10 @@
-import { client } from "@/sanity/lib/client";
 import { groq } from "next-sanity";
-import type { Motorcycle, Variant } from "@/VehicleTypes/VehicleTypes";
 import dynamic from "next/dynamic";
-import { Montserrat } from "next/font/google";
+import { client } from "@/sanity/lib/client";
 import { fileUrl } from "@/sanity/lib/image";
+import { Montserrat } from "next/font/google";
 import { DetailsHero } from "@/components/exports";
+import type { Motorcycle, Variant } from "@/VehicleTypes/VehicleTypes";
 
 const montserrat = Montserrat({ subsets: ["latin"] });
 
@@ -37,7 +37,10 @@ export default async function VehiclePage({ params }: Props) {
   return (
     <div className="bg-white min-h-screen overflow-x-hidden ">
       {/* Hero Section with Vehicle Name */}
-      <DetailsHero vehicle={vehicle} brochureUrl={brochureUrl} />
+      <DetailsHero
+        vehicle={{ ...vehicle, variant: variants }}
+        brochureUrl={brochureUrl}
+      />
 
       {/* Image Carousel Section */}
       <div className="container mx-auto max-w-7xl px-4 -mt-16 md:-mt-24 lg:-mtw-32 relative z-20">

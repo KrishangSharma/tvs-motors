@@ -88,10 +88,10 @@ export default function Navbar() {
               <Search />
               <nav className="flex items-center space-x-2">
                 <Link
-                  href="/test-ride"
+                  href="/book"
                   className="px-4 py-2 text-sm font-medium text-white bg-customBlue rounded-md hover:bg-blue-600 transition-colors"
                 >
-                  Book A Test Ride
+                  Book A Vehicle
                 </Link>
               </nav>
             </div>
