@@ -69,6 +69,7 @@ export interface LoanConfirmationParams extends MessageParams {
   senderName?: string;
   refId?: string;
   date?: string;
+  estEMI?: string;
   loanAmt?: string;
   tenure?: string;
   senderEmail?: string;

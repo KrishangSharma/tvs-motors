@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
           startDate: parsedStartDate.toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "2-digit",
-            year: "n  umeric",
+            year: "numeric",
           }),
           endDate: endDate.toLocaleDateString("en-IN", {
             day: "2-digit",
