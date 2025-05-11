@@ -2,6 +2,10 @@ import { type NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { TestRideConfirmationEmail } from "@/react-email-starter/emails/test-ride-confirmation";
 import { AdminTestRideEmail } from "@/react-email-starter/emails/admin-test-ride";
+import {
+  TestRideUserConfirmation,
+  TestRideAdminConfirmation,
+} from "@/lib/whatsapp";
 
 const resend = new Resend();
 
@@ -62,18 +66,58 @@ export async function POST(req: NextRequest) {
       timeSlotMap[timeSlot as keyof typeof timeSlotMap] || "11:00 AM";
 
     // Get the vehicle, variant, and dealer details from the maps
-    const vehicleName = vehicle; // Use the actual model name directly
-    const variantName = variant; // Use the actual variant name directly
+    const vehicleName = vehicle;
+    const variantName = variant;
 
-    console.log("Preparing to send email with data:", {
-      name,
-      email,
-      phone,
-      vehicleName,
-      variantName,
-      bookingDate: parsedBookingDate,
-      bookingTime,
-    });
+    const promises = [];
+
+    // User WhatsApp message
+    if (phone) {
+      const formattedPhone = phone.startsWith("91") ? phone : `91${phone}`;
+
+      promises.push(
+        TestRideUserConfirmation({
+          to: formattedPhone,
+          senderName: name,
+          vehicleModel: vehicleName,
+          model: vehicleName,
+          vehicleVariant: variantName,
+          senderEmail: email,
+          senderNumber: phone, // Adding the missing parameter
+          date: parsedBookingDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          time: bookingTime,
+          refId: bookingReference,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message to user:", error);
+        })
+      );
+
+      // Admin WhatsApp message
+      promises.push(
+        TestRideAdminConfirmation({
+          to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+          senderName: name,
+          senderEmail: email,
+          senderNumber: phone,
+          model: vehicleName,
+          vehicleModel: vehicleName,
+          vehicleVariant: variantName,
+          date: parsedBookingDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          time: bookingTime,
+          refId: bookingReference,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message to admin:", error);
+        })
+      );
+    }
 
     // Admin email data
     const adminEmailData = {
@@ -110,17 +154,20 @@ export async function POST(req: NextRequest) {
         }),
       };
 
-      // Send both emails
-      await Promise.all([
+      // Add email promises
+      promises.push(
         resend.emails.send(customerEmailData),
-        resend.emails.send(adminEmailData),
-      ]);
+        resend.emails.send(adminEmailData)
+      );
     } else {
       // Send only admin email
-      await resend.emails.send(adminEmailData);
+      promises.push(resend.emails.send(adminEmailData));
     }
 
-    console.log("Emails sent successfully");
+    // Execute all promises in parallel
+    await Promise.all(promises);
+
+    console.log("Emails and WhatsApp messages sent successfully");
 
     // Return success response
     return NextResponse.json(

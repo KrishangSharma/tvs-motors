@@ -138,6 +138,7 @@ export async function POST(req: NextRequest) {
 
     // Execute all promises in parallel
     await Promise.all(promises);
+
     // Return success response
     return NextResponse.json(
       {

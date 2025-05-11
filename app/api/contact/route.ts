@@ -1,3 +1,7 @@
+import {
+  ContactAdminConfirmation,
+  ContactUserConfirmation,
+} from "@/lib/whatsapp";
 import AdminContactEmail from "@/react-email-starter/emails/admin-contact-email";
 import ContactEmail from "@/react-email-starter/emails/contact";
 import { resend } from "@/react-email-starter/lib/resend";
@@ -60,6 +64,38 @@ export async function POST(req: NextRequest) {
     const requestId = generateRequestId();
     const requestDate = new Date();
 
+    const promises = [];
+
+    if (phoneNumber) {
+      // Format phone number to international format if needed
+      const formattedPhone = phoneNumber.startsWith("91")
+        ? phoneNumber
+        : `91${phoneNumber}`;
+
+      // Client Confiirmation msg
+      promises.push(
+        ContactUserConfirmation({
+          to: formattedPhone,
+          senderName: name,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+
+      // Admin WhatsApp message
+      promises.push(
+        ContactAdminConfirmation({
+          to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+          senderName: name,
+          senderEmail: email || "Not provided",
+          senderNumber: phoneNumber,
+          message: message.substring(0, 100),
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+    }
+
     // Admin email data
     const adminEmailData = {
       from: `customercare@${process.env.NEXT_PUBLIC_EMAIL_DOMAIN}`,
@@ -100,6 +136,9 @@ export async function POST(req: NextRequest) {
       // Send only admin email
       await resend.emails.send(adminEmailData);
     }
+
+    // Execute all promises in parallel
+    await Promise.all(promises);
 
     // Return success response
     return NextResponse.json(

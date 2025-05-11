@@ -2,6 +2,7 @@ import { LoanApplicationEmail } from "@/react-email-starter/emails/loan-applicat
 import { AdminLoanApplicationEmail } from "@/react-email-starter/emails/admin-loan-application-email";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
+import { LoanAdminConfirmation, LoanUserConfirmation } from "@/lib/whatsapp";
 
 // Generate a unique application ID
 function generateApplicationId(): string {
@@ -37,6 +38,46 @@ export async function POST(req: NextRequest) {
 
     const applicationId = generateApplicationId();
     const applicationDate = new Date();
+
+    const promises = [];
+
+    if (phone) {
+      const formattedPhone = phone.startsWith(91) ? phone : `91${phone}`;
+
+      // User WhatsApp message
+      promises.push(
+        LoanUserConfirmation({
+          to: formattedPhone,
+          senderName: fullName,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+
+      // Admin WhatsApp message
+      promises.push(
+        LoanAdminConfirmation({
+          to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+          refId: applicationId,
+          date: applicationDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          loanAmt: loanAmount.toString(),
+          tenure: loanTenure,
+          senderName: fullName,
+          senderEmail: email,
+          senderNumber: phone,
+          dob: dateOfBirth,
+          employmentStatus,
+          address: residentialAddress,
+          annualIncome: parseFloat(annualIncome).toString(),
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+    }
 
     // Admin email data
     const adminEmailData = {

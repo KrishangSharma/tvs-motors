@@ -2,6 +2,10 @@ import { InsuranceRenewalEmail } from "@/react-email-starter/emails/insurance-re
 import { AdminInsuranceRenewalEmail } from "@/react-email-starter/emails/admin-insurance-renewal-email";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  InsuranceAdminConfirmation,
+  InsuranceUserConfirmation,
+} from "@/lib/whatsapp";
 
 // Generate a unique request ID
 function generateRequestId(): string {
@@ -40,6 +44,57 @@ export async function POST(req: NextRequest) {
 
     const requestId = generateRequestId();
     const requestDate = new Date();
+
+    const promises = [];
+
+    if (contactNumber) {
+      const formattedPhone = contactNumber.startsWith("91")
+        ? contactNumber
+        : `91${contactNumber}`;
+
+      // Client WhatsApp message
+      promises.push(
+        InsuranceUserConfirmation({
+          to: formattedPhone,
+          senderName: customerName,
+          senderNumber: contactNumber,
+          refId: requestId,
+          date: requestDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          model,
+          registrationNumber,
+          year: registrationYear,
+          prevInsurance: previousInsuranceCompany,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+
+      // Admin WhatsApp message
+      promises.push(
+        InsuranceAdminConfirmation({
+          to: formattedPhone,
+          senderName: customerName,
+          senderEmail: emailId,
+          senderNumber: contactNumber,
+          refId: requestId,
+          date: requestDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          model,
+          registrationNumber,
+          year: registrationYear,
+          prevInsurance: previousInsuranceCompany,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message:", error);
+        })
+      );
+    }
 
     // Admin email data
     const adminEmailData = {
@@ -87,6 +142,9 @@ export async function POST(req: NextRequest) {
       // Send only admin email
       await resend.emails.send(adminEmailData);
     }
+
+    // Execute all promises in parallel
+    await Promise.all(promises);
 
     return NextResponse.json(
       {

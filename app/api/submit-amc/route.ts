@@ -2,6 +2,7 @@ import { AMCConfirmationEmail } from "@/react-email-starter/emails/get-amc";
 import { AdminAMCEmail } from "@/react-email-starter/emails/admin-amc-email";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
+import { AMCAdminConfirmation, AMCUserConfirmation } from "@/lib/whatsapp";
 
 // Generate a unique order reference number
 function generateOrderReference(): string {
@@ -32,6 +33,66 @@ export async function POST(req: NextRequest) {
     } = await req.json();
 
     const orderReference = generateOrderReference();
+
+    const promises = [];
+
+    if (phone) {
+      const formattedPhone = phone.startsWith("91") ? phone : `91${phone}`;
+
+      // Client WhatsApp message
+      const parsedStartDate = new Date(startDate);
+      const endDate = new Date(parsedStartDate);
+      endDate.setFullYear(endDate.getFullYear() + 1);
+
+      promises.push(
+        AMCUserConfirmation({
+          to: formattedPhone,
+          senderName: ownerName,
+          refId: orderReference,
+          planType: amcPackage,
+          startDate: parsedStartDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          endDate: endDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          model: vehicleMake,
+          registrationNumber: registrationNumber,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message to user:", error);
+        })
+      );
+
+      // Admin WhatsApp message
+      promises.push(
+        AMCAdminConfirmation({
+          to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+          senderName: ownerName,
+          senderEmail: email,
+          senderNumber: phone,
+          refId: orderReference,
+          planType: amcPackage,
+          startDate: parsedStartDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "n  umeric",
+          }),
+          endDate: endDate.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          model: vehicleMake,
+          registrationNumber: registrationNumber,
+        }).catch((error) => {
+          console.error("Error sending WhatsApp message to admin:", error);
+        })
+      );
+    }
 
     // Admin email data
     const adminEmailData = {
@@ -79,6 +140,9 @@ export async function POST(req: NextRequest) {
       // Send only admin email
       await resend.emails.send(adminEmailData);
     }
+
+    // Execute all promises in parallel
+    await Promise.all(promises);
 
     // Return success response
     return NextResponse.json(

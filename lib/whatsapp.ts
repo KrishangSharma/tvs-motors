@@ -1,10 +1,13 @@
 import {
   AMCParams,
   CareerConfirmationParams,
+  ContactConfirmationParams,
   ExchangeConfirmationParams,
-  MessageParams,
-  TestRideConfirmationParams,
   InsuranceConfirmationParams,
+  LoanConfirmationParams,
+  MessageParams,
+  ServiceConfirmationParams,
+  TestRideConfirmationParams,
 } from "./whatsappParams";
 
 const WHATSAPP_API_VERSION = "v20.0";
@@ -57,7 +60,7 @@ export async function TestMessage({ to }: MessageParams): Promise<any> {
   }
 }
 
-// Career Application USER confirmation
+//Career Application USER confirmation
 export async function CareerUserConfirmation({
   to,
   applicantName,
@@ -112,7 +115,7 @@ export async function CareerUserConfirmation({
   }
 }
 
-// Career Application USER confirmation
+//Career Application USER confirmation
 export async function CareerAdminConfirmation({
   to,
   requestID,
@@ -174,7 +177,7 @@ export async function CareerAdminConfirmation({
   }
 }
 
-// Contact Form USER Confirmation
+//Contact Form USER Confirmation
 export async function ContactUserConfirmation({
   to,
   senderName,
@@ -186,7 +189,7 @@ export async function ContactUserConfirmation({
       to,
       type: "template",
       template: {
-        name: "career_user_confirmation",
+        name: "contact_user_confirmation",
         language: {
           code: "en",
         },
@@ -225,7 +228,7 @@ export async function ContactUserConfirmation({
   }
 }
 
-// Contact Form ADMIN Confirmation
+//Contact Form ADMIN Confirmation
 export async function ContactAdminConfirmation({
   to,
   senderName,
@@ -240,7 +243,7 @@ export async function ContactAdminConfirmation({
       to,
       type: "template",
       template: {
-        name: "career_admin_confirmation",
+        name: "contact_admin_confirmation",
         language: {
           code: "en",
         },
@@ -282,7 +285,7 @@ export async function ContactAdminConfirmation({
   }
 }
 
-// Test Ride USER Confirmation
+//Test Ride USER Confirmation
 export async function TestRideUserConfirmation({
   to,
   senderName,
@@ -345,7 +348,7 @@ export async function TestRideUserConfirmation({
   }
 }
 
-// Test Ride ADMIN Confirmation
+//Test Ride ADMIN Confirmation
 export async function TestRideAdminConfirmation({
   to,
   senderName,
@@ -410,7 +413,7 @@ export async function TestRideAdminConfirmation({
   }
 }
 
-// Exchange USER Confirmation
+//Exchange USER Confirmation
 export async function ExchangeUserConfirmation({
   to,
   senderName,
@@ -473,7 +476,7 @@ export async function ExchangeUserConfirmation({
   }
 }
 
-// Exchange ADMIN Confirmation
+//Exchange ADMIN Confirmation
 export async function ExchangeAdminConfirmation({
   to,
   refId,
@@ -540,13 +543,12 @@ export async function ExchangeAdminConfirmation({
   }
 }
 
-// AMC USER Confirmation
+//AMC USER Confirmation
 export async function AMCUserConfirmation({
   to,
   senderName,
   refId,
   planType,
-  planPrice,
   startDate,
   endDate,
   model,
@@ -570,7 +572,6 @@ export async function AMCUserConfirmation({
               { type: "text", text: senderName },
               { type: "text", text: refId },
               { type: "text", text: planType },
-              { type: "text", text: planPrice },
               { type: "text", text: startDate },
               { type: "text", text: endDate },
               { type: "text", text: model },
@@ -605,7 +606,7 @@ export async function AMCUserConfirmation({
   }
 }
 
-// AMC USER Confirmation
+//AMC ADMIN Confirmation
 export async function AMCAdminConfirmation({
   to,
   senderName,
@@ -613,7 +614,6 @@ export async function AMCAdminConfirmation({
   senderNumber,
   refId,
   planType,
-  planPrice,
   startDate,
   endDate,
   model,
@@ -636,7 +636,6 @@ export async function AMCAdminConfirmation({
             parameters: [
               { type: "text", text: refId },
               { type: "text", text: planType },
-              { type: "text", text: planPrice },
               { type: "text", text: startDate },
               { type: "text", text: endDate },
               { type: "text", text: senderName },
@@ -674,14 +673,7 @@ export async function AMCAdminConfirmation({
   }
 }
 
-export interface ContactConfirmationParams extends MessageParams {
-  senderName?: string;
-  senderEmail?: string;
-  senderNumber: string;
-  message?: string;
-}
-
-// Insurance USER Confirmation
+//Insurance USER Confirmation
 export async function InsuranceUserConfirmation({
   to,
   senderName,
@@ -744,7 +736,7 @@ export async function InsuranceUserConfirmation({
   }
 }
 
-// Insurance ADMIN Confirmation
+//Insurance ADMIN Confirmation
 export async function InsuranceAdminConfirmation({
   to,
   senderName,
@@ -804,6 +796,254 @@ export async function InsuranceAdminConfirmation({
 
     const responseData = await response.json();
     console.log("Insurance Form for admin:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+
+//Loan USER Confirmation
+export async function LoanUserConfirmation({
+  to,
+  senderName,
+}: LoanConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "loan_user_confirmation",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [{ type: "text", text: senderName }],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Loan Form for user:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+
+//Loan ADMIN Confirmation
+export async function LoanAdminConfirmation({
+  to,
+  refId,
+  date,
+  loanAmt,
+  tenure,
+  estEMI,
+  senderName,
+  senderEmail,
+  senderNumber,
+  dob,
+  employmentStatus,
+  annualIncome,
+  address,
+}: LoanConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "loan_admin_confirmation",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: refId },
+              { type: "text", text: date },
+              { type: "text", text: loanAmt },
+              { type: "text", text: tenure },
+              { type: "text", text: estEMI },
+              { type: "text", text: senderName },
+              { type: "text", text: senderEmail || "No Email provided" },
+              { type: "text", text: senderNumber },
+              { type: "text", text: dob },
+              { type: "text", text: employmentStatus },
+              { type: "text", text: annualIncome },
+              { type: "text", text: address },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Loan Form for admin:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+
+//Service USER Confirmation
+export async function ServiceUserConfirmation({
+  to,
+  senderName,
+  refId,
+  date,
+  time,
+}: ServiceConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "service_user_confirmation",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: senderName },
+              { type: "text", text: refId },
+              { type: "text", text: date },
+              { type: "text", text: time },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Service Form for user:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+
+//Service ADMIN Confirmation
+export async function ServiceAdminConfirmation({
+  to,
+  senderName,
+  senderEmail,
+  senderNumber,
+  refId,
+  date,
+  time,
+  serviceType,
+  pickUp,
+  model,
+  registrationNumber,
+}: ServiceConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "service_admin_confirmation",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: refId },
+              { type: "text", text: date },
+              { type: "text", text: time },
+              { type: "text", text: serviceType },
+              { type: "text", text: pickUp },
+              { type: "text", text: senderName },
+              { type: "text", text: senderEmail || "No Email provided" },
+              { type: "text", text: senderNumber },
+              { type: "text", text: model },
+              { type: "text", text: registrationNumber },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Service Form for admin:", responseData);
     return responseData;
   } catch (error) {
     console.error("Error sending WhatsApp message:", error);

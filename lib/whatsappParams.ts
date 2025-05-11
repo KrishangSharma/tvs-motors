@@ -45,7 +45,6 @@ export interface AMCParams extends MessageParams {
   senderName?: string;
   refId?: string;
   planType?: string;
-  planPrice?: string;
   startDate?: string;
   endDate?: string;
   model?: string;
@@ -64,4 +63,31 @@ export interface InsuranceConfirmationParams extends MessageParams {
   registrationNumber?: string;
   year?: string;
   prevInsurance?: string;
+}
+
+export interface LoanConfirmationParams extends MessageParams {
+  senderName?: string;
+  refId?: string;
+  date?: string;
+  loanAmt?: string;
+  tenure?: string;
+  senderEmail?: string;
+  senderNumber?: string;
+  dob?: string;
+  employmentStatus?: string;
+  annualIncome?: string;
+  address?: string;
+}
+
+export interface ServiceConfirmationParams extends MessageParams {
+  senderName?: string;
+  refId?: string;
+  date?: string;
+  time?: string;
+  serviceType?: string;
+  pickUp?: string;
+  senderEmail?: string;
+  senderNumber?: string;
+  model?: string;
+  registrationNumber?: string;
 }
