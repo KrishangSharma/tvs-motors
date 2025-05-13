@@ -69,7 +69,11 @@ export async function POST(req: NextRequest) {
           senderName: fullName,
           senderEmail: email,
           senderNumber: phone,
-          dob: dateOfBirth,
+          dob: new Date(dateOfBirth).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
           employmentStatus,
           address: residentialAddress,
           annualIncome: parseFloat(annualIncome).toString(),

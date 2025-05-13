@@ -2,6 +2,10 @@ import { ServiceBookingConfirmationEmail } from "@/react-email-starter/emails/on
 import { AdminServiceBookingEmail } from "@/react-email-starter/emails/admin-service-booking";
 import { resend } from "@/react-email-starter/lib/resend";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ServiceAdminConfirmation,
+  ServiceUserConfirmation,
+} from "@/lib/whatsapp";
 
 // Generate a unique booking ID
 function generateBookingId(): string {
@@ -50,6 +54,53 @@ export async function POST(req: NextRequest) {
     }
 
     const bookingId = generateBookingId();
+
+    const promises = [];
+
+    // Format the contact number
+    const formattedContactNumber = contactNumber.startsWith("91")
+      ? contactNumber
+      : `91${contactNumber}`;
+
+    // Send WhatsApp message to user
+    promises.push(
+      ServiceUserConfirmation({
+        to: formattedContactNumber,
+        senderName: name,
+        refId: bookingId,
+        date: new Date(bookingDate).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        time: bookingTime,
+      }).catch((error) => {
+        console.error("Error sending WhatsApp message:", error);
+      })
+    );
+
+    // Send WhatsApp message to amdin
+    promises.push(
+      ServiceAdminConfirmation({
+        to: process.env.WHATSAPP_ADMIN_PHONE_NUMBER!,
+        senderName: name,
+        senderEmail: emailId,
+        senderNumber: contactNumber,
+        refId: bookingId,
+        date: new Date(bookingDate).toLocaleDateString("en-IN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        }),
+        time: bookingTime,
+        serviceType: serviceType,
+        pickUp: pickupRequired,
+        model: model,
+        registrationNumber: registrationNumber,
+      }).catch((error) => {
+        console.error("Error sending WhatsApp message:", error);
+      })
+    );
 
     // Admin email data
     const adminEmailData = {
