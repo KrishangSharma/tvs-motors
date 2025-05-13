@@ -4,6 +4,7 @@ import "../globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { Footer } from "@/components/ui/large-name-footer";
 import { Toaster } from "@/components/ui/sonner";
+import ChatBot from "@/components/ai/ChatBot";
 
 const quicksand = Quicksand({
   weight: ["300", "400", "500", "600", "700"],
@@ -27,6 +28,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <Toaster position="top-right" />
+        <ChatBot />
       </body>
     </html>
   );
