@@ -8,6 +8,7 @@ import {
   MessageParams,
   ServiceConfirmationParams,
   TestRideConfirmationParams,
+  VehicleBookingConfirmationParams,
 } from "./whatsappParams";
 
 const WHATSAPP_API_VERSION = "v20.0";
@@ -16,7 +17,7 @@ const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const WHATSAPP_API_URL = `https://graph.facebook.com/${WHATSAPP_API_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}/messages`;
 
 // Function to test the messaging
-export async function TestMessage({ to }: MessageParams): Promise<any> {
+export async function TestMessage({ to }: MessageParams) {
   try {
     const messageBody = {
       messaging_product: "whatsapp",
@@ -66,7 +67,7 @@ export async function CareerUserConfirmation({
   applicantName,
   jobProfile,
   requestID,
-}: CareerConfirmationParams): Promise<any> {
+}: CareerConfirmationParams) {
   try {
     const messageBody = {
       messaging_product: "whatsapp",
@@ -123,7 +124,7 @@ export async function CareerAdminConfirmation({
   contactNumber,
   applicantEmail,
   jobProfile,
-}: CareerConfirmationParams): Promise<any> {
+}: CareerConfirmationParams) {
   try {
     const messageBody = {
       messaging_product: "whatsapp",
@@ -1042,6 +1043,120 @@ export async function ServiceAdminConfirmation({
 
     const responseData = await response.json();
     console.log("Service Form for admin:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+
+// Amdin Vehicle Booking Confirmaton
+export async function AdminVehicleBookingConfirmation({
+  to,
+  fullName,
+  vehicleModel,
+  variant,
+  color,
+}: VehicleBookingConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "admin_vehicle_booking",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: fullName },
+              { type: "text", text: vehicleModel },
+              { type: "text", text: variant },
+              { type: "text", text: color },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Vehicle Booking Form for admin:", responseData);
+    return responseData;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return null;
+  }
+}
+// Amdin Vehicle Booking Confirmaton
+export async function UserVehicleBookingConfirmation({
+  to,
+  fullName,
+  vehicleModel,
+  variant,
+  color,
+}: VehicleBookingConfirmationParams) {
+  try {
+    const messageBody = {
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to,
+      type: "template",
+      template: {
+        name: "user_vehicle_booking",
+        language: {
+          code: "en",
+        },
+        components: [
+          {
+            type: "body",
+            parameters: [
+              { type: "text", text: fullName },
+              { type: "text", text: vehicleModel },
+              { type: "text", text: vehicleModel },
+              { type: "text", text: variant },
+              { type: "text", text: color },
+            ],
+          },
+        ],
+      },
+    };
+
+    const response = await fetch(WHATSAPP_API_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(messageBody),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("WhatsApp API error response:", errorData);
+      return null;
+    }
+
+    const responseData = await response.json();
+    console.log("Vehicle Booking Form for user:", responseData);
     return responseData;
   } catch (error) {
     console.error("Error sending WhatsApp message:", error);

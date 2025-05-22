@@ -167,8 +167,6 @@ export async function POST(req: NextRequest) {
     // Execute all promises in parallel
     await Promise.all(promises);
 
-    console.log("Emails and WhatsApp messages sent successfully");
-
     // Return success response
     return NextResponse.json(
       {

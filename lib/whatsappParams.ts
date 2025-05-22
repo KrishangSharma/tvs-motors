@@ -92,3 +92,10 @@ export interface ServiceConfirmationParams extends MessageParams {
   model?: string;
   registrationNumber?: string;
 }
+
+export interface VehicleBookingConfirmationParams extends MessageParams {
+  fullName: string;
+  vehicleModel: string;
+  variant: string;
+  color: string;
+}

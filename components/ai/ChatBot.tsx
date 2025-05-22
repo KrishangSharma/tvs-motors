@@ -1,29 +1,29 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import type React from "react";
-
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Button } from "../ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
-import { X, MessageCircle, Send, Loader2, CircleStop } from "lucide-react";
+import {
+  X,
+  Send,
+  Loader2,
+  CircleStop,
+  Command,
+  MessageCircle,
+} from "lucide-react";
 import { useChat } from "@ai-sdk/react";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 const ChatBot = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const chatIconRef = useRef<HTMLButtonElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [chatHeight, setChatHeight] = useState(300);
 
   const {
     messages,
@@ -40,6 +40,9 @@ const ChatBot = () => {
 
   const toggleChat = () => {
     setIsChatOpen((prev) => !prev);
+    if (!isChatOpen) {
+      setHasInteracted(false); // Reset interaction state when opening
+    }
   };
 
   // Focus input when chat opens or after loading completes
@@ -70,175 +73,247 @@ const ChatBot = () => {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
     }
 
-    // Adjust height based on message count
-    if (messages.length === 0) {
-      setChatHeight(300);
-    } else if (messages.length > 0 && messages.length < 4) {
-      setChatHeight(350);
-    } else if (messages.length >= 4 && messages.length < 8) {
-      setChatHeight(450);
-    } else {
-      setChatHeight(550);
+    // Set hasInteracted to true when there are messages
+    if (messages.length > 0 && !hasInteracted) {
+      setHasInteracted(true);
     }
-  }, [messages]);
+  }, [messages, hasInteracted]);
 
   // Custom submit handler to prevent multiple submissions while loading
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     if (isLoading) return;
     handleSubmit(e);
   };
 
   return (
     <>
-      <div>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="fixed bottom-4 right-4 z-50 rounded-full bg-blue-600 shadow-lg text-white hover:bg-blue-700 hover:text-white transition duration-300 ease-in-out"
-          onClick={toggleChat}
-          ref={chatIconRef}
-          aria-label={isChatOpen ? "Close chat" : "Open chat"}
-        >
-          <div className="transition-transform duration-300 ease-in-out">
-            {isChatOpen ? <X size={26} /> : <MessageCircle size={26} />}
-          </div>
-        </Button>
-      </div>
-
-      {/* Overlay to prevent background interactions */}
-      {isChatOpen && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={toggleChat}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Chat Modal with Animation */}
-      <div
-        className={cn(
-          "fixed bottom-16 right-4 z-50 w-[92%] sm:w-[400px] transition-all duration-300 ease-in-out",
-          isChatOpen
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-90 translate-y-4 pointer-events-none"
-        )}
+      {/* Chat toggle button */}
+      <Button
+        size="icon"
+        variant="ghost"
+        className="fixed bottom-4 right-4 z-50 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 shadow-lg text-white hover:from-blue-600 hover:to-blue-700 hover:text-white transition duration-300 ease-in-out h-14 w-14"
+        onClick={toggleChat}
+        ref={chatIconRef}
+        aria-label={isChatOpen ? "Close command center" : "Open command center"}
       >
-        <Card className="h-full shadow-xl border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">
-            <CardTitle className="text-2xl">Chat with TVS AI</CardTitle>
-            <X
-              size={22}
-              className="cursor-pointer text-muted-foreground hover:text-gray-700 transition-colors duration-200 ease-in-out"
-              onClick={toggleChat}
-            />
-          </CardHeader>
-          <CardContent className="pr-0 py-1">
-            <ScrollArea
-              className="pr-4 transition-all duration-300 ease-in-out"
-              style={{ height: `${chatHeight}px` }}
-            >
-              {messages?.length === 0 && (
-                <p className="w-full mt-24 text-muted-foreground items-center justify-center flex gap-3">
-                  No messages yet!
-                </p>
-              )}
-              {messages?.map((message, index) => (
-                <div
-                  key={index}
-                  className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"} `}
-                >
-                  <div
-                    className={`inline-block rounded-lg px-3 py-2 text-sm ${message.role === "user" ? "bg-blue-600 text-white" : "bg-gray-200 text-black"}`}
-                  >
-                    <ReactMarkdown
-                      children={message.content}
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code({ inline, children, ...props }) {
-                          return inline ? (
-                            <code
-                              {...props}
-                              className="bg-gray-200 px-1 rounded"
-                            >
-                              {children}
-                            </code>
-                          ) : (
-                            <pre {...props} className="bg-gray-200 p-2 rounded">
-                              <code>{children}</code>
-                            </pre>
-                          );
-                        },
-                        ul: ({ children }) => (
-                          <ul className="list-disc pl-4">{children}</ul>
-                        ),
-                        ol: ({ children }) => (
-                          <ol className="list-decimal pl-4">{children}</ol>
-                        ),
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
+        <div className="transition-transform duration-300 ease-in-out">
+          {isChatOpen ? <X size={26} /> : <MessageCircle size={26} />}
+        </div>
+      </Button>
 
-              {isLoading && (
-                <div className="w-full flex items-center justify-center py-4">
-                  <Loader2 className="animate-spin" size={24} />
-                </div>
+      {/* Overlay with blur effect */}
+      {/* <AnimatePresence>
+        {isChatOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-white/30 backdrop-blur-sm z-40"
+            onClick={toggleChat}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence> */}
+
+      {/* Command Center Interface */}
+      <AnimatePresence>
+        {isChatOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed z-50 w-full"
+            style={{
+              top: "15%",
+              transform: hasInteracted
+                ? "translate(-50%, -50%)"
+                : "translate(-50%, 0)",
+            }}
+          >
+            <div
+              className={cn(
+                "w-[95%] max-w-4xl mx-auto transition-all duration-500 ease-in-out",
+                hasInteracted
+                  ? "bg-white/80 backdrop-blur-md border border-gray-200 rounded-xl shadow-xl"
+                  : ""
               )}
-              {error && (
-                <div className="w-full flex items-center justify-center py-4">
-                  <p className="text-red-500">
-                    Couldn&apos;t generate a response!
-                  </p>
+            >
+              {/* Command Center Header - Only visible after interaction */}
+              {hasInteracted && (
+                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Command size={20} className="text-blue-600" />
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      TVS Command Center
+                    </h2>
+                  </div>
                   <Button
-                    variant="link"
-                    onClick={() => reload()}
-                    className="text-blue-500 underline"
+                    variant="ghost"
+                    size="icon"
+                    onClick={toggleChat}
+                    className="text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg"
                   >
-                    Retry
+                    <X size={20} />
                   </Button>
                 </div>
               )}
-              <div ref={scrollRef} />
-            </ScrollArea>
-          </CardContent>
-          {/* Message Input */}
-          <CardFooter className="px-3">
-            <form
-              onSubmit={onSubmit}
-              className="flex w-full items-center space-x-2"
-            >
-              <Input
-                ref={inputRef}
-                value={input}
-                onChange={handleInputChange}
-                className="flex-1"
-                placeholder="Type your message..."
-                disabled={isLoading}
-              />
-              {isLoading ? (
-                <Button
-                  type="button"
-                  variant="default"
-                  className="p-2 cursor-pointer"
-                  onClick={() => stop()}
-                >
-                  <CircleStop />
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  variant="default"
-                  className="p-2 cursor-pointer"
-                  disabled={!input.trim()}
-                >
-                  <Send />
-                </Button>
+
+              {/* Messages Area - Only visible after interaction */}
+              {hasInteracted && (
+                <div className="p-4">
+                  <ScrollArea className="h-[400px] pr-4">
+                    {messages.map((message, index) => (
+                      <div
+                        key={index}
+                        className={`mb-4 ${message.role === "user" ? "text-right" : "text-left"}`}
+                      >
+                        <div
+                          className={cn(
+                            "inline-block rounded-lg px-2",
+                            message.role === "user"
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                              : "bg-gray-100 text-gray-800 border border-gray-200"
+                          )}
+                        >
+                          <ReactMarkdown
+                            children={message.content}
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              code({ inline, children, ...props }) {
+                                return inline ? (
+                                  <code
+                                    {...props}
+                                    className="bg-gray-200 px-1 rounded text-blue-600"
+                                  >
+                                    {children}
+                                  </code>
+                                ) : (
+                                  <pre
+                                    {...props}
+                                    className="bg-gray-200 p-3 rounded-lg my-2 text-gray-800 overflow-x-auto"
+                                  >
+                                    <code>{children}</code>
+                                  </pre>
+                                );
+                              },
+                              ul: ({ children }) => (
+                                <ul className="list-disc pl-5 my-2">
+                                  {children}
+                                </ul>
+                              ),
+                              ol: ({ children }) => (
+                                <ol className="list-decimal pl-5 my-2">
+                                  {children}
+                                </ol>
+                              ),
+                              p: ({ children }) => (
+                                <p className="my-2">{children}</p>
+                              ),
+                              a: ({ href, children }) => (
+                                <a
+                                  href={href}
+                                  className="text-blue-600 hover:underline"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {children}
+                                </a>
+                              ),
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+
+                    {isLoading && (
+                      <div className="flex items-center space-x-2 text-blue-600">
+                        <Loader2 className="animate-spin" size={18} />
+                        <span>TVS AI is thinking...</span>
+                      </div>
+                    )}
+
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg flex items-center justify-between">
+                        <p>Couldn&apos;t generate a response</p>
+                        <Button
+                          variant="ghost"
+                          onClick={() => reload()}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-100"
+                        >
+                          Retry
+                        </Button>
+                      </div>
+                    )}
+                    <div ref={scrollRef} />
+                  </ScrollArea>
+                </div>
               )}
-            </form>
-          </CardFooter>
-        </Card>
-      </div>
+
+              {/* Command Input */}
+              <div className={cn("p-4", hasInteracted ? "" : "w-full")}>
+                <form
+                  onSubmit={onSubmit}
+                  className="flex items-center space-x-2 w-full"
+                >
+                  <div
+                    className={cn(
+                      "relative flex items-center w-full transition-all duration-300",
+                      hasInteracted ? "" : "max-w-2xl mx-auto"
+                    )}
+                  >
+                    <div className="relative w-full">
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                        <Command size={20} />
+                      </div>
+                      <Input
+                        ref={inputRef}
+                        value={input}
+                        onChange={handleInputChange}
+                        className={cn(
+                          "flex-1 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm text-gray-800 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                          hasInteracted ? "rounded-lg h-14" : "rounded-lg h-14"
+                        )}
+                        placeholder={
+                          hasInteracted
+                            ? "Type your message..."
+                            : "Ask TVS Command Center..."
+                        }
+                        disabled={isLoading}
+                      />
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {isLoading ? (
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() => stop()}
+                            className="h-10 w-10 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                          >
+                            <CircleStop size={20} />
+                          </Button>
+                        ) : (
+                          <Button
+                            type="submit"
+                            size="icon"
+                            variant="ghost"
+                            disabled={!input.trim()}
+                            className="h-10 w-10 rounded-lg text-blue-600 hover:text-white hover:bg-blue-600 disabled:opacity-50"
+                          >
+                            <Send size={20} />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

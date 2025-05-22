@@ -2,22 +2,18 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import {
-  Check,
-  BikeIcon as Motorcycle,
-  User,
-  CreditCard,
-  CheckCircle,
-} from "lucide-react";
+import { Check, BikeIcon as Motorcycle, User, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
+import type {
   Color,
   Motorcycle as MotorcycleType,
   Variant,
 } from "@/VehicleTypes/VehicleTypes";
 import { urlFor } from "@/sanity/lib/image";
+import BookVehicleForm from "./Forms/BookVehicleForm";
+import Link from "next/link";
 
 interface VehicleBookingProps {
   vehicle: MotorcycleType;
@@ -27,8 +23,7 @@ interface VehicleBookingProps {
 const steps = [
   { id: 1, name: "Select Vehicle", icon: Motorcycle },
   { id: 2, name: "Submit Details", icon: User },
-  { id: 3, name: "Make Payment", icon: CreditCard },
-  { id: 4, name: "Booking Confirmed", icon: CheckCircle },
+  { id: 3, name: "Booking Confirmed", icon: CheckCircle },
 ];
 
 export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
@@ -43,6 +38,24 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
     selectedColor?.image ? urlFor(selectedColor.image).url() : null
   );
 
+  // UseEffect to update the variant if the URL has any
+  useEffect(() => {
+    const hash = window.location.hash;
+    const hashVariant = hash.match(/variant\?=([\w-]+)/i)?.[1];
+
+    if (hashVariant && vehicle.variants) {
+      const matchedVariant = vehicle.variants.find(
+        (variant) =>
+          variant.variantName.toLowerCase() ===
+          decodeURIComponent(hashVariant).toLowerCase()
+      );
+      if (matchedVariant) {
+        setSelectedVariant(matchedVariant);
+        setSelectedColor(matchedVariant.colors[0]);
+      }
+    }
+  }, [vehicle.variants]);
+
   // Function to update variant and its associated color
   const updateVariant = (variantName: string) => {
     const newVariant = vehicle.variants?.find(
@@ -51,6 +64,13 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
     if (newVariant) {
       setSelectedVariant(newVariant);
       setSelectedColor(newVariant.colors[0]);
+
+      // Update URL hash
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}#variant?=${encodeURIComponent(variantName)}`
+      );
     }
   };
 
@@ -216,7 +236,7 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                   <div className="relative w-full aspect-[4/3] overflow-hidden">
                     {currentImage && (
                       <Image
-                        src={currentImage}
+                        src={currentImage || "/placeholder.svg"}
                         alt={`${vehicle.model} - ${selectedVariant?.variantName || ""} - ${selectedColor?.name || ""}`}
                         fill
                         className="object-contain"
@@ -226,7 +246,7 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                 </div>
 
                 {/* Vehicle Details */}
-                <div className="space-y-8">
+                <div className="space-y-8 flex flex-col h-full">
                   {/* Colors */}
                   {selectedVariant?.colors && (
                     <div>
@@ -269,7 +289,7 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                   {/* Variant Features */}
                   {selectedVariant?.variantFeatures && (
                     <div>
-                      <h3 className="text-lg font-semibold mb-4 text-slate-900 dark:text-white">
+                      <h3 className="text-lg font-semibold mb-4 text-slate-900">
                         {selectedVariant.variantName} Features
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
@@ -277,9 +297,9 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                           (feature, index) => (
                             <div
                               key={index}
-                              className="bg-slate-50 dark:bg-slate-700/30 p-3 rounded-lg"
+                              className="bg-slate-100 w-max p-3 rounded-lg"
                             >
-                              <p className="text-sm text-slate-900 dark:text-white">
+                              <p className="text-sm text-slate-900">
                                 {feature}
                               </p>
                             </div>
@@ -289,11 +309,27 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                     </div>
                   )}
 
-                  {/* Price */}
-                  <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                      Booking amount starting from ₹5,000 | Fully refundable
-                    </p>
+                  {/* Spacer to push buttons to bottom */}
+                  <div className="flex-grow"></div>
+
+                  {/* Back/Next Buttons */}
+                  <div className="flex justify-between sm:justify-center sm:gap-28 mt-auto">
+                    <Link href="/">
+                      <Button
+                        variant="outline"
+                        className="px-6 sm:px-8 py-2.5 sm:py-6 text-sm sm:text-base"
+                      >
+                        Back
+                      </Button>
+                    </Link>
+
+                    <Button
+                      onClick={handleNext}
+                      disabled={currentStep === steps.length}
+                      className="px-6 sm:px-8 py-2.5 sm:py-6 text-sm sm:text-base bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Next
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -301,28 +337,47 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
           )}
 
           {currentStep === 2 && (
-            <div className="p-8 text-center min-h-[400px] flex items-center justify-center">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Submit Details</h2>
-                <p className="text-slate-500 dark:text-slate-400">
-                  This is a placeholder for the details form.
-                </p>
+            <div className="p-8 min-h-[400px] flex justify-between">
+              <div className="w-1/2">
+                <BookVehicleForm
+                  vehicle={vehicle}
+                  selectedVariant={selectedVariant}
+                  selectedColor={selectedColor}
+                  onSuccess={handleNext}
+                  onBack={handleBack}
+                  activeStep={currentStep}
+                />
+              </div>
+              <div className=" bg-white max-w-[500px] h-min rounded-lg border shadow-lg p-4">
+                <h2 className="text-lg font-bold">Your Selection</h2>
+                <div className="flex">
+                  <div className="flex flex-col gap-2 items-start text-sm">
+                    <p className="text-gray-500 text-sm">
+                      {vehicle.model} {selectedVariant!.variantName}
+                    </p>
+                    <span className=" font-bold mt-3">Color</span>
+                    <div className="flex gap-2 items-center">
+                      <span
+                        style={{ backgroundColor: selectedColor!.hexCode }}
+                        className="h-6 w-6 rounded-full mt-2 shadow-md"
+                      />
+                      <span className="mt-1 text-gray-700">
+                        {selectedColor!.name}
+                      </span>
+                    </div>
+                  </div>
+                  <Image
+                    src={currentImage! || "/placeholder.svg"}
+                    alt="Vehicle Image"
+                    width={200}
+                    height={50}
+                  />
+                </div>
               </div>
             </div>
           )}
 
           {currentStep === 3 && (
-            <div className="p-8 text-center min-h-[400px] flex items-center justify-center">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Make Payment</h2>
-                <p className="text-slate-500 dark:text-slate-400">
-                  This is a placeholder for the payment form.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 4 && (
             <div className="p-8 text-center min-h-[400px] flex items-center justify-center">
               <div>
                 <div className="flex justify-center mb-4">
@@ -338,28 +393,6 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
               </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Navigation Buttons - Fixed at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] py-4 px-4">
-        <div className="max-w-7xl mx-auto flex justify-between sm:justify-center sm:gap-28">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={currentStep === 1}
-            className="px-6 sm:px-8 py-2.5 sm:py-6 text-sm sm:text-base"
-          >
-            Back
-          </Button>
-
-          <Button
-            onClick={handleNext}
-            disabled={currentStep === steps.length}
-            className="px-6 sm:px-8 py-2.5 sm:py-6 text-sm sm:text-base bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            {currentStep === steps.length - 1 ? "Confirm Booking" : "Next"}
-          </Button>
         </div>
       </div>
     </div>

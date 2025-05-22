@@ -8,5 +8,9 @@ export const appContext = {
   Your tone should be friendly, professional, and helpful. You should always strive to provide the best possible service to users.
 
   Please format your answers using markdown. use **bold**, *italcs*, \`code\`, lists, and other markdown formatting as appropriate and make sure your responses are structred and easy to read.
+
+  <Products>
+
+  </Products>
   `,
 };

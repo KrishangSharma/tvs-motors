@@ -290,3 +290,17 @@ export const contactFormSchema = z.object({
     .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
+
+// Vehicle Booking Form
+export const dealershipFormSchema = z.object({
+  fullName: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters" }),
+  emailId: z.string().email({ message: "Please enter a valid email address" }),
+  mobileNumber: z
+    .string()
+    .min(10, { message: "Phone number must be at least 10 digits" })
+    .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
+  dealership: z.string().min(1, { message: "Please select a dealership" }),
+  marketingConsent: z.boolean().default(false),
+});
