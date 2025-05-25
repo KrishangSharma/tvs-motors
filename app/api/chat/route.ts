@@ -79,6 +79,7 @@ export async function POST(request: Request) {
           - I have already given you the links for the vehicle description and booking pages. But still, when asked for the services you can take them to /product/vehicles to list out all the vehicles.
           - For suggestions it's, /suggestions
           - And lastly, for booking a test ride, it's /test-ride
+          All of these links, are to be prefixed with the baseurl, like you're doing for the product description and booking page!
           Do remember that when asked for the provided services and/or what can a user do here, provide them with working links that take the user to the required page! You can add some descriptive text along with the links as you please based on the context of the chat, but make sure you stay withing the relativity of the topic.
 
         ## Limitations:
