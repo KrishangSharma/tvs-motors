@@ -296,10 +296,11 @@ export const dealershipFormSchema = z.object({
   fullName: z
     .string()
     .min(2, { message: "Name must be at least 2 characters" }),
-  emailId: z.string().email({ message: "Please enter a valid email address" }),
+  emailId: z.string().optional(),
   mobileNumber: z
     .string()
     .min(10, { message: "Phone number must be at least 10 digits" })
+    .max(10, { message: "Phone number must not exceed 10 digits" })
     .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
   dealership: z.string().min(1, { message: "Please select a dealership" }),
   marketingConsent: z.boolean().default(false),

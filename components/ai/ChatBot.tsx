@@ -179,26 +179,8 @@ const ChatBot = () => {
                           )}
                         >
                           <ReactMarkdown
-                            children={message.content}
                             remarkPlugins={[remarkGfm]}
                             components={{
-                              code({ inline, children, ...props }) {
-                                return inline ? (
-                                  <code
-                                    {...props}
-                                    className="bg-gray-200 px-1 rounded text-blue-600"
-                                  >
-                                    {children}
-                                  </code>
-                                ) : (
-                                  <pre
-                                    {...props}
-                                    className="bg-gray-200 p-3 rounded-lg my-2 text-gray-800 overflow-x-auto"
-                                  >
-                                    <code>{children}</code>
-                                  </pre>
-                                );
-                              },
                               ul: ({ children }) => (
                                 <ul className="list-disc pl-5 my-2">
                                   {children}
@@ -223,7 +205,9 @@ const ChatBot = () => {
                                 </a>
                               ),
                             }}
-                          />
+                          >
+                            {message.content}
+                          </ReactMarkdown>
                         </div>
                       </div>
                     ))}

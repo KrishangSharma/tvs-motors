@@ -239,7 +239,7 @@ export default function BookVehicleForm({
               name="emailId"
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel className="text-sm font-medium after:content-['*'] after:text-red-500 after:ml-0.5">
+                  <FormLabel className="text-sm font-medium ">
                     Email ID
                   </FormLabel>
                   <FormControl>
@@ -250,7 +250,6 @@ export default function BookVehicleForm({
                       className="h-12 pl-4 bg-white border-slate-200 focus:ring-1 focus:ring-blue-500"
                     />
                   </FormControl>
-                  <FormMessage className="text-xs text-red-500" />
                 </FormItem>
               )}
             />

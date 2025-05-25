@@ -390,6 +390,13 @@ export default function VehicleBooking({ vehicle }: VehicleBookingProps) {
                   Your booking has been confirmed. Thank you for choosing our
                   service.
                 </p>
+                <div className="mt-6">
+                  <Link href="/">
+                    <Button variant="default" className="w-full sm:w-auto">
+                      Return to Home
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           )}

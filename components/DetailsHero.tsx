@@ -74,15 +74,9 @@ export default function DetailsHero({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 sm:items-center md:items-end">
-              {vehicle.variant && vehicle.variant.length > 0 ? (
-                <Link href={`/book/select/${vehicle.slug.current}`}>
-                  <Button>Book Your {vehicle.model}</Button>
-                </Link>
-              ) : (
-                <Link href={`/book/confirm/${vehicle.slug.current}`}>
-                  <Button>Book Your {vehicle.model}</Button>
-                </Link>
-              )}
+              <Link href={`/book/select/${vehicle.slug.current}`}>
+                <Button>Book Your {vehicle.model}</Button>
+              </Link>
               {brochureUrl && (
                 <Button
                   className="flex items-center gap-2 group hover:shadow-lg transition-shadow duration-300"

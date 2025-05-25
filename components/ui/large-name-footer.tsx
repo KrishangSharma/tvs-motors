@@ -277,7 +277,7 @@ export function Footer() {
               <h3 className="text-lg font-bold tracking-wider mb-6 text-center">
                 CONTACT US
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-content-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 place-content-center">
                 {contactInfo.map((contact, idx) => (
                   <div
                     key={idx}
@@ -298,7 +298,7 @@ export function Footer() {
         {/* Brand statement */}
         <div className="w-full mt-16 mb-12 overflow-hidden">
           <h1 className="text-center text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-9xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-white select-none tracking-tighter">
-            TVS Motors
+            Sabharwal TVS
           </h1>
         </div>
 
@@ -316,7 +316,8 @@ export function Footer() {
             ))}
           </div>
           <p>
-            © {new Date().getFullYear()} TVS Motor Company. All Rights Reserved
+            Copyright © 2015-2021 <b>Sabharwal TVS</b>. All Rights Reserved
+            {/* © {new Date().getFullYear()} TVS Motor Company. All Rights Reserved */}
           </p>
         </div>
       </div>

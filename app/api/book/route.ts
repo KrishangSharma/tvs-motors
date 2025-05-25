@@ -24,7 +24,6 @@ export async function POST(request: Request) {
     // Validate required fields
     const requiredFields = [
       "fullName",
-      "emailId",
       "mobileNumber",
       "dealership",
       "vehicle",
